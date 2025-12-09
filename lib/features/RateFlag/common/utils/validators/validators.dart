@@ -106,4 +106,18 @@ class Validators {
 
     return null;
   }
+
+  ///date
+  static String? date(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Tarih seçmelisin";
+    }
+
+    try {
+      DateTime.parse(value);
+      return null;
+    } catch (_) {
+      return "Geçerli bir tarih seçmelisin";
+    }
+  }
 }

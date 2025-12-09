@@ -7,6 +7,9 @@ class Rateflagtextfield extends StatefulWidget {
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
   final bool isPassword;
+  final bool isDateField;
+  final Function(DateTime)? onDateSelected; // 👈 EKLENDİ
+  // 👈 eklendi
 
   const Rateflagtextfield({
     super.key,
@@ -16,6 +19,8 @@ class Rateflagtextfield extends StatefulWidget {
     required this.keyboardType,
     this.validator,
     this.isPassword = false,
+    this.isDateField = false,
+    this.onDateSelected,
   });
 
   @override
@@ -30,8 +35,33 @@ class _RateflagtextfieldState extends State<Rateflagtextfield> {
     return TextFormField(
       controller: widget.controller,
       keyboardType: widget.keyboardType,
+      readOnly: widget.isDateField,
+
       obscureText: widget.isPassword ? _obscureText : false,
       validator: widget.validator,
+
+      onTap: widget.isDateField
+          ? () async {
+              FocusScope.of(context).unfocus();
+
+              final DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime(2000),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+              );
+              if (pickedDate != null) {
+                widget.controller.text = pickedDate
+                    .toIso8601String()
+                    .split("T")
+                    .first;
+
+                if (widget.onDateSelected != null) {
+                  widget.onDateSelected!(pickedDate);
+                }
+              }
+            }
+          : null,
       decoration: InputDecoration(
         labelText: widget.label,
 
@@ -48,11 +78,19 @@ class _RateflagtextfieldState extends State<Rateflagtextfield> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(60),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: BorderSide(color: Colors.grey[900]!),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(60),
-          borderSide: BorderSide(color: Colors.grey[400]!, width: 2),
+          borderSide: BorderSide(color: Colors.grey[900]!, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(60),
+          borderSide: BorderSide(color: Colors.grey[900]!),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(60),
+          borderSide: BorderSide(color: Colors.grey[900]!),
         ),
 
         suffixIcon: widget.isPassword
