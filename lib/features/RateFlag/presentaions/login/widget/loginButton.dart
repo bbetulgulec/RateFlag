@@ -7,14 +7,14 @@ class Loginbutton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final buttonSize = screenWidth * 0.12;
+    final buttonSize = screenWidth * 0.10;
 
     return Container(
       width: buttonSize,
       height: buttonSize,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black45, width: 1.5),
-        borderRadius: BorderRadius.circular(18.0),
+        borderRadius: BorderRadius.circular(14.0),
       ),
       child: Padding(
         padding: const EdgeInsets.all(4.0),

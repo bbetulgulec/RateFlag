@@ -5,6 +5,7 @@ import 'package:rate_flag/features/RateFlag/common/widget/rateFlagTextField.dart
 import 'package:rate_flag/features/RateFlag/presentaions/login/widget/loginButton.dart';
 import 'package:rate_flag/features/RateFlag/common/widget/elevatedButtonWidget.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/widget/loginTextButton.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/register/view/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -30,6 +31,7 @@ class LoginScreen extends StatelessWidget {
               label: "E-posta giriniz",
               icon: Icons.email,
               keyboardType: TextInputType.emailAddress,
+              validator: Validators.email,
             ),
             const SizedBox(height: 40),
             Rateflagtextfield(
@@ -58,21 +60,26 @@ class LoginScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 40),
-            Rateflagtext.Maintitle(text: "Diğer giriş yöntemleri"),
-            const SizedBox(height: 30),
 
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: [
+                Rateflagtext.Maintitle(text: "Diğer giriş yöntemleri"),
                 Loginbutton(imagePath: "assets/images/google.png"),
-                const SizedBox(width: 40),
-                Loginbutton(imagePath: "assets/images/github-sign.png"),
               ],
             ),
             const SizedBox(height: 30),
-            Logintextbutton(text: "Zaten hesabım var"),
+            Logintextbutton(
+              text: "Hesabın yok mu? Kayıt ol",
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RegisterScreen()),
+                );
+              },
+            ),
           ],
         ),
       ),
