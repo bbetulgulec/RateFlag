@@ -58,7 +58,6 @@ class FirebaseAuthImpl extends AuthRepository {
       throw Exception("E-posta doğrulanmadı. Lütfen mailinizi kontrol edin.");
     }
 
-    // Domain User dönüyoruz (gerekirse boş alanlar doldurulabilir)
     return User(
       uid: fbUser.uid,
       firstName: "",

@@ -14,4 +14,29 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
       });
     }
   }
+
+  @override
+  Future<Map<String, dynamic>?> getUserInfo(String userID) async {
+    try {
+      final doc = await firestore.collection("users").doc(userID).get();
+
+      if (doc.exists) {
+        return doc.data();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("getUserInfo ERROR: $e");
+      return null;
+    }
+  }
+
+  @override
+  Future<void> updateUserInfo(String userID, Map<String, dynamic> data) async {
+    try {
+      await firestore.collection("users").doc(userID).update(data);
+    } catch (e) {
+      print("updateUserInfo ERROR: $e");
+    }
+  }
 }

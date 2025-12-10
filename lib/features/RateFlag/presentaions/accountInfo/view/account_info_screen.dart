@@ -1,0 +1,111 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/utils/validators/validators.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/elevatedButtonWidget.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/rateFlagTextField.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_cubit.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_state.dart';
+
+class AccountInfoScreen extends StatefulWidget {
+  const AccountInfoScreen({super.key});
+
+  @override
+  State<AccountInfoScreen> createState() => _AccountInfoScreenState();
+}
+
+class _AccountInfoScreenState extends State<AccountInfoScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    final cubit = context.read<AccountInfoCubit>();
+
+    final userID = FirebaseAuth.instance.currentUser!.uid;
+
+    /// SAYFA AÇILIR AÇILMAZ VERİ ÇEKİLİYOR
+    cubit.loadUser(userID);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<AccountInfoCubit>();
+
+    final userID = FirebaseAuth.instance.currentUser!.uid;
+
+    return Scaffold(
+      appBar: AppBar(title: Rateflagtext.Maintitle(text: "Profil Güncelleme")),
+      body: BlocConsumer<AccountInfoCubit, AccountInfoState>(
+        listener: (context, state) {
+          if (state.isUpdateInfoSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Bilgiler güncellendi")),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state.isGetInfoLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Rateflagtextfield(
+                  controller: cubit.firstNameController,
+                  label: "İsim :",
+                  validator: Validators.onlyLetters,
+                  keyboardType: TextInputType.text,
+                ),
+
+                Rateflagtextfield(
+                  controller: cubit.lastNameController,
+                  label: "Soyisim :",
+                  validator: Validators.onlyLetters,
+                  keyboardType: TextInputType.text,
+                ),
+
+                Rateflagtextfield(
+                  controller: cubit.mailController,
+                  label: "E-posta :",
+                  validator: Validators.email,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+
+                Rateflagtextfield(
+                  controller: cubit.dateController,
+                  label: "Doğum Tarihi :",
+                  validator: Validators.date,
+                  isDateField: true,
+                  keyboardType: TextInputType.datetime,
+                  onDateSelected: (date) {
+                    cubit.setBirthDate(date);
+                  },
+                ),
+
+                Onboardingelevetedbutton.primary(
+                  text: state.isUpdateInfoLoading
+                      ? "Güncelleniyor..."
+                      : "Bilgileri Kaydet",
+                  onPressed: () {
+                    cubit.updateUser(userID);
+                  },
+                ),
+
+                const SizedBox(height: 20),
+
+                Onboardingelevetedbutton.primary(
+                  text: "Hesap Sil",
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
