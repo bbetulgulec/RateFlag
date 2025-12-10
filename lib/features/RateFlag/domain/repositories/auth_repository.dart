@@ -11,5 +11,6 @@ abstract class AuthRepository {
   Future<bool> checkEmailVerified();
   Future<User?> login(String email, String password);
 
-  Future<User?> getCurrentUser(); // 👈 burada ekle
+  Future<User?> getCurrentUser();
+  Future<void> deleteAccount();
 }

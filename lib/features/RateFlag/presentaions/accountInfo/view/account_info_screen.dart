@@ -7,6 +7,8 @@ import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
 import 'package:rate_flag/features/RateFlag/common/widget/rateFlagTextField.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_state.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/settings/widget/show_setting_dialog.dart';
 
 class AccountInfoScreen extends StatefulWidget {
   const AccountInfoScreen({super.key});
@@ -43,7 +45,13 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
               const SnackBar(content: Text("Bilgiler güncellendi")),
             );
           }
+          if (state.isDeleteAccountSuccess) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text("Kullanıcı silindi")));
+          }
         },
+
         builder: (context, state) {
           if (state.isGetInfoLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -99,7 +107,22 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
 
                 Onboardingelevetedbutton.primary(
                   text: "Hesap Sil",
-                  onPressed: () {},
+                  onPressed: () {
+                    showDeleteDialog(
+                      context,
+                      "Hesap Silme",
+                      "Hesap silmeyi onaylıyor musun?",
+                      () {
+                        cubit.deleteUser(userID);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ],
             ),

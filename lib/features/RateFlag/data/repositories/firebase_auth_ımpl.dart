@@ -82,4 +82,9 @@ class FirebaseAuthImpl extends AuthRepository {
       password: "",
     );
   }
+
+  @override
+  Future<void> deleteAccount() async {
+    await auth.currentUser!.delete();
+  }
 }

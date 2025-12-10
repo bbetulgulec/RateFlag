@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/data/repositories/firebase_auth_%C4%B1mpl.dart';
 import 'package:rate_flag/features/RateFlag/data/repositories/firebase_firestore_%C4%B1mpl.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/create_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/delete_account_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/login_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/update_info_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_cubit.dart';
@@ -52,7 +53,11 @@ class MyApp extends StatelessWidget {
         BlocProvider<AccountInfoCubit>(
           create: (context) {
             final firestoreRepository = FirebaseFirestoreImpl();
-            return AccountInfoCubit(UpdateInfoUserUsecase(firestoreRepository));
+            final authRepository = FirebaseAuthImpl();
+            return AccountInfoCubit(
+              UpdateInfoUserUsecase(firestoreRepository),
+              DeleteAccountUserUsecase(firestoreRepository, authRepository),
+            );
           },
         ),
 

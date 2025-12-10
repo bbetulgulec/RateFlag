@@ -39,4 +39,20 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
       print("updateUserInfo ERROR: $e");
     }
   }
+
+  @override
+  Future<void> deleteAccount(String userID) async {
+    try {
+      final doc = await firestore
+          .collection("users")
+          .doc(userID)
+          .delete()
+          .then(
+            (doc) => print("documented deleted"),
+            onError: (e) => print("error updating $e"),
+          );
+    } catch (e) {
+      print(e);
+    }
+  }
 }

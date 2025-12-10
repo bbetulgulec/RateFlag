@@ -1,18 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/delete_account_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/update_info_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_state.dart';
 
 class AccountInfoCubit extends Cubit<AccountInfoState> {
   final UpdateInfoUserUsecase updateInfoUserUsecase;
+  final DeleteAccountUserUsecase deleteAccountUserUsecase;
 
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final mailController = TextEditingController();
   final dateController = TextEditingController();
 
-  AccountInfoCubit(this.updateInfoUserUsecase)
+  AccountInfoCubit(this.updateInfoUserUsecase, this.deleteAccountUserUsecase)
     : super(const AccountInfoState());
 
   String _formatDate(DateTime date) {
@@ -98,6 +100,28 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
         state.copyWith(
           isUpdateInfoLoading: false,
           errorMessage: "Güncelleme sırasında bir hata oluştu",
+        ),
+      );
+    }
+  }
+
+  Future<void> deleteUser(String userID) async {
+    emit(state.copyWith(isDeleteAccountLoading: true));
+
+    try {
+      await deleteAccountUserUsecase.execute();
+      emit(
+        state.copyWith(
+          isDeleteAccountSuccess: true,
+          isDeleteAccountLoading: false,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isDeleteAccountLoading: false,
+          isDeleteAccountSuccess: false,
+          errorMessage: "Kullanıcı silinemedi : $e",
         ),
       );
     }

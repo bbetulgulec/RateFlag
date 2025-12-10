@@ -11,6 +11,9 @@ class AccountInfoState extends Equatable {
   final Map<String, dynamic>? userData; // EKLENDİ
   final DateTime? birthDate;
 
+  final bool isDeleteAccountLoading;
+  final bool isDeleteAccountSuccess;
+
   const AccountInfoState({
     this.isGetInfoLoading = false,
     this.isUpdateInfoLoading = false,
@@ -19,6 +22,8 @@ class AccountInfoState extends Equatable {
     this.errorMessage,
     this.userData,
     this.birthDate,
+    this.isDeleteAccountLoading = false,
+    this.isDeleteAccountSuccess = false,
   });
 
   AccountInfoState copyWith({
@@ -29,6 +34,8 @@ class AccountInfoState extends Equatable {
     String? errorMessage,
     Map<String, dynamic>? userData,
     DateTime? birthDate,
+    bool? isDeleteAccountLoading,
+    bool? isDeleteAccountSuccess,
   }) {
     return AccountInfoState(
       isGetInfoLoading: isGetInfoLoading ?? this.isGetInfoLoading,
@@ -38,6 +45,9 @@ class AccountInfoState extends Equatable {
       errorMessage: errorMessage,
       userData: userData ?? this.userData,
       birthDate: birthDate ?? this.birthDate,
+      isDeleteAccountLoading: isGetInfoLoading ?? this.isDeleteAccountLoading,
+      isDeleteAccountSuccess:
+          isDeleteAccountSuccess ?? this.isDeleteAccountSuccess,
     );
   }
 
@@ -50,5 +60,7 @@ class AccountInfoState extends Equatable {
     errorMessage,
     userData,
     birthDate,
+    isDeleteAccountLoading,
+    isDeleteAccountSuccess,
   ];
 }
