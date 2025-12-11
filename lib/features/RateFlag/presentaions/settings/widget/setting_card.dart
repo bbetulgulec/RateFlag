@@ -6,7 +6,7 @@ class SettingCard extends StatelessWidget {
   final String? subtitle; // opsiyonel
   final Color? iconColor; // istersen özel renk
   final VoidCallback? onTap; // tıklanabilir kart
-  final bool isDestructive; // kırmızı (Delete Account)
+  final bool isDestructive;
 
   const SettingCard({
     super.key,

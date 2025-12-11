@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
 import 'package:rate_flag/features/RateFlag/domain/repositories/firestore_repository.dart';
 
 class FirebaseFirestoreImpl implements FirestoreRepository {
@@ -53,6 +54,31 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
           );
     } catch (e) {
       print(e);
+    }
+  }
+
+  @override
+  Future<void> createPost(
+    String collection,
+    Map<String, dynamic> data,
+    Post post,
+  ) async {
+    try {
+      await firestore.collection(collection).doc(post.postId).set({
+        "postId": post.postId,
+        "userId": post.userId,
+        "description": post.description,
+        "imageUrl": post.imageUrl,
+        "isPublic": post.isPublic,
+        "date": post.date.toIso8601String(),
+        "city": post.city,
+        "district": post.district,
+        "createdAt": FieldValue.serverTimestamp(),
+      });
+      print("Post saved successfully: ${post.postId}");
+    } catch (e) {
+      print("createPost ERROR: $e");
+      rethrow; // hatayı Cubit'e fırlat
     }
   }
 }

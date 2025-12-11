@@ -2,17 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/data/repositories/firebase_auth_%C4%B1mpl.dart';
 import 'package:rate_flag/features/RateFlag/data/repositories/firebase_firestore_%C4%B1mpl.dart';
+import 'package:rate_flag/features/RateFlag/data/repositories/firebase_storage_%C4%B1mpl.dart';
+import 'package:rate_flag/features/RateFlag/domain/repositories/storage_repository.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/create_post_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/create_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/delete_account_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/login_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/sign_out_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/update_info_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/upload_image_storage_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/cubit/onboarding_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/view/onboarding_screen.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/register/cubit/register_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,8 +67,25 @@ class MyApp extends StatelessWidget {
             );
           },
         ),
+        BlocProvider<PostCubit>(
+          create: (context) {
+            final firestoreRepository = FirebaseFirestoreImpl();
+            final storageRepository = FirebaseStorageImpl(); // <-- doğru
+            return PostCubit(
+              CreatePostUserUsecase(firestoreRepository),
+              UploadImageStorageUserUsecase(storageRepository),
+            );
+          },
+        ),
 
         BlocProvider<ProfileCubit>(create: (context) => ProfileCubit()),
+
+        BlocProvider<SettingsCubit>(
+          create: (context) {
+            final authRepository = FirebaseAuthImpl();
+            return SettingsCubit(SignOutUserUsecase(authRepository));
+          },
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

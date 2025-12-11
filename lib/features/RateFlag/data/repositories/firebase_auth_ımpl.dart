@@ -87,4 +87,9 @@ class FirebaseAuthImpl extends AuthRepository {
   Future<void> deleteAccount() async {
     await auth.currentUser!.delete();
   }
+
+  @override
+  Future<void> signOut() async {
+    await auth.signOut();
+  }
 }

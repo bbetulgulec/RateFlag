@@ -31,6 +31,10 @@ class MainScreen extends StatelessWidget {
               elevation: 0,
               onPressed: () {
                 context.read<MainCubit>().changeTab(1);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => PostScreen()),
+                );
               },
               child: const Icon(Icons.add, color: Colors.deepPurple, size: 30),
             ),
