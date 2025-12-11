@@ -58,7 +58,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
           }
 
           return Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -68,6 +68,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                   validator: Validators.onlyLetters,
                   keyboardType: TextInputType.text,
                 ),
+                const SizedBox(height: 20),
 
                 Rateflagtextfield(
                   controller: cubit.lastNameController,
@@ -75,14 +76,14 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                   validator: Validators.onlyLetters,
                   keyboardType: TextInputType.text,
                 ),
-
+                const SizedBox(height: 20),
                 Rateflagtextfield(
                   controller: cubit.mailController,
                   label: "E-posta :",
                   validator: Validators.email,
                   keyboardType: TextInputType.emailAddress,
                 ),
-
+                const SizedBox(height: 20),
                 Rateflagtextfield(
                   controller: cubit.dateController,
                   label: "Doğum Tarihi :",
@@ -93,7 +94,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                     cubit.setBirthDate(date);
                   },
                 ),
-
+                const SizedBox(height: 40),
                 Onboardingelevetedbutton.primary(
                   text: state.isUpdateInfoLoading
                       ? "Güncelleniyor..."
