@@ -46,4 +46,12 @@ class HomeCubit extends Cubit<HomeState> {
       );
     }
   }
+
+  void selectMap() {
+    emit(state.copyWith(selectedTab: HomeTab.map));
+  }
+
+  void selectForYou() {
+    emit(state.copyWith(selectedTab: HomeTab.forYou));
+  }
 }

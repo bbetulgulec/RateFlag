@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/home/widget/self_post_badget.dart';
 
 class FeedPostCard extends StatelessWidget {
   final String? imageUrl;
@@ -35,74 +36,13 @@ class FeedPostCard extends StatelessWidget {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       ),
                     ),
-                    errorWidget: (context, url, error) => _imagePlaceholder(),
                   )
-                : _imagePlaceholder(),
+                : CircularProgressIndicator(),
           ),
 
-          // 👀 VIEW COUNT
-          Positioned(bottom: 8, left: 8, child: _ViewCount(viewCount)),
-
-          // 🔥 SELF POST
           if (isSelfPost)
-            const Positioned(top: 8, left: 8, child: _SelfPostBadge()),
+            const Positioned(top: 8, left: 8, child: SelfPostBadget()),
         ],
-      ),
-    );
-  }
-
-  Widget _imagePlaceholder() {
-    return Container(
-      color: Colors.grey.shade300,
-      child: const Icon(Icons.image, size: 50, color: Colors.white),
-    );
-  }
-}
-
-class _ViewCount extends StatelessWidget {
-  final String viewCount;
-  const _ViewCount(this.viewCount);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.6),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.play_arrow, color: Colors.white, size: 14),
-          const SizedBox(width: 4),
-          Text(
-            viewCount,
-            style: const TextStyle(color: Colors.white, fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SelfPostBadge extends StatelessWidget {
-  const _SelfPostBadge();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.orange,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: const Text(
-        "SELF POST 🔥",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-        ),
       ),
     );
   }

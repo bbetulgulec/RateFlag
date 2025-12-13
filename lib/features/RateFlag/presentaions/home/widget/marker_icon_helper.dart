@@ -21,7 +21,6 @@ Future<BitmapDescriptor> createImageMarker(String imageUrl) async {
 
   final paint = Paint()..isAntiAlias = true;
 
-  // 🔵 Yuvarlak kırpma
   final radius = 60.0;
   canvas.drawCircle(Offset(radius, radius), radius, paint);
 

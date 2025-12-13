@@ -99,7 +99,7 @@ class MyApp extends StatelessWidget {
             return HomeCubit(
               LoadAllPostsUsecase(fireStore),
               userId, // 🔥 currentUserId
-            );
+            )..loadAllPosts();
           },
         ),
       ],

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/widget/marker_icon_helper.dart';
 
 class MapScreen extends StatefulWidget {
@@ -14,7 +12,6 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  GoogleMapController? _controller;
   final Set<Marker> _markers = {};
 
   @override
@@ -36,15 +33,12 @@ class _MapScreenState extends State<MapScreen> {
         position: LatLng(post.latitude, post.longitude),
         icon: icon,
         onTap: () {
-          // 👉 istersen detay aç
           print(post.description);
         },
       );
 
       _markers.add(marker);
     }
-
-    setState(() {});
   }
 
   @override
