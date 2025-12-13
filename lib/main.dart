@@ -1,17 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/data/repositories/firebase_auth_%C4%B1mpl.dart';
 import 'package:rate_flag/features/RateFlag/data/repositories/firebase_firestore_%C4%B1mpl.dart';
 import 'package:rate_flag/features/RateFlag/data/repositories/firebase_storage_%C4%B1mpl.dart';
-import 'package:rate_flag/features/RateFlag/domain/repositories/storage_repository.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/create_post_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/create_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/delete_account_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/load_all_post_user_usercase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/load_post_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/login_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/sign_out_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/update_info_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/upload_image_storage_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_cubit.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/cubit/onboarding_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/view/onboarding_screen.dart';
@@ -34,6 +37,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authRepository = FirebaseAuthImpl();
+    final fireStore = FirebaseFirestoreImpl();
+    final storageRepository = FirebaseStorageImpl();
     return MultiBlocProvider(
       providers: [
         // 1. Onboarding Cubit
@@ -43,47 +49,57 @@ class MyApp extends StatelessWidget {
         //2.Register Cubit
         BlocProvider<RegisterCubit>(
           create: (context) {
-            final authRepository = FirebaseAuthImpl();
-            final fireStore = FirebaseFirestoreImpl();
-
             return RegisterCubit(CreateUserUsecase(fireStore, authRepository));
           },
         ),
         //3.Login Cubit
         BlocProvider<LoginCubit>(
           create: (context) {
-            final authRepository = FirebaseAuthImpl();
             return LoginCubit(LoginUserUsecase(authRepository));
           },
         ),
         //4.AccountInfo Cubit
         BlocProvider<AccountInfoCubit>(
           create: (context) {
-            final firestoreRepository = FirebaseFirestoreImpl();
-            final authRepository = FirebaseAuthImpl();
             return AccountInfoCubit(
-              UpdateInfoUserUsecase(firestoreRepository),
-              DeleteAccountUserUsecase(firestoreRepository, authRepository),
+              UpdateInfoUserUsecase(fireStore),
+              DeleteAccountUserUsecase(fireStore, authRepository),
             );
           },
         ),
+        //5. PoST cUBİT
         BlocProvider<PostCubit>(
           create: (context) {
-            final firestoreRepository = FirebaseFirestoreImpl();
-            final storageRepository = FirebaseStorageImpl(); // <-- doğru
             return PostCubit(
-              CreatePostUserUsecase(firestoreRepository),
+              CreatePostUserUsecase(fireStore),
               UploadImageStorageUserUsecase(storageRepository),
             );
           },
         ),
 
-        BlocProvider<ProfileCubit>(create: (context) => ProfileCubit()),
+        //6.Profile Cubit
+        BlocProvider<ProfileCubit>(
+          create: (context) {
+            return ProfileCubit(LoadPostUserUsecase(fireStore));
+          },
+        ),
 
+        //7. Settings Cubit
         BlocProvider<SettingsCubit>(
           create: (context) {
-            final authRepository = FirebaseAuthImpl();
             return SettingsCubit(SignOutUserUsecase(authRepository));
+          },
+        ),
+
+        //8. Home Cubit
+        BlocProvider<HomeCubit>(
+          create: (context) {
+            final userId = FirebaseAuth.instance.currentUser!.uid;
+
+            return HomeCubit(
+              LoadAllPostsUsecase(fireStore),
+              userId, // 🔥 currentUserId
+            );
           },
         ),
       ],

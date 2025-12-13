@@ -1,6 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/elevatedButtonWidget.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/rateFlagTextField.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/main/view/main_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_state.dart';
 
@@ -29,23 +33,23 @@ class Page5 extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'Share your story',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+          Rateflagtext.Maintitle(text: "Story Açıklaması"),
+
           SizedBox(height: 20),
-          TextField(
+
+          Rateflagtextfield(
             controller: controller,
+            label: "Sizi eşsiz kılan şeyleri yazın...",
+            keyboardType: TextInputType.text,
             maxLength: 500,
             maxLines: 6,
-            decoration: InputDecoration(
-              hintText: 'Write about what makes you unique...',
-              border: OutlineInputBorder(),
-            ),
             onChanged: cubit.setDescription,
           ),
-          Spacer(),
-          TextButton(
+
+          const SizedBox(height: 70),
+
+          Onboardingelevetedbutton.primary(
+            text: "Paylaş",
             onPressed: () {
               final post = Post(
                 postId: 'post_${DateTime.now().millisecondsSinceEpoch}',
@@ -58,8 +62,11 @@ class Page5 extends StatelessWidget {
                 imageUrl: cubit.state.selectedImage?.path,
               );
               cubit.createPost(post);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => MainScreen()),
+              );
             },
-            child: Text("paylaş"),
           ),
         ],
       ),

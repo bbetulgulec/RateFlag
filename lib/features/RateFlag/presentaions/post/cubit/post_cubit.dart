@@ -26,7 +26,18 @@ class PostCubit extends Cubit<PostState> {
           File(post.imageUrl!),
           post.postId,
         );
-        print("uploadedImageUrl: $uploadedImageUrl");
+
+        // 🔥 STORAGE URL'yi post nesnesine yaz
+        post = Post(
+          postId: post.postId,
+          userId: post.userId,
+          description: post.description,
+          imageUrl: uploadedImageUrl,
+          isPublic: post.isPublic,
+          date: post.date,
+          city: post.city,
+          district: post.district,
+        );
       }
 
       try {

@@ -9,6 +9,11 @@ class Rateflagtextfield extends StatefulWidget {
   final bool isPassword;
   final bool isDateField;
   final Function(DateTime)? onDateSelected; // 👈 EKLENDİ
+  final Function(String)? onChanged;
+  final String? hintText;
+  final int? maxLength;
+  final int? maxLines;
+
   // 👈 eklendi
 
   const Rateflagtextfield({
@@ -21,6 +26,10 @@ class Rateflagtextfield extends StatefulWidget {
     this.isPassword = false,
     this.isDateField = false,
     this.onDateSelected,
+    this.onChanged,
+    this.hintText,
+    this.maxLength,
+    this.maxLines,
   });
 
   @override
@@ -36,7 +45,8 @@ class _RateflagtextfieldState extends State<Rateflagtextfield> {
       controller: widget.controller,
       keyboardType: widget.keyboardType,
       readOnly: widget.isDateField,
-
+      maxLength: widget.maxLength,
+      maxLines: widget.isPassword ? 1 : (widget.maxLines ?? 1),
       obscureText: widget.isPassword ? _obscureText : false,
       validator: widget.validator,
 
@@ -62,8 +72,10 @@ class _RateflagtextfieldState extends State<Rateflagtextfield> {
               }
             }
           : null,
+      onChanged: widget.onChanged,
       decoration: InputDecoration(
         labelText: widget.label,
+        hintText: widget.hintText,
 
         prefixIcon: widget.icon != null
             ? Icon(widget.icon, color: Colors.grey[600])

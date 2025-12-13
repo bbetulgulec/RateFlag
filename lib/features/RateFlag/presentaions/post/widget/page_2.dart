@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/elevatedButtonWidget.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_state.dart';
 
@@ -8,58 +10,64 @@ class Page2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<PostCubit>();
+
     return BlocBuilder<PostCubit, PostState>(
       builder: (context, state) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Resim seçin',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
+        return Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Rateflagtext.fadedItalic(text: "Yüklemek için resim seçin"),
+              SizedBox(height: 20),
 
-            // IMAGE PREVIEW
-            state.selectedImage == null
-                ? Container(
-                    width: 180,
-                    height: 180,
-                    color: Colors.grey[300],
-                    child: Icon(Icons.image, size: 60),
-                  )
-                : Image.file(
-                    state.selectedImage!,
-                    width: 180,
-                    height: 180,
-                    fit: BoxFit.cover,
-                  ),
+              InkWell(
+                onTap: () {
+                  cubit.checkGalleryPermission();
+                  cubit.pickImage();
+                },
+                child: state.selectedImage == null
+                    ? Container(
+                        width: 180,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.image,
+                          size: 60,
+                          color: Colors.grey[600],
+                        ),
+                      )
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          state.selectedImage!,
+                          width: 180,
+                          height: 180,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+              ),
 
-            SizedBox(height: 20),
+              SizedBox(height: 40),
 
-            ElevatedButton(
-              onPressed: () {
-                context.read<PostCubit>().checkGalleryPermission();
-                context.read<PostCubit>().pickImage();
-              },
-              child: Text("Fotoğraf Seç"),
-            ),
-
-            Spacer(),
-
-            ElevatedButton(
-              onPressed: () {
-                if (state.selectedImage == null) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text("Lütfen resim seçin")));
-                  return;
-                }
-
-                context.read<PostCubit>().goToPage(2);
-              },
-              child: Text("Devam"),
-            ),
-          ],
+              Onboardingelevetedbutton.secondary(
+                text: "Devam",
+                onPressed: () {
+                  if (state.selectedImage == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Lütfen resim seçin")),
+                    );
+                    return;
+                  }
+                  cubit.goToPage(2);
+                },
+              ),
+            ],
+          ),
         );
       },
     );

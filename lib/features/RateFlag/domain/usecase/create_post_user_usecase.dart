@@ -11,6 +11,6 @@ class CreatePostUserUsecase {
     required Map<String, dynamic> data,
     required Post post,
   }) async {
-    return await firestoreRepository.createPost(collection, data, post);
+    return await firestoreRepository.createPost(collection, post);
   }
 }

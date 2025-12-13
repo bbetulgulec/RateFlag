@@ -1,6 +1,10 @@
 // lib/features/RateFlag/presentaions/post/widget/page_1.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/elevatedButtonWidget.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/widget/page_card.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
 
@@ -9,45 +13,53 @@ class Page1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final postCubit = context.read<PostCubit>();
-
-    return BlocBuilder<PostCubit, dynamic>(
+    return BlocBuilder<PostCubit, PostState>(
+      // Burası eksikti!
       builder: (context, state) {
-        final isPublic = state.isPublic ?? false;
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Who do you want to post?',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                PageCard(
-                  icon: Icons.lock,
-                  title: "Yalnızca Kendime",
-                  isSelected: state.isPublic == false,
-                  onTap: () => postCubit.setPublic(false),
-                ),
-                const SizedBox(width: 20),
-                PageCard(
-                  icon: Icons.public,
-                  title: "Başka Birine",
-                  isSelected: state.isPublic == true,
-                  onTap: () => postCubit.setPublic(true),
-                ),
-              ],
-            ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                postCubit.nextPage();
-              },
-              child: const Text("Continue"),
-            ),
-          ],
+        final postCubit = context.read<PostCubit>();
+
+        return Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+
+            children: [
+              Rateflagtext.Maintitle(text: "Kiminle paylaşmak istersiniz?"),
+
+              const SizedBox(height: 40),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: PageCard(
+                      icon: Icons.lock,
+                      title: "Yalnızca Kendime",
+                      isSelected: state.isPublic == false,
+                      onTap: () => postCubit.setPublic(false),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: PageCard(
+                      icon: Icons.public,
+                      title: "Başka Birine",
+                      isSelected: state.isPublic == true,
+                      onTap: () => postCubit.setPublic(true),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
+
+              Onboardingelevetedbutton.primary(
+                text: "Devam",
+                onPressed: () {
+                  postCubit.nextPage();
+                },
+              ),
+            ],
+          ),
         );
       },
     );

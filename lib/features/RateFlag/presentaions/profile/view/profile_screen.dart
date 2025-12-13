@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_buid_count.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_grid_view.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_icon_widget.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/view/settings_screen.dart';
 
@@ -11,6 +12,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<ProfileCubit>().loadPosts();
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         final tabIndex = state.tabIndex;
@@ -121,28 +123,34 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 35),
 
-                  /// ------- NO POSTS YET --------
-                  Column(
-                    children: const [
-                      Icon(
-                        Icons.image_not_supported_outlined,
-                        size: 45,
-                        color: Colors.grey,
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "No posts yet 👎",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        "They will show up here",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
+                  Expanded(
+                    child: state.isPostLoading
+                        ? Center(child: CircularProgressIndicator())
+                        : state.posts.isEmpty
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(
+                                Icons.image_not_supported_outlined,
+                                size: 45,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                "No posts yet 👎",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                "They will show up here",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          )
+                        : ProfileGridView(posts: state.posts),
                   ),
                 ],
               ),

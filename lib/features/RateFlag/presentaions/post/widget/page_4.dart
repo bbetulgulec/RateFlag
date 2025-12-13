@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/elevatedButtonWidget.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/rateFlagTextField.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_state.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post/widget/page_list_view.dart';
 
 class Page4 extends StatelessWidget {
   const Page4({super.key});
@@ -9,6 +13,7 @@ class Page4 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<PostCubit>();
+    final districtController = TextEditingController();
 
     return BlocBuilder<PostCubit, PostState>(
       builder: (context, state) {
@@ -26,33 +31,28 @@ class Page4 extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (state.selectedCity != null)
-                Text(
-                  "Seçilen şehir: ${state.selectedCity}",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Rateflagtext.Maintitle(
+                  text: "Seçilen Şehir : ${state.selectedCity}",
                 ),
-              const SizedBox(height: 20),
 
-              TextField(
+              const SizedBox(height: 20),
+              Rateflagtextfield(
+                controller: districtController,
+
+                icon: Icons.search,
+                keyboardType: TextInputType.text,
                 onChanged: (query) {
                   cubit.filterDistricts(query);
                 },
-                decoration: InputDecoration(
-                  hintText: "İlçe Ara...",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: const Icon(Icons.search),
-                ),
+                label: 'Şehir ara ',
               ),
+
               const SizedBox(height: 10),
 
               districts.isEmpty
                   ? const Center(child: Text("İlçe bulunamadı"))
                   : Expanded(
-                      child: ListView.builder(
+                      child: PageListView(
                         itemCount: districts.length,
                         itemBuilder: (context, index) {
                           final district = districts[index];
@@ -70,13 +70,13 @@ class Page4 extends StatelessWidget {
 
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
+                child: Onboardingelevetedbutton.secondary(
+                  text: "İlerle",
                   onPressed: state.selectedDistrict == null
                       ? null
                       : () {
                           cubit.nextPage();
                         },
-                  child: const Text("İlerle"),
                 ),
               ),
             ],

@@ -5,9 +5,7 @@ abstract class FirestoreRepository {
   Future<Map<String, dynamic>?> getUserInfo(String userID);
   Future<void> updateUserInfo(String userID, Map<String, dynamic> data);
   Future<void> deleteAccount(String userID);
-  Future<void> createPost(
-    String collection,
-    Map<String, dynamic> data,
-    Post post,
-  );
+  Future<void> createPost(String collection, Post post);
+  Future<List<Post>> loadUserPosts(String userId);
+  Future<List<Post>> loadAllPosts();
 }

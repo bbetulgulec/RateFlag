@@ -7,6 +7,7 @@ class Post {
   final String district;
   final String description;
   final String? imageUrl;
+  final DateTime? createdAt;
 
   const Post({
     required this.postId,
@@ -17,5 +18,6 @@ class Post {
     required this.district,
     required this.description,
     this.imageUrl,
+    this.createdAt,
   });
 }

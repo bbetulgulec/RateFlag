@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/elevatedButtonWidget.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/rateFlagTextField.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_state.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post/widget/page_list_view.dart';
 
 class Page3 extends StatelessWidget {
   const Page3({super.key});
@@ -9,60 +13,44 @@ class Page3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<PostCubit>();
+    final cityController = TextEditingController();
 
     return BlocBuilder<PostCubit, PostState>(
       builder: (context, state) {
         return Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text(
-                'Where can you be found?',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
+              Rateflagtext.Maintitle(text: "Sizi nerede bulabiliriz ?"),
 
-              TextField(
+              const SizedBox(height: 20),
+              Rateflagtextfield(
+                controller: cityController,
+
+                icon: Icons.search,
+                keyboardType: TextInputType.text,
                 onChanged: (value) => cubit.searchCities(value),
-                decoration: InputDecoration(
-                  hintText: "Şehir Ara...",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: const Icon(Icons.search),
-                ),
+                label: 'Şehir ara ',
               ),
 
               const SizedBox(height: 15),
-
-              /// ✔ Seçilen şehir burada gösteriliyor
-              if (state.selectedCity != null)
-                Text(
-                  "Seçilen şehir: ${state.selectedCity}",
-                  style: const TextStyle(
-                    color: Colors.blue,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-              const SizedBox(height: 10),
 
               if (state.isCityLoading)
                 const Center(child: CircularProgressIndicator()),
 
               if (!state.isCityLoading)
                 Expanded(
-                  child: ListView.builder(
+                  child: PageListView(
                     itemCount: state.citySuggestions.length,
                     itemBuilder: (context, index) {
                       final item = state.citySuggestions[index];
 
                       return ListTile(
                         title: Text(item["name"]),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () {
-                          cubit.selectCity(item["name"]); // Şehir seç
+                          cubit.selectCity(item["name"]);
                         },
                       );
                     },
@@ -73,14 +61,15 @@ class Page3 extends StatelessWidget {
 
               /// ✔ İlerle butonu (şehir seçilmeden basılamaz)
               SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: state.selectedCity == null
-                      ? null
-                      : () {
-                          context.read<PostCubit>().nextPage();
-                        },
-                  child: const Text("İlerle"),
+                child: Onboardingelevetedbutton.primary(
+                  text: "Devam",
+                  onPressed: () {
+                    state.selectedCity == null
+                        ? null
+                        : () {
+                            context.read<PostCubit>().nextPage();
+                          };
+                  },
                 ),
               ),
             ],

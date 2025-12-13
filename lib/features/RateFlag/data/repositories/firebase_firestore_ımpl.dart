@@ -58,27 +58,79 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
   }
 
   @override
-  Future<void> createPost(
-    String collection,
-    Map<String, dynamic> data,
-    Post post,
-  ) async {
+  Future<void> createPost(String collection, Post post) async {
     try {
-      await firestore.collection(collection).doc(post.postId).set({
-        "postId": post.postId,
-        "userId": post.userId,
-        "description": post.description,
-        "imageUrl": post.imageUrl,
-        "isPublic": post.isPublic,
-        "date": post.date.toIso8601String(),
-        "city": post.city,
-        "district": post.district,
-        "createdAt": FieldValue.serverTimestamp(),
-      });
-      print("Post saved successfully: ${post.postId}");
+      // users/{userId}/posts/{postId}
+      await firestore
+          .collection("users")
+          .doc(post.userId)
+          .collection("posts")
+          .doc(post.postId)
+          .set({
+            "postId": post.postId,
+            "userId": post.userId,
+            "description": post.description,
+            "imageUrl": post.imageUrl,
+            "isPublic": post.isPublic,
+            "date": post.date.toIso8601String(),
+            "city": post.city,
+            "district": post.district,
+            "createdAt": FieldValue.serverTimestamp(),
+          });
+
+      print("Post saved successfully under user: ${post.userId}");
     } catch (e) {
       print("createPost ERROR: $e");
-      rethrow; // hatayı Cubit'e fırlat
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<Post>> loadAllPosts() async {
+    final snapshot = await firestore.collectionGroup('posts').get();
+
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      return Post(
+        postId: data['postId'],
+        userId: data['userId'],
+        description: data['description'],
+        imageUrl: data['imageUrl'],
+        isPublic: data['isPublic'],
+        city: data['city'],
+        district: data['district'],
+        date: DateTime.parse(data['date']),
+      );
+    }).toList();
+  }
+
+  @override
+  Future<List<Post>> loadUserPosts(String userId) async {
+    try {
+      final query = await firestore
+          .collection("users")
+          .doc(userId)
+          .collection("posts")
+          .orderBy("createdAt", descending: true)
+          .get();
+
+      // QuerySnapshot → List<Post>
+      return query.docs.map((doc) {
+        final data = doc.data();
+        return Post(
+          postId: data["postId"],
+          userId: data["userId"],
+          description: data["description"],
+          imageUrl: data["imageUrl"],
+          isPublic: data["isPublic"],
+          date: DateTime.parse(data["date"]),
+          city: data["city"],
+          district: data["district"],
+        );
+      }).toList();
+    } catch (e) {
+      print("loadUserPosts ERROR: $e");
+      return [];
     }
   }
 }
