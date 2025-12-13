@@ -50,7 +50,7 @@ class Page3 extends StatelessWidget {
                         title: Text(item["name"]),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () {
-                          cubit.selectCity(item["name"]);
+                          cubit.selectCity(item);
                         },
                       );
                     },

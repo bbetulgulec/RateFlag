@@ -4,6 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/widget/feed_post_card.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/home/widget/map_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,10 +34,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
         leading: const Icon(Icons.notifications_none, color: Colors.black),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: Icon(Icons.search, color: Colors.black),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.map),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MapScreen()),
+              );
+            },
           ),
         ],
       ),

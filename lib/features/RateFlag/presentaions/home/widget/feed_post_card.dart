@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class FeedPostCard extends StatelessWidget {
@@ -23,19 +24,18 @@ class FeedPostCard extends StatelessWidget {
           AspectRatio(
             aspectRatio: isBig ? 3 / 4 : 1,
             child: imageUrl != null
-                ? Image.network(
-                    imageUrl!,
+                ? CachedNetworkImage(
+                    imageUrl: imageUrl!,
                     fit: BoxFit.cover,
-                    loadingBuilder: (context, child, progress) {
-                      if (progress == null) return child;
-                      return Container(
-                        color: Colors.grey.shade300,
-                        child: const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      );
-                    },
-                    errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                    memCacheHeight: 800,
+                    memCacheWidth: 800,
+                    placeholder: (context, url) => Container(
+                      color: Colors.grey.shade300,
+                      child: const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => _imagePlaceholder(),
                   )
                 : _imagePlaceholder(),
           ),

@@ -60,6 +60,8 @@ class Page5 extends StatelessWidget {
                 district: cubit.state.selectedDistrict ?? '',
                 description: cubit.state.description ?? '',
                 imageUrl: cubit.state.selectedImage?.path,
+                latitude: cubit.state.latitude ?? 0.0,
+                longitude: cubit.state.longitude ?? 0.0,
               );
               cubit.createPost(post);
               Navigator.pushReplacement(

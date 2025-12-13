@@ -20,6 +20,11 @@ class PostCubit extends Cubit<PostState> {
     print("createPost started: ${post.postId}");
     emit(state.copyWith(isCreatePostLoading: true));
     try {
+      final coords = await fetchCoordinates(
+        city: post.city,
+        district: post.district,
+      );
+
       String? uploadedImageUrl;
       if (post.imageUrl != null) {
         uploadedImageUrl = await uploadImageUsecase.execute(
@@ -37,6 +42,9 @@ class PostCubit extends Cubit<PostState> {
           date: post.date,
           city: post.city,
           district: post.district,
+          latitude: coords["latitude"]!,
+          longitude: coords["longitude"]!,
+          createdAt: DateTime.now(),
         );
       }
 
@@ -52,6 +60,9 @@ class PostCubit extends Cubit<PostState> {
             "date": post.date.toIso8601String(),
             "city": post.city,
             "district": post.district,
+            "latitude": post.latitude,
+            "longitude": post.longitude,
+            "createdAt": post.createdAt?.toIso8601String(),
           },
           post: post,
         );
@@ -144,11 +155,15 @@ class PostCubit extends Cubit<PostState> {
     }
   }
 
-  void selectCity(String cityName) {
+  void selectCity(Map<String, dynamic> city) {
+    final coords = city["coordinates"];
+
     emit(
       state.copyWith(
-        selectedCity: cityName,
-        currentPage: state.currentPage + 1, // otomatik sonraki sayfa
+        selectedCity: city["name"],
+        latitude: coords?["latitude"],
+        longitude: coords?["longitude"],
+        currentPage: state.currentPage + 1,
       ),
     );
   }
@@ -186,5 +201,37 @@ class PostCubit extends Cubit<PostState> {
         .toList();
 
     emit(state.copyWith(filteredDistricts: filtered));
+  }
+
+  Future<Map<String, double>> fetchCoordinates({
+    required String city,
+    required String district,
+  }) async {
+    final url = Uri.parse(
+      'https://nominatim.openstreetmap.org/search'
+      '?q=$district,$city,Turkey'
+      '&format=json'
+      '&limit=1',
+    );
+
+    final response = await http.get(
+      url,
+      headers: {'User-Agent': 'rate-flag-app'},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Konum servisine ulaşılamadı");
+    }
+
+    final data = jsonDecode(response.body);
+
+    if (data.isEmpty) {
+      throw Exception("Bu ilçe için koordinat bulunamadı");
+    }
+
+    return {
+      "latitude": double.parse(data[0]["lat"]),
+      "longitude": double.parse(data[0]["lon"]),
+    };
   }
 }

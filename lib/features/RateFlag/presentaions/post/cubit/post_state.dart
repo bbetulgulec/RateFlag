@@ -7,6 +7,8 @@ class PostState extends Equatable {
   final bool isCreatePostSuccess;
   final String? errorMessage;
   final String? description;
+  final double? latitude;
+  final double? longitude;
 
   //1.page
   final bool? isPublic;
@@ -31,6 +33,8 @@ class PostState extends Equatable {
     this.isCreatePostSuccess = false,
     this.errorMessage,
     this.description,
+    this.latitude,
+    this.longitude,
     this.isPublic,
     this.currentPage = 0,
     this.selectedImage,
@@ -48,6 +52,8 @@ class PostState extends Equatable {
     bool? isCreatePostSuccess,
     String? errorMessage,
     String? description,
+    double? latitude,
+    double? longitude,
     bool? isPublic,
     int? currentPage,
     File? selectedImage,
@@ -64,6 +70,8 @@ class PostState extends Equatable {
       isCreatePostSuccess: isCreatePostSuccess ?? this.isCreatePostSuccess,
       errorMessage: errorMessage ?? this.errorMessage,
       description: description ?? this.description,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
       isPublic: isPublic ?? this.isPublic,
       currentPage: currentPage ?? this.currentPage,
       selectedImage: selectedImage ?? this.selectedImage,
@@ -84,6 +92,8 @@ class PostState extends Equatable {
     isCreatePostSuccess,
     errorMessage,
     description,
+    latitude,
+    longitude,
     isPublic,
     currentPage,
     selectedImage,

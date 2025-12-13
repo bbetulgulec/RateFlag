@@ -76,6 +76,8 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
             "city": post.city,
             "district": post.district,
             "createdAt": FieldValue.serverTimestamp(),
+            "latitude": post.latitude,
+            "longitude": post.longitude,
           });
 
       print("Post saved successfully under user: ${post.userId}");
@@ -100,6 +102,9 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
         city: data['city'],
         district: data['district'],
         date: DateTime.parse(data['date']),
+        latitude: (data['latitude'] as num).toDouble(),
+        longitude: (data['longitude'] as num).toDouble(),
+        createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       );
     }).toList();
   }
@@ -126,6 +131,9 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
           date: DateTime.parse(data["date"]),
           city: data["city"],
           district: data["district"],
+          latitude: (data['latitude'] as num).toDouble(),
+          longitude: (data['longitude'] as num).toDouble(),
+          createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
         );
       }).toList();
     } catch (e) {
