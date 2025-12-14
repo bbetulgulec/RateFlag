@@ -25,6 +25,8 @@ import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_c
 import 'package:rate_flag/features/RateFlag/presentaions/register/cubit/register_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_cubit.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/splash/cubit/splash_cubit.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/splash/view/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -110,7 +112,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<PostInfoCubit>(
           create: (context) => PostInfoCubit(LoadPostUserUsecase(fireStore)),
         ),
+        // 9. Splash Cubit
+        BlocProvider(create: (_) => SplashCubit()..startSplash()),
       ],
+
       child: MaterialApp(
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
@@ -118,7 +123,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: const OnboardingScreen(),
+        home: const SplashScreen(),
       ),
     );
   }
