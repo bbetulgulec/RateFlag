@@ -10,6 +10,7 @@ import 'package:rate_flag/features/RateFlag/domain/usecase/delete_account_user_u
 import 'package:rate_flag/features/RateFlag/domain/usecase/load_all_post_user_usercase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/load_post_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/login_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/rate_the_image_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/sign_out_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/update_info_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/upload_image_storage_user_usecase.dart';
@@ -19,6 +20,7 @@ import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/cubit/onboarding_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/view/onboarding_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/register/cubit/register_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -98,9 +100,15 @@ class MyApp extends StatelessWidget {
 
             return HomeCubit(
               LoadAllPostsUsecase(fireStore),
-              userId, // 🔥 currentUserId
+
+              userId,
+              RateTheImageUserUsecase(fireStore),
             )..loadAllPosts();
           },
+        ),
+        // 9. PostInfo Cubit
+        BlocProvider<PostInfoCubit>(
+          create: (context) => PostInfoCubit(LoadPostUserUsecase(fireStore)),
         ),
       ],
       child: MaterialApp(

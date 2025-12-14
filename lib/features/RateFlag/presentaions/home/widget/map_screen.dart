@@ -39,6 +39,8 @@ class _MapScreenState extends State<MapScreen> {
 
       _markers.add(marker);
     }
+
+    setState(() {});
   }
 
   @override

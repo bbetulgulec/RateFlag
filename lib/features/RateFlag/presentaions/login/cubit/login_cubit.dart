@@ -13,7 +13,7 @@ class LoginCubit extends Cubit<LoginState> {
 
     try {
       // await ekleyelim ki login tamamlanana kadar beklesin
-      final user = await loginUserUsecase.execute(email, password);
+      await loginUserUsecase.execute(email, password);
 
       emit(
         state.copyWith(

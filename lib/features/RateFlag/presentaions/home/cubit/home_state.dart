@@ -11,6 +11,11 @@ class HomeState extends Equatable {
   final List<Post> posts;
   final Set<Marker> markers;
   final HomeTab selectedTab;
+  final bool isRatePostLoading;
+  final bool isRatePostSuccess;
+
+  final String? openedImageUrl;
+  final Post? openedPost;
 
   HomeState({
     this.isAllPostLoading = false,
@@ -19,6 +24,10 @@ class HomeState extends Equatable {
     this.posts = const [],
     this.markers = const {},
     this.selectedTab = HomeTab.forYou,
+    this.openedImageUrl,
+    this.openedPost,
+    this.isRatePostLoading = false,
+    this.isRatePostSuccess = false,
   });
   HomeState copyWith({
     bool? isAllPostLoading,
@@ -27,6 +36,10 @@ class HomeState extends Equatable {
     List<Post>? posts,
     Set<Marker>? markers,
     HomeTab? selectedTab,
+    String? openedImageUrl,
+    bool? isRatePostLoading,
+    bool? isRatePostSuccess,
+    Post? openedPost,
   }) {
     return HomeState(
       isAllPostLoading: isAllPostLoading ?? this.isAllPostLoading,
@@ -35,6 +48,10 @@ class HomeState extends Equatable {
       posts: posts ?? this.posts,
       markers: markers ?? this.markers,
       selectedTab: selectedTab ?? this.selectedTab,
+      openedImageUrl: openedImageUrl ?? this.openedImageUrl,
+      isRatePostLoading: isRatePostLoading ?? this.isRatePostLoading,
+      isRatePostSuccess: isRatePostSuccess ?? this.isRatePostSuccess,
+      openedPost: openedPost ?? this.openedPost,
     );
   }
 
@@ -46,5 +63,9 @@ class HomeState extends Equatable {
     posts,
     markers,
     selectedTab,
+    openedImageUrl,
+    isRatePostLoading,
+    isRatePostSuccess,
+    openedPost,
   ];
 }

@@ -8,6 +8,8 @@ class Post {
   final String description;
   final String? imageUrl;
   final DateTime? createdAt;
+  final int? redFlag;
+  final int? greenFlag;
 
   // 🔥 HARİTA İÇİN ZORUNLU
   final double latitude;
@@ -25,5 +27,7 @@ class Post {
     required this.longitude,
     this.imageUrl,
     this.createdAt,
+    this.redFlag,
+    this.greenFlag,
   });
 }

@@ -7,6 +7,7 @@ class FeedPostCard extends StatelessWidget {
   final bool isSelfPost;
   final String viewCount;
   final bool isBig;
+  final VoidCallback? onPressed;
 
   const FeedPostCard({
     super.key,
@@ -14,35 +15,39 @@ class FeedPostCard extends StatelessWidget {
     required this.isSelfPost,
     required this.viewCount,
     required this.isBig,
+    this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: Stack(
-        children: [
-          AspectRatio(
-            aspectRatio: isBig ? 3 / 4 : 1,
-            child: imageUrl != null
-                ? CachedNetworkImage(
-                    imageUrl: imageUrl!,
-                    fit: BoxFit.cover,
-                    memCacheHeight: 800,
-                    memCacheWidth: 800,
-                    placeholder: (context, url) => Container(
-                      color: Colors.grey.shade300,
-                      child: const Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
+    return InkWell(
+      onTap: onPressed,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
+          children: [
+            AspectRatio(
+              aspectRatio: isBig ? 3 / 4 : 1,
+              child: imageUrl != null
+                  ? CachedNetworkImage(
+                      imageUrl: imageUrl!,
+                      fit: BoxFit.cover,
+                      memCacheHeight: 800,
+                      memCacheWidth: 800,
+                      placeholder: (context, url) => Container(
+                        color: Colors.grey.shade300,
+                        child: const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
                       ),
-                    ),
-                  )
-                : CircularProgressIndicator(),
-          ),
+                    )
+                  : CircularProgressIndicator(),
+            ),
 
-          if (isSelfPost)
-            const Positioned(top: 8, left: 8, child: SelfPostBadget()),
-        ],
+            if (isSelfPost)
+              const Positioned(top: 8, left: 8, child: SelfPostBadget()),
+          ],
+        ),
       ),
     );
   }

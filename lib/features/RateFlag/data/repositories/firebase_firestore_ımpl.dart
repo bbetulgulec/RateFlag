@@ -141,4 +141,50 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
       return [];
     }
   }
+
+  @override
+  Future<void> incrementFlag({
+    required String userId,
+    required String postId,
+    required bool isGreen,
+  }) async {
+    final docRef = firestore
+        .collection('users')
+        .doc(userId)
+        .collection('posts')
+        .doc(postId);
+
+    await docRef.update({
+      isGreen ? 'greenFlag' : 'redFlag': FieldValue.increment(1),
+    });
+  }
+
+  @override
+  Future<Post?> getPostById(String userId, String postId) async {
+    final doc = await firestore
+        .collection('users')
+        .doc(userId)
+        .collection('posts')
+        .doc(postId)
+        .get();
+
+    if (!doc.exists) return null;
+
+    final data = doc.data()!;
+    return Post(
+      postId: data['postId'],
+      userId: data['userId'],
+      description: data['description'],
+      imageUrl: data['imageUrl'],
+      isPublic: data['isPublic'],
+      date: DateTime.parse(data['date']),
+      city: data['city'],
+      district: data['district'],
+      latitude: (data['latitude'] as num).toDouble(),
+      longitude: (data['longitude'] as num).toDouble(),
+      redFlag: (data['redFlag'] as num?)?.toInt() ?? 0,
+      greenFlag: (data['greenFlag'] as num?)?.toInt() ?? 0,
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+    );
+  }
 }

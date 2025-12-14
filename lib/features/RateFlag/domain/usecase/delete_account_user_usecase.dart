@@ -14,10 +14,8 @@ class DeleteAccountUserUsecase {
     }
 
     final uid = user.uid;
-    //Firebase Authtan sil
-    await firestoreRepository.deleteAccount(uid);
 
-    //Firebase firestoredan sil
+    await firestoreRepository.deleteAccount(uid);
 
     await authRepository.deleteAccount();
   }
