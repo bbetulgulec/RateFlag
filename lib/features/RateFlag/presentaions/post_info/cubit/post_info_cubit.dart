@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/follow_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/load_post_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/post_info_share_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/rate_the_image_user_usecase.dart';
 import 'post_info_state.dart';
 
@@ -9,11 +10,13 @@ class PostInfoCubit extends Cubit<PostInfoState> {
   final LoadPostUserUsecase loadPostUserUsecase;
   final RateTheImageUserUsecase rateTheImageUserUsecase;
   final FollowUserUsecase followUserUsecase;
+  final PostInfoShareUserUsecase postInfoShareUserUsecase;
 
   PostInfoCubit(
     this.loadPostUserUsecase,
     this.rateTheImageUserUsecase,
     this.followUserUsecase,
+    this.postInfoShareUserUsecase,
   ) : super(PostInfoState());
 
   Future<void> loadPostInfo({
@@ -84,14 +87,31 @@ class PostInfoCubit extends Cubit<PostInfoState> {
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
     final prevRed = state.redFlagCount ?? 0;
     final prevGreen = state.greenFlagCount ?? 0;
+    bool prevGreenFlag = state.hasGreenFlag ?? false;
+    bool prevRedFlag = state.hasRedFlag ?? false;
 
-    if (state.hasGreenFlag == true || state.hasRedFlag == true) return;
+    int newGreen = prevGreen;
+    int newRed = prevRed;
+
+    // Önceki oy durumuna göre güncelle
+    if (prevGreenFlag && !isGreen) {
+      newGreen--;
+      newRed++;
+    } else if (prevRedFlag && isGreen) {
+      newRed--;
+      newGreen++;
+    } else if (!prevGreenFlag && !prevRedFlag) {
+      if (isGreen)
+        newGreen++;
+      else
+        newRed++;
+    }
 
     // UI anında güncelle
     emit(
       state.copyWith(
-        greenFlagCount: isGreen ? prevGreen + 1 : prevGreen,
-        redFlagCount: isGreen ? prevRed : prevRed + 1,
+        greenFlagCount: newGreen,
+        redFlagCount: newRed,
         hasGreenFlag: isGreen,
         hasRedFlag: !isGreen,
       ),
@@ -105,13 +125,13 @@ class PostInfoCubit extends Cubit<PostInfoState> {
         isGreen: isGreen,
       );
     } catch (e) {
-      // Hata → geri al
+      // hata → geri al
       emit(
         state.copyWith(
           greenFlagCount: prevGreen,
           redFlagCount: prevRed,
-          hasGreenFlag: false,
-          hasRedFlag: false,
+          hasGreenFlag: prevGreenFlag,
+          hasRedFlag: prevRedFlag,
           errorMessage: "Posta oy verilemedi",
         ),
       );
@@ -149,6 +169,24 @@ class PostInfoCubit extends Cubit<PostInfoState> {
           followMessage: null,
         ),
       );
+    }
+  }
+
+  Future<void> sharePost() async {
+    final post = state.post;
+    final user = state.user;
+    if (post == null || user == null) return;
+
+    try {
+      await postInfoShareUserUsecase.execute(
+        description: post.description,
+        userName: "${user['firstName']} ${user['lastName']}",
+        city: post.city,
+        district: post.district,
+        imageUrl: post.imageUrl,
+      );
+    } catch (e) {
+      emit(state.copyWith(errorMessage: "Paylaşım başarısız oldu"));
     }
   }
 }

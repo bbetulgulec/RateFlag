@@ -30,6 +30,7 @@ class _PostPageViewState extends State<PostPageView> {
     final pages = [Page1(), Page2(), Page3(), Page4(), Page5()];
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           const SizedBox(height: 50),
@@ -55,6 +56,9 @@ class _PostPageViewState extends State<PostPageView> {
                 controller: _controller,
                 itemCount: pages.length,
                 onPageChanged: (i) => context.read<PostCubit>().goToPage(i),
+                physics: currentIndex == 0 && selectedImage == null
+                    ? const NeverScrollableScrollPhysics()
+                    : const AlwaysScrollableScrollPhysics(),
                 itemBuilder: (_, i) =>
                     Padding(padding: const EdgeInsets.all(16), child: pages[i]),
               ),

@@ -27,43 +27,40 @@ class OnboardingScreen extends StatelessWidget {
                 colors: [Color(0xFFB8A3EC), Color.fromARGB(255, 255, 255, 255)],
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12.0),
-                    child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginScreen(),
-                            ),
-                          );
-                        },
-                        child: state.showSkipButton
-                            ? RateFlagText.fadedItalic(text: "Skip")
-                            : const SizedBox(),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 60),
-
-                  Expanded(
-                    child: OnboardingPageView(
-                      controller: controller,
-                      onPageChanged: (i) {
-                        context.read<OnboardingCubit>().pageChanged(i);
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 40.0, right: 25.0),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
                       },
+                      child: state.showSkipButton
+                          ? RateFlagText.fadedItalic(text: "Skip")
+                          : const SizedBox(),
                     ),
                   ),
-                ],
-              ),
+                ),
+
+                const SizedBox(height: 60),
+
+                Expanded(
+                  child: OnboardingPageView(
+                    controller: controller,
+                    onPageChanged: (i) {
+                      context.read<OnboardingCubit>().pageChanged(i);
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         );

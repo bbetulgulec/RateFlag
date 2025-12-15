@@ -55,6 +55,7 @@ dependencies:
   lottie: ^3.3.2
   google_sign_in: ^7.2.0
   fluttertoast: ^9.0.0
+  share_plus: ^12.0.1
 
 dev_dependencies:
   flutter_test:

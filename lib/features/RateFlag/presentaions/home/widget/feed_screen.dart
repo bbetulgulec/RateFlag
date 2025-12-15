@@ -4,6 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:rate_flag/features/RateFlag/data/repositories/firebase_firestore_%C4%B1mpl.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/follow_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/load_post_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/post_info_share_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/rate_the_image_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_state.dart';
@@ -67,6 +68,7 @@ class FeedScreen extends StatelessWidget {
                                 LoadPostUserUsecase(fireStore),
                                 RateTheImageUserUsecase(fireStore),
                                 FollowUserUsecase(fireStore),
+                                PostInfoShareUserUsecase(),
                               ),
                               child: PostInfoScreen(
                                 postId: post.postId,

@@ -20,6 +20,11 @@ class PostCubit extends Cubit<PostState> {
   PostCubit(this.createPostUserUsecase, this.uploadImageUsecase)
     : super(const PostState());
   Future<void> createPost(Post post, BuildContext context) async {
+    // 🔹 Resim yoksa post oluşturma işlemini durdur
+    if (post.imageUrl == null || post.imageUrl!.isEmpty) {
+      ToastMessage.show(context, message: "Lütfen bir resim seçin");
+      return;
+    }
     print("createPost started: ${post.postId}");
     emit(state.copyWith(isCreatePostLoading: true));
     try {

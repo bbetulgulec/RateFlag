@@ -164,19 +164,33 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
     await firestore.runTransaction((transaction) async {
       final postSnap = await transaction.get(postRef);
       final data = postSnap.data()!;
-      final flaggedBy = List<String>.from(data['flaggedBy'] ?? []);
+      // Map olarak flaggedBy al
+      final Map<String, dynamic> flaggedBy = Map<String, dynamic>.from(
+        data['flaggedBy'] ?? {},
+      );
 
-      // Kullanıcı zaten oy verdi mi
-      if (flaggedBy.contains(userId)) {
-        print("User has already voted on this post");
+      final previousVote = flaggedBy[userId]; // null, "green" veya "red"
+
+      // Eğer önceki oy aynı ise return
+      if ((isGreen && previousVote == "green") ||
+          (!isGreen && previousVote == "red")) {
+        print("User already voted the same");
         return;
       }
+      // Oy değişikliği yap
+      if (previousVote == "green") {
+        transaction.update(postRef, {'greenFlag': FieldValue.increment(-1)});
+      } else if (previousVote == "red") {
+        transaction.update(postRef, {'redFlag': FieldValue.increment(-1)});
+      }
 
+      // Yeni oy ekle
       transaction.update(postRef, {
         isGreen ? 'greenFlag' : 'redFlag': FieldValue.increment(1),
-        'flaggedBy': FieldValue.arrayUnion([userId]),
+        'flaggedBy': {...flaggedBy, userId: isGreen ? "green" : "red"},
       });
-      print("Firestore oy başarıyla gönderildi");
+
+      print("Firestore vote updated successfully");
     });
   }
 
@@ -203,8 +217,8 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
       district: data['district'],
       latitude: (data['latitude'] as num).toDouble(),
       longitude: (data['longitude'] as num).toDouble(),
-      redFlag: (data['redFlag'] as num?)?.toInt() ?? 0, // Flagging part
-      greenFlag: (data['greenFlag'] as num?)?.toInt() ?? 0, // Flagging part
+      redFlag: (data['redFlag'] as num?)?.toInt() ?? 0,
+      greenFlag: (data['greenFlag'] as num?)?.toInt() ?? 0,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
     );
   }

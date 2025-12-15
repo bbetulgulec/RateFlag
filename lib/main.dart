@@ -13,6 +13,7 @@ import 'package:rate_flag/features/RateFlag/domain/usecase/forgot_password_user_
 import 'package:rate_flag/features/RateFlag/domain/usecase/load_all_post_user_usercase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/load_post_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/login_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/post_info_share_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/rate_the_image_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/sign_out_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/update_info_user_usecase.dart';
@@ -125,6 +126,7 @@ class MyApp extends StatelessWidget {
             LoadPostUserUsecase(fireStore),
             RateTheImageUserUsecase(fireStore),
             FollowUserUsecase(fireStore),
+            PostInfoShareUserUsecase(),
           ),
         ),
         // 9. Splash Cubit
