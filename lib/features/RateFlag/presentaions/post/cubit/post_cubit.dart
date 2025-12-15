@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/toast_message.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/create_post_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/upload_image_storage_user_usecase.dart';
@@ -68,9 +69,7 @@ class PostCubit extends Cubit<PostState> {
           },
           post: post,
         );
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(" Post Paylaşıldı")));
+        ToastMessage.show(context, message: "Post Paylaşıldı");
         print("Post successfully saved to Firestore");
       } catch (e) {
         print("Firestore save failed: $e");

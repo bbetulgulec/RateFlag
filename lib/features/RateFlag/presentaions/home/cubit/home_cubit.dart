@@ -68,18 +68,6 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(openedImageUrl: null));
   }
 
-  Future<void> ratePost({required bool isGreen}) async {
-    if (state.openedPost == null) return;
-
-    await rateTheImageUserUsecase.execute(
-      userId: state.openedPost!.userId,
-      postId: state.openedPost!.postId,
-      isGreen: isGreen,
-    );
-
-    emit(state.copyWith(isRatePostSuccess: true));
-  }
-
   void openPost(Post post) {
     emit(state.copyWith(openedPost: post));
   }

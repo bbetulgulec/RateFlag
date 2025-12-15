@@ -14,6 +14,8 @@ class PostInfoState {
   final bool isFollowing;
   final bool isFollowActionSuccess;
   final String? followMessage;
+  final bool? hasGreenFlag;
+  final bool? hasRedFlag;
 
   PostInfoState({
     this.isLoadPostInfoLoading = false,
@@ -27,6 +29,8 @@ class PostInfoState {
     this.isFollowing = false,
     this.isFollowActionSuccess = false,
     this.followMessage,
+    this.hasGreenFlag,
+    this.hasRedFlag,
   });
 
   PostInfoState copyWith({
@@ -41,6 +45,8 @@ class PostInfoState {
     bool? isFollowing,
     bool? isFollowActionSuccess,
     String? followMessage,
+    bool? hasGreenFlag,
+    bool? hasRedFlag,
   }) {
     return PostInfoState(
       isLoadPostInfoLoading:
@@ -58,6 +64,8 @@ class PostInfoState {
       isFollowActionSuccess:
           isFollowActionSuccess ?? this.isFollowActionSuccess,
       followMessage: followMessage ?? this.followMessage,
+      hasGreenFlag: hasGreenFlag ?? this.hasGreenFlag,
+      hasRedFlag: hasRedFlag ?? this.hasRedFlag,
     );
   }
 
@@ -72,5 +80,7 @@ class PostInfoState {
     isFollowing,
     isFollowActionSuccess,
     followMessage,
+    hasGreenFlag,
+    hasRedFlag,
   ];
 }

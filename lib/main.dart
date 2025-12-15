@@ -94,6 +94,7 @@ class MyApp extends StatelessWidget {
             return ProfileCubit(
               LoadPostUserUsecase(fireStore),
               FollowUserUsecase(fireStore),
+              UpdateInfoUserUsecase(fireStore),
             );
           },
         ),

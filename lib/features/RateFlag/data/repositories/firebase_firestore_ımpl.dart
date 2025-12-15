@@ -106,6 +106,8 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
         latitude: (data['latitude'] as num).toDouble(),
         longitude: (data['longitude'] as num).toDouble(),
         createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+        redFlag: (data['redFlag'] as num?)?.toInt() ?? 0, // Flagging part
+        greenFlag: (data['greenFlag'] as num?)?.toInt() ?? 0, // Flagging part
       );
     }).toList();
   }
@@ -135,6 +137,9 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
           latitude: (data['latitude'] as num).toDouble(),
           longitude: (data['longitude'] as num).toDouble(),
           createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+          redFlag: (data['redFlag'] as num?)?.toInt() ?? 0, // Flagging part
+          greenFlag: (data['greenFlag'] as num?)?.toInt() ?? 0, // Flagging part
+          // Flagging part
         );
       }).toList();
     } catch (e) {
@@ -146,17 +151,32 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
   @override
   Future<void> incrementFlag({
     required String userId,
+    required String postOwnerId,
     required String postId,
     required bool isGreen,
   }) async {
-    final docRef = firestore
+    final postRef = firestore
         .collection('users')
-        .doc(userId)
+        .doc(postOwnerId)
         .collection('posts')
         .doc(postId);
 
-    await docRef.update({
-      isGreen ? 'greenFlag' : 'redFlag': FieldValue.increment(1),
+    await firestore.runTransaction((transaction) async {
+      final postSnap = await transaction.get(postRef);
+      final data = postSnap.data()!;
+      final flaggedBy = List<String>.from(data['flaggedBy'] ?? []);
+
+      // Kullanıcı zaten oy verdi mi
+      if (flaggedBy.contains(userId)) {
+        print("User has already voted on this post");
+        return;
+      }
+
+      transaction.update(postRef, {
+        isGreen ? 'greenFlag' : 'redFlag': FieldValue.increment(1),
+        'flaggedBy': FieldValue.arrayUnion([userId]),
+      });
+      print("Firestore oy başarıyla gönderildi");
     });
   }
 
@@ -183,8 +203,8 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
       district: data['district'],
       latitude: (data['latitude'] as num).toDouble(),
       longitude: (data['longitude'] as num).toDouble(),
-      redFlag: (data['redFlag'] as num?)?.toInt() ?? 0,
-      greenFlag: (data['greenFlag'] as num?)?.toInt() ?? 0,
+      redFlag: (data['redFlag'] as num?)?.toInt() ?? 0, // Flagging part
+      greenFlag: (data['greenFlag'] as num?)?.toInt() ?? 0, // Flagging part
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
     );
   }

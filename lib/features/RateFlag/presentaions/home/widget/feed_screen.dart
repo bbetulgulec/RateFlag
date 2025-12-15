@@ -36,9 +36,7 @@ class FeedScreen extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: RefreshIndicator(
               onRefresh: () async {
-                await context
-                    .read<HomeCubit>()
-                    .loadAllPosts(); // HomeCubit'te tüm postları yeniden çek
+                await context.read<HomeCubit>().loadAllPosts();
               },
               child: MasonryGridView.count(
                 crossAxisCount: 2,

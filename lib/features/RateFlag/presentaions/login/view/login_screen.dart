@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/toast_message.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/widget/login_form.dart';
@@ -28,10 +29,12 @@ class LoginScreen extends StatelessWidget {
           }
 
           if (state.loginStatus == LoginStatus.success) {
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => MainScreen()),
             );
+
+            ToastMessage.show(context, message: "Başarıyla Giriş yapıldı");
           }
 
           if (state.passwordResetStatus == LoginStatus.success) {

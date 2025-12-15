@@ -5,6 +5,7 @@ import 'package:rate_flag/features/RateFlag/common/utils/validators/validators.d
 import 'package:rate_flag/features/RateFlag/common/widget/elevatedButtonWidget.dart';
 import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
 import 'package:rate_flag/features/RateFlag/common/widget/rateFlagTextField.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/toast_message.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
@@ -30,9 +31,7 @@ class AccountInfoScreen extends StatelessWidget {
       body: BlocConsumer<AccountInfoCubit, AccountInfoState>(
         listener: (context, state) {
           if (state.isUpdateInfoSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Bilgiler güncellendi")),
-            );
+            ToastMessage.show(context, message: " Bilgiler güncellendi ");
           }
           if (state.isDeleteAccountSuccess) {
             ScaffoldMessenger.of(

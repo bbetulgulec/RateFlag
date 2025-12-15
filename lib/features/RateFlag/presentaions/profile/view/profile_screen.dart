@@ -1,11 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_state.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_avatar.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_buid_count.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_gesture_detector.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_grid_view.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_icon_widget.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_posts_empty.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/view/settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -16,6 +20,7 @@ class ProfileScreen extends StatelessWidget {
     context.read<ProfileCubit>().loadPosts();
     final profileCubit = context.read<ProfileCubit>();
     profileCubit.loadUserFollowData(FirebaseAuth.instance.currentUser!.uid);
+    profileCubit.loadUser(FirebaseAuth.instance.currentUser!.uid);
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         final tabIndex = state.tabIndex;
@@ -49,35 +54,14 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   /// ------- PROFİL FOTOĞRAF + KAMERA --------
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      const CircleAvatar(
-                        radius: 45,
-                        backgroundColor: Colors.grey,
-                        child: Icon(
-                          Icons.person,
-                          size: 60,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 6,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.blue,
-                          radius: 16,
-                          child: Icon(
-                            Icons.camera_alt,
-                            size: 18,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  ProfileAvatar(radius: 45),
 
                   const SizedBox(height: 25),
+
+                  RateFlagText.head2(
+                    text:
+                        "${state.user?.firstName ?? "tttt"} ${state.user?.lastName ?? "gggg"}",
+                  ),
 
                   /// ------- POSTS – FOLLOWERS – FOLLOWING --------
                   Row(
@@ -100,7 +84,6 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 25),
 
-                  /// ------- TAB BAR (Grid - Saved) --------
                   Container(
                     height: 45,
                     decoration: BoxDecoration(
@@ -111,23 +94,19 @@ class ProfileScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        GestureDetector(
+                        ProfileGestureDetector(
+                          icon: Icons.grid_on,
+                          tabIndex: state.tabIndex,
+                          index: 0,
                           onTap: () =>
                               context.read<ProfileCubit>().changeTab(0),
-                          child: Icon(
-                            Icons.grid_on,
-                            size: 28,
-                            color: tabIndex == 0 ? Colors.black : Colors.grey,
-                          ),
                         ),
-                        GestureDetector(
+                        ProfileGestureDetector(
+                          icon: Icons.bookmark_border,
+                          tabIndex: state.tabIndex,
+                          index: 1,
                           onTap: () =>
                               context.read<ProfileCubit>().changeTab(1),
-                          child: Icon(
-                            Icons.bookmark_border,
-                            size: 28,
-                            color: tabIndex == 1 ? Colors.black : Colors.grey,
-                          ),
                         ),
                       ],
                     ),
@@ -139,30 +118,15 @@ class ProfileScreen extends StatelessWidget {
                     child: state.isPostLoading
                         ? Center(child: CircularProgressIndicator())
                         : state.posts.isEmpty
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                Icons.image_not_supported_outlined,
-                                size: 45,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                "No posts yet 👎",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 5),
-                              Text(
-                                "They will show up here",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
+                        ? ProfilePostsEmpty(
+                            mainText: "No posts yet 👎",
+                            subText: "They will show up here",
+                            icon: Icons.hourglass_empty,
                           )
-                        : ProfileGridView(posts: state.posts),
+                        : ProfileGridView(
+                            posts: state.posts,
+                            lottieAsset: 'assets/lottie/image_loading.json',
+                          ),
                   ),
                 ],
               ),

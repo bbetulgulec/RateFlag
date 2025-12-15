@@ -52,7 +52,7 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> forgotPassword(String email) async {
     emit(
       state.copyWith(
-        loginStatus: LoginStatus.initial, // ✅ EKLENECEK SATIR
+        loginStatus: LoginStatus.initial,
         passwordResetStatus: LoginStatus.loading,
         errorMessage: null,
       ),

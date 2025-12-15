@@ -1,15 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/user.dart' as model;
 import 'package:rate_flag/features/RateFlag/domain/usecase/follow_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/load_post_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/update_info_user_usecase.dart';
 import 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   final LoadPostUserUsecase loadPostUserUsecase;
   final FollowUserUsecase followUserUsecase;
+  final UpdateInfoUserUsecase updateInfoUserUsecase;
 
-  ProfileCubit(this.loadPostUserUsecase, this.followUserUsecase)
-    : super(const ProfileState());
+  ProfileCubit(
+    this.loadPostUserUsecase,
+    this.followUserUsecase,
+    this.updateInfoUserUsecase,
+  ) : super(const ProfileState());
 
   void changeTab(int index) {
     emit(state.copyWith(tabIndex: index));
@@ -110,6 +116,27 @@ class ProfileCubit extends Cubit<ProfileState> {
           errorMessage: e.toString(),
         ),
       );
+    }
+  }
+
+  Future<void> loadUser(String uid) async {
+    try {
+      final data = await updateInfoUserUsecase.fetchUser(uid);
+
+      if (data != null) {
+        final user = model.User(
+          uid: uid,
+          firstName: data['firstName'] ?? '',
+          lastName: data['lastName'] ?? '',
+          mail: '', // placeholder
+          birthDate: DateTime.now(), // placeholder
+          password: '', // placeholder
+        );
+
+        emit(state.copyWith(user: user));
+      }
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString()));
     }
   }
 }

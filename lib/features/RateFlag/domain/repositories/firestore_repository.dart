@@ -8,8 +8,10 @@ abstract class FirestoreRepository {
   Future<void> createPost(String collection, Post post);
   Future<List<Post>> loadUserPosts(String userId);
   Future<List<Post>> loadAllPosts();
+
   Future<void> incrementFlag({
     required String userId,
+    required String postOwnerId,
     required String postId,
     required bool isGreen,
   });

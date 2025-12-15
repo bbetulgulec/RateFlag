@@ -54,6 +54,7 @@ dependencies:
   flutter_card_swiper: ^7.2.0
   lottie: ^3.3.2
   google_sign_in: ^7.2.0
+  fluttertoast: ^9.0.0
 
 dev_dependencies:
   flutter_test:

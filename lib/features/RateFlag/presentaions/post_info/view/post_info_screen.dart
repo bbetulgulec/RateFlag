@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/toast_message.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post_info/functions/calculateAge.dart';
@@ -23,14 +25,10 @@ class PostInfoScreen extends StatelessWidget {
     return BlocConsumer<PostInfoCubit, PostInfoState>(
       listener: (context, state) {
         if (state.errorMessage != null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ToastMessage.show(context, message: state.errorMessage!);
         }
         if (state.followMessage != null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.followMessage!)));
+          ToastMessage.show(context, message: state.followMessage!);
         }
       },
       builder: (context, state) {
@@ -77,7 +75,9 @@ class PostInfoScreen extends StatelessWidget {
                           ),
                         )
                       : Text(
-                          state.isFollowing ? "Takibi Bırak" : "Takip Et",
+                          state.isFollowing == true
+                              ? "Takibi Bırak"
+                              : "Takip Et",
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
@@ -114,13 +114,29 @@ class PostInfoScreen extends StatelessWidget {
                       children: [
                         FlagButton(
                           isGreen: true,
-                          count: (state.greenFlagCount ?? post.greenFlag)!,
-                          onPressedCallback: cubit.ratePost,
+                          count: state.greenFlagCount ?? 0,
+                          hasFlagged:
+                              (state.hasGreenFlag ?? false) ||
+                              (state.hasRedFlag ?? false),
+
+                          onPressedCallback: () => cubit.ratePost(
+                            postOwnerId: post.userId,
+                            postId: post.postId,
+                            isGreen: true,
+                          ),
                         ),
                         FlagButton(
                           isGreen: false,
-                          count: (state.redFlagCount ?? post.redFlag)!,
-                          onPressedCallback: cubit.ratePost,
+                          count: state.redFlagCount ?? 0,
+                          hasFlagged:
+                              (state.hasGreenFlag ?? false) ||
+                              (state.hasRedFlag ?? false),
+
+                          onPressedCallback: () => cubit.ratePost(
+                            postOwnerId: post.userId,
+                            postId: post.postId,
+                            isGreen: false,
+                          ),
                         ),
                       ],
                     ),

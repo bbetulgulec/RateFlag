@@ -23,7 +23,7 @@ class PostInfoCubit extends Cubit<PostInfoState> {
     emit(state.copyWith(isLoadPostInfoLoading: true, errorMessage: null));
 
     try {
-      // 🔥 1. Postu çek
+      // 1️⃣ Postu çek
       final post = await loadPostUserUsecase.getPostById(userId, postId);
       if (post == null) {
         emit(
@@ -35,7 +35,7 @@ class PostInfoCubit extends Cubit<PostInfoState> {
         return;
       }
 
-      // 🔥 2. Kullanıcı bilgilerini çek
+      // 2️⃣ Kullanıcı bilgilerini çek
       final user = await loadPostUserUsecase.getUserInfo(post.userId);
       if (user == null) {
         emit(
@@ -47,20 +47,23 @@ class PostInfoCubit extends Cubit<PostInfoState> {
         return;
       }
 
-      // 🔥 3. Takip durumunu kontrol et
       final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-      final isFollowing = await followUserUsecase.isFollowing(
+
+      // 3️⃣ Kullanıcı takip durumunu kontrol et
+      final bool following = await followUserUsecase.isFollowing(
         currentUserId: currentUserId,
         targetUserId: post.userId,
       );
 
-      // 🔥 4. State’i güncelle
+      // 5️⃣ State emit et
       emit(
         state.copyWith(
           post: post,
           user: user,
-          isFollowing: isFollowing,
+          isFollowing: following,
           isLoadPostInfoLoading: false,
+          greenFlagCount: post.greenFlag ?? 0,
+          redFlagCount: post.redFlag ?? 0,
         ),
       );
     } catch (e) {
@@ -74,38 +77,50 @@ class PostInfoCubit extends Cubit<PostInfoState> {
   }
 
   Future<void> ratePost({
-    required String currentUserId,
+    required String postOwnerId,
+    required String postId,
     required bool isGreen,
   }) async {
-    final post = state.post;
-    if (post == null) return;
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    final prevRed = state.redFlagCount ?? 0;
+    final prevGreen = state.greenFlagCount ?? 0;
 
-    final prevRed = state.redFlagCount ?? post.redFlag;
-    final prevGreen = state.greenFlagCount ?? post.greenFlag;
+    if (state.hasGreenFlag == true || state.hasRedFlag == true) return;
 
-    // 🔥 OPTIMISTIC UI
+    // UI anında güncelle
     emit(
       state.copyWith(
-        redFlagCount: isGreen ? prevRed : prevRed! + 1,
-        greenFlagCount: isGreen ? prevGreen! + 1 : prevGreen,
+        greenFlagCount: isGreen ? prevGreen + 1 : prevGreen,
+        redFlagCount: isGreen ? prevRed : prevRed + 1,
+        hasGreenFlag: isGreen,
+        hasRedFlag: !isGreen,
       ),
     );
 
     try {
       await rateTheImageUserUsecase.execute(
-        userId: post.userId,
-        postId: post.postId,
+        userId: currentUserId,
+        postOwnerId: postOwnerId,
+        postId: postId,
         isGreen: isGreen,
       );
     } catch (e) {
-      // ❌ HATA → GERİ AL
-      emit(state.copyWith(redFlagCount: prevRed, greenFlagCount: prevGreen));
+      // Hata → geri al
+      emit(
+        state.copyWith(
+          greenFlagCount: prevGreen,
+          redFlagCount: prevRed,
+          hasGreenFlag: false,
+          hasRedFlag: false,
+          errorMessage: "Posta oy verilemedi",
+        ),
+      );
     }
   }
 
   Future<void> toggleFollow(String targetUserId) async {
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-    final currentlyFollowing = state.isFollowing;
+    final currentlyFollowing = state.isFollowing ?? false;
 
     emit(state.copyWith(isFollowActionLoading: true));
 

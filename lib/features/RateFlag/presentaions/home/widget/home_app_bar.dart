@@ -24,7 +24,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Tabitem(
-                title: "Map",
+                title: "Haritalar",
                 isActive: state.selectedTab == HomeTab.map,
                 onTap: () {
                   context.read<HomeCubit>().selectMap();
@@ -34,7 +34,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               const SizedBox(width: 20),
 
               Tabitem(
-                title: "For You",
+                title: "Senin için ",
                 isActive: state.selectedTab == HomeTab.forYou,
                 onTap: () {
                   context.read<HomeCubit>().selectForYou();

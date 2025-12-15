@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/user.dart';
 
 class ProfileState extends Equatable {
   final int tabIndex;
@@ -17,6 +18,8 @@ class ProfileState extends Equatable {
   final int followersCount;
   final int followingCount;
 
+  final User? user;
+
   const ProfileState({
     this.tabIndex = 0,
     this.isPostLoading = false,
@@ -31,6 +34,7 @@ class ProfileState extends Equatable {
     this.isFollowing = false,
     this.followersCount = 0,
     this.followingCount = 0,
+    this.user,
   });
 
   ProfileState copyWith({
@@ -47,6 +51,7 @@ class ProfileState extends Equatable {
     bool? isFollowing,
     int? followersCount,
     int? followingCount,
+    User? user,
   }) {
     return ProfileState(
       tabIndex: tabIndex ?? this.tabIndex,
@@ -64,6 +69,7 @@ class ProfileState extends Equatable {
       isFollowing: isFollowing ?? this.isFollowing,
       followersCount: followersCount ?? this.followersCount,
       followingCount: followingCount ?? this.followingCount,
+      user: user ?? this.user,
     );
   }
 
@@ -82,5 +88,6 @@ class ProfileState extends Equatable {
     isFollowing,
     followersCount,
     followingCount,
+    user,
   ];
 }

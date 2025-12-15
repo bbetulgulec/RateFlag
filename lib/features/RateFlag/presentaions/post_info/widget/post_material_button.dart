@@ -1,37 +1,38 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FlagButton extends StatelessWidget {
   final bool isGreen;
   final int count;
-  final void Function({required String currentUserId, required bool isGreen})
-  onPressedCallback;
+  final bool hasFlagged; // kullanıcı oy verdi mi
+  final VoidCallback onPressedCallback;
 
   const FlagButton({
     super.key,
     required this.isGreen,
     required this.count,
+    required this.hasFlagged,
     required this.onPressedCallback,
   });
 
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
-      onPressed: () {
-        final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-        onPressedCallback(currentUserId: currentUserId, isGreen: isGreen);
-      },
-      child: Row(
-        children: [
-          Icon(
+    return Row(
+      children: [
+        IconButton(
+          onPressed: hasFlagged ? null : onPressedCallback,
+          icon: Icon(
             Icons.flag,
-            color: isGreen ? Colors.green : Colors.red,
-            size: 20,
+            color: isGreen
+                ? (hasFlagged ? Colors.green : Colors.green.shade400)
+                : (hasFlagged ? Colors.red : Colors.red.shade400),
+            size: 30,
           ),
-          const SizedBox(width: 4),
-          Text(count.toString()),
-        ],
-      ),
+        ),
+        Text(
+          '$count',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+      ],
     );
   }
 }

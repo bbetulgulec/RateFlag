@@ -21,9 +21,6 @@ class Page5 extends StatelessWidget {
     return BlocListener<PostCubit, PostState>(
       listener: (context, state) {
         if (state.isCreatePostSuccess) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text("Post başarıyla kaydedildi!")));
         } else if (state.errorMessage != null) {
           ScaffoldMessenger.of(
             context,
