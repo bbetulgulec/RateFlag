@@ -8,7 +8,7 @@ class AccountInfoState extends Equatable {
   final bool isUpdateInfoSuccess;
 
   final String? errorMessage;
-  final Map<String, dynamic>? userData; // EKLENDİ
+  final Map<String, dynamic>? userData;
   final DateTime? birthDate;
 
   final bool isDeleteAccountLoading;

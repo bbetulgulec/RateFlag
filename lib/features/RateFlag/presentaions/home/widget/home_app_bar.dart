@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_state.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/home/widget/tabItem.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
@@ -22,15 +23,17 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           return Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _tabItem(
+              Tabitem(
                 title: "Map",
                 isActive: state.selectedTab == HomeTab.map,
                 onTap: () {
                   context.read<HomeCubit>().selectMap();
                 },
               ),
+
               const SizedBox(width: 20),
-              _tabItem(
+
+              Tabitem(
                 title: "For You",
                 isActive: state.selectedTab == HomeTab.forYou,
                 onTap: () {
@@ -48,35 +51,6 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: const Icon(Icons.search, color: Colors.black),
         ),
       ],
-    );
-  }
-
-  Widget _tabItem({
-    required String title,
-    required bool isActive,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
-          const SizedBox(height: 4),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            height: 2,
-            width: isActive ? 24 : 0,
-            color: Colors.black,
-          ),
-        ],
-      ),
     );
   }
 

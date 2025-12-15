@@ -31,7 +31,7 @@ class Page4 extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (state.selectedCity != null)
-                Rateflagtext.Maintitle(
+                RateFlagText.head2(
                   text: "Seçilen Şehir : ${state.selectedCity}",
                 ),
 

@@ -84,6 +84,11 @@ class FirebaseAuthImpl extends AuthRepository {
   }
 
   @override
+  Future<void> forgotPassword(String email) async {
+    await auth.sendPasswordResetEmail(email: email);
+  }
+
+  @override
   Future<void> deleteAccount() async {
     await auth.currentUser!.delete();
   }

@@ -14,4 +14,12 @@ abstract class FirestoreRepository {
     required bool isGreen,
   });
   Future<Post?> getPostById(String userId, String postId);
+  Future<void> followUser({
+    required String currentUserId,
+    required String targetUserId,
+  });
+  Future<void> unfollowUser({
+    required String currentUserId,
+    required String targetUserId,
+  });
 }

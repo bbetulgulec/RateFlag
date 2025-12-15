@@ -8,7 +8,7 @@ class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      height: 70,
+      height: 60,
       color: Color(0xFFA889FC),
       shape: const CircularNotchedRectangle(),
       notchMargin: 8,
@@ -25,8 +25,8 @@ class BottomBar extends StatelessWidget {
             onPressed: () => onTap(0),
           ),
 
-          const SizedBox(width: 40), // Ortadaki oyuk için boşluk
-          // Sağ ikon
+          const SizedBox(width: 20),
+
           IconButton(
             icon: Icon(
               Icons.location_city_outlined,

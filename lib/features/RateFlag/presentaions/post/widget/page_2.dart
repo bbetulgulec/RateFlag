@@ -19,7 +19,7 @@ class Page2 extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Rateflagtext.fadedItalic(text: "Yüklemek için resim seçin"),
+              RateFlagText.fadedItalic(text: "Yüklemek için resim seçin"),
               SizedBox(height: 20),
 
               InkWell(

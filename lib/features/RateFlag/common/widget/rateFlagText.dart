@@ -1,32 +1,50 @@
 import 'package:flutter/material.dart';
 
-class Rateflagtext extends StatelessWidget {
+class RateFlagText extends StatelessWidget {
   final String text;
-  final bool isFadedItalic;
-  final bool boldText;
+  final bool isItalic;
+  final bool isBold;
+  final Color color;
+  final double fontSize;
 
-  const Rateflagtext({
+  const RateFlagText({
     super.key,
     required this.text,
-    this.isFadedItalic = false,
-    this.boldText = false,
+    this.isItalic = false,
+    this.isBold = false,
+    required this.color,
+    this.fontSize = 16,
   });
 
-  factory Rateflagtext.fadedItalic({Key? key, required String text}) {
-    return Rateflagtext(
+  /// Faded Italic
+  factory RateFlagText.fadedItalic({Key? key, required String text}) {
+    return RateFlagText(
       key: key,
       text: text,
-      isFadedItalic: true,
-      boldText: false,
+      isItalic: true,
+      color: Colors.black54,
     );
   }
 
-  factory Rateflagtext.Maintitle({Key? key, required String text}) {
-    return Rateflagtext(
-      text: text,
+  /// Head1
+  factory RateFlagText.head1({Key? key, required String text}) {
+    return RateFlagText(
       key: key,
-      isFadedItalic: false,
-      boldText: true,
+      text: text,
+      isBold: true,
+      fontSize: 28,
+      color: Colors.deepPurple,
+    );
+  }
+
+  /// Head2
+  factory RateFlagText.head2({Key? key, required String text}) {
+    return RateFlagText(
+      key: key,
+      text: text,
+      isBold: true,
+      fontSize: 24,
+      color: Colors.black87,
     );
   }
 
@@ -35,10 +53,10 @@ class Rateflagtext extends StatelessWidget {
     return Text(
       text,
       style: TextStyle(
-        fontSize: 16,
-        color: isFadedItalic ? Colors.black54 : Colors.black87,
-        fontStyle: isFadedItalic ? FontStyle.italic : FontStyle.normal,
-        fontWeight: boldText ? FontWeight.w700 : FontWeight.normal,
+        fontSize: fontSize,
+        color: color,
+        fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
+        fontWeight: isBold ? FontWeight.w700 : FontWeight.normal,
       ),
     );
   }

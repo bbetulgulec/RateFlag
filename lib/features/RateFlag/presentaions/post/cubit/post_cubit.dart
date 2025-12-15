@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -8,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/create_post_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/upload_image_storage_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_state.dart';
 
 class PostCubit extends Cubit<PostState> {
@@ -16,7 +18,7 @@ class PostCubit extends Cubit<PostState> {
 
   PostCubit(this.createPostUserUsecase, this.uploadImageUsecase)
     : super(const PostState());
-  Future<void> createPost(Post post) async {
+  Future<void> createPost(Post post, BuildContext context) async {
     print("createPost started: ${post.postId}");
     emit(state.copyWith(isCreatePostLoading: true));
     try {
@@ -66,11 +68,16 @@ class PostCubit extends Cubit<PostState> {
           },
           post: post,
         );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(" Post Paylaşıldı")));
         print("Post successfully saved to Firestore");
       } catch (e) {
         print("Firestore save failed: $e");
       }
 
+      final homeCubit = context.read<HomeCubit>();
+      homeCubit.addPost(post);
       emit(
         state.copyWith(isCreatePostLoading: false, isCreatePostSuccess: true),
       );
@@ -161,8 +168,12 @@ class PostCubit extends Cubit<PostState> {
     emit(
       state.copyWith(
         selectedCity: city["name"],
-        latitude: coords?["latitude"],
-        longitude: coords?["longitude"],
+        latitude: coords?["latitude"] != null
+            ? (coords!["latitude"] as num).toDouble()
+            : null,
+        longitude: coords?["longitude"] != null
+            ? (coords!["longitude"] as num).toDouble()
+            : null,
         currentPage: state.currentPage + 1,
       ),
     );
@@ -229,9 +240,16 @@ class PostCubit extends Cubit<PostState> {
       throw Exception("Bu ilçe için koordinat bulunamadı");
     }
 
+    final latRaw = data[0]["lat"];
+    final lonRaw = data[0]["lon"];
+
     return {
-      "latitude": double.parse(data[0]["lat"]),
-      "longitude": double.parse(data[0]["lon"]),
+      "latitude": latRaw is String
+          ? double.parse(latRaw)
+          : (latRaw as num).toDouble(),
+      "longitude": lonRaw is String
+          ? double.parse(lonRaw)
+          : (lonRaw as num).toDouble(),
     };
   }
 }

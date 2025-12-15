@@ -25,7 +25,6 @@ class HomeCubit extends Cubit<HomeState> {
       final Set<Marker> markers = {};
 
       for (final post in posts) {
-        // 🔥 SADECE NORMAL MARKER (ŞİMDİLİK)
         markers.add(
           Marker(
             markerId: MarkerId(post.postId),
@@ -83,5 +82,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   void openPost(Post post) {
     emit(state.copyWith(openedPost: post));
+  }
+
+  void addPost(Post post) {
+    final updatedPosts = [post, ...state.posts];
+    emit(state.copyWith(posts: updatedPosts));
   }
 }

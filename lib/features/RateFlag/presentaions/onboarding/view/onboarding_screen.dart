@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/cubit/onboarding_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/cubit/onboarding_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/widget/onboardingPageView.dart';
@@ -37,11 +38,15 @@ class OnboardingScreen extends StatelessWidget {
                       alignment: Alignment.bottomRight,
                       child: GestureDetector(
                         onTap: () {
-                          context.read<OnboardingCubit>().skip();
-                          controller.jumpToPage(state.totalPageCount - 1);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(),
+                            ),
+                          );
                         },
                         child: state.showSkipButton
-                            ? Rateflagtext.fadedItalic(text: "Skip")
+                            ? RateFlagText.fadedItalic(text: "Skip")
                             : const SizedBox(),
                       ),
                     ),

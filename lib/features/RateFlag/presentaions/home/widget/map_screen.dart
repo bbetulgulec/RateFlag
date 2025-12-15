@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/widget/marker_icon_helper.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/home/functions/createImageMarker.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -13,6 +13,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   final Set<Marker> _markers = {};
+  Createimagemarker createimagemarker = Createimagemarker();
 
   @override
   void initState() {
@@ -23,12 +24,10 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _loadMarkers() async {
     final posts = context.read<HomeCubit>().state.posts;
 
-    for (final post in posts) {
-      if (post.imageUrl == null) continue;
-
-      final icon = await createImageMarker(post.imageUrl!);
-
-      final marker = Marker(
+    // marker oluşturma future'larını paralel hazırlıyoruz
+    final futures = posts.where((p) => p.imageUrl != null).map((post) async {
+      final icon = await getMarkerIcon(post.imageUrl!); // Önbellekli
+      return Marker(
         markerId: MarkerId(post.postId),
         position: LatLng(post.latitude, post.longitude),
         icon: icon,
@@ -36,11 +35,24 @@ class _MapScreenState extends State<MapScreen> {
           print(post.description);
         },
       );
+    }).toList();
 
-      _markers.add(marker);
-    }
+    final markersList = await Future.wait(futures);
 
-    setState(() {});
+    setState(() {
+      _markers.addAll(markersList);
+    });
+  }
+
+  // Önbellekli icon fonksiyonu
+  final Map<String, BitmapDescriptor> _iconCache = {};
+
+  Future<BitmapDescriptor> getMarkerIcon(String url) async {
+    if (_iconCache.containsKey(url)) return _iconCache[url]!;
+
+    final icon = await createimagemarker.createImageMarker(url);
+    _iconCache[url] = icon;
+    return icon;
   }
 
   @override

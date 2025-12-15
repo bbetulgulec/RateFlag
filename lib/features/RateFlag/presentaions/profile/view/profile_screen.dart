@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_cubit.dart';
@@ -13,16 +14,18 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<ProfileCubit>().loadPosts();
+    final profileCubit = context.read<ProfileCubit>();
+    profileCubit.loadUserFollowData(FirebaseAuth.instance.currentUser!.uid);
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         final tabIndex = state.tabIndex;
         return Scaffold(
+          backgroundColor: Colors.white,
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  /// ------- ÜST İKONLAR --------
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -43,7 +46,6 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 20),
 
                   /// ------- PROFİL FOTOĞRAF + KAMERA --------
@@ -80,9 +82,19 @@ class ProfileScreen extends StatelessWidget {
                   /// ------- POSTS – FOLLOWERS – FOLLOWING --------
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: const [
-                      ProfileBuildCount(label: "Posts", count: "0"),
-                      ProfileBuildCount(label: "Followers", count: "0"),
+                    children: [
+                      ProfileBuildCount(
+                        label: "Posts",
+                        count: "${state.postCount}",
+                      ),
+                      ProfileBuildCount(
+                        label: "Followers",
+                        count: "${state.followersCount}",
+                      ),
+                      ProfileBuildCount(
+                        label: "Followering",
+                        count: "${state.followingCount}",
+                      ),
                     ],
                   ),
 

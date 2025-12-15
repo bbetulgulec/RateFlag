@@ -12,7 +12,7 @@ class MainScreen extends StatelessWidget {
 
   final List<Widget> pages = const [
     HomeScreen(),
-    PostScreen(),
+    PostPageView(),
     ProfileScreen(),
   ];
 
@@ -33,7 +33,7 @@ class MainScreen extends StatelessWidget {
                 context.read<MainCubit>().changeTab(1);
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => PostScreen()),
+                  MaterialPageRoute(builder: (context) => PostPageView()),
                 );
               },
               child: const Icon(Icons.add, color: Colors.deepPurple, size: 30),
@@ -41,7 +41,6 @@ class MainScreen extends StatelessWidget {
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
 
-            // 🔥 Alt barda kendi widget’ımız
             bottomNavigationBar: BottomBar(
               currentIndex: state.currentIndex,
               onTap: (index) {

@@ -5,19 +5,24 @@ import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/view/accoun
 import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_state.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/settings/functions/show_delete_dialog.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/settings/functions/show_setting_dialog.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/widget/setting_card.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/widget/show_setting_dialog.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    ShowSettingDialog showSettingDialog = ShowSettingDialog();
+    ShowDeleteDialog showDeleteDialog = ShowDeleteDialog();
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Align(
           alignment: AlignmentGeometry.topLeft,
-          child: Rateflagtext.Maintitle(text: "Ayarlar"),
+          child: RateFlagText.head2(text: "Ayarlar"),
         ),
       ),
       body: BlocConsumer<SettingsCubit, SettingsState>(
@@ -31,41 +36,50 @@ class SettingsScreen extends StatelessWidget {
               children: [
                 Align(
                   alignment: AlignmentGeometry.topLeft,
-                  child: Rateflagtext.Maintitle(text: "Destek"),
+                  child: RateFlagText.fadedItalic(text: "Destek"),
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 25),
                 SettingCard(
                   icon: Icons.description_outlined,
+                  iconColor: Colors.deepPurple,
                   title: "Terms of Service",
                   onTap: () {
-                    showSettingDialog(
+                    showSettingDialog.showSettingDialog(
                       context,
                       "Terms of Service",
                       "1. This app is provided “as is” without warranties.\n2. Users are responsible for content shared in the app.\n3. Premium purchases are non-refundable unless required by law.\n4. Misuse may result in account suspension.\n5. Using the app means you accept the latest Terms.",
                     );
                   },
                 ),
+                const SizedBox(height: 15),
 
                 SettingCard(
                   icon: Icons.lock_outline,
+                  iconColor: Colors.deepPurple,
                   title: "Privacy Policy",
                   onTap: () {
-                    showSettingDialog(context, "Privacy Policy", """
+                    showSettingDialog.showSettingDialog(
+                      context,
+                      "Privacy Policy",
+                      """
 • We collect basic analytics to improve the app.
 • Personal information is stored securely.
 • We do not sell your data to third parties.
 • You may request data deletion at any time.
-""");
+""",
+                    );
                   },
                 ),
-
+                const SizedBox(height: 25),
                 Align(
                   alignment: AlignmentGeometry.topLeft,
-                  child: Rateflagtext.Maintitle(text: "Hesap"),
+                  child: RateFlagText.fadedItalic(text: "Hesap"),
                 ),
+                const SizedBox(height: 25),
 
                 SettingCard(
                   icon: Icons.settings_accessibility,
+                  iconColor: Colors.deepPurple,
                   title: "Hesap Bilgileri güncelle",
                   onTap: () {
                     Navigator.push(
@@ -76,12 +90,13 @@ class SettingsScreen extends StatelessWidget {
                     );
                   },
                 ),
-
+                const SizedBox(height: 15),
                 SettingCard(
                   icon: Icons.exit_to_app,
+                  iconColor: Colors.deepPurple,
                   title: "Çıkıs yap",
                   onTap: () {
-                    showDeleteDialog(
+                    showDeleteDialog.showDeleteDialog(
                       context,
                       "Çıkış yap",
                       "Çıkış yapılsın mı ?",

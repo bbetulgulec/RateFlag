@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class SettingCard extends StatelessWidget {
   final IconData icon;
   final String title;
-  final String? subtitle; // opsiyonel
-  final Color? iconColor; // istersen özel renk
-  final VoidCallback? onTap; // tıklanabilir kart
+  final String? subtitle;
+  final Color? iconColor;
+  final VoidCallback? onTap;
   final bool isDestructive;
 
   const SettingCard({
@@ -35,7 +35,7 @@ class SettingCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: (iconColor ?? Colors.blue).withOpacity(.1),
+                color: (iconColor ?? Colors.deepPurpleAccent).withOpacity(.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(

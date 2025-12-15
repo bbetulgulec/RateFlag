@@ -14,7 +14,6 @@ class Page1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PostCubit, PostState>(
-      // Burası eksikti!
       builder: (context, state) {
         final postCubit = context.read<PostCubit>();
 
@@ -24,7 +23,7 @@ class Page1 extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
 
             children: [
-              Rateflagtext.Maintitle(text: "Kiminle paylaşmak istersiniz?"),
+              RateFlagText.head2(text: "Kiminle paylaşmak istersiniz?"),
 
               const SizedBox(height: 40),
 

@@ -5,6 +5,7 @@ import 'package:rate_flag/features/RateFlag/domain/repositories/firestore_reposi
 class FirebaseFirestoreImpl implements FirestoreRepository {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  @override
   Future<void> createUser(String collection, Map<String, dynamic> data) async {
     final userID = data["userID"];
 
@@ -186,5 +187,65 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
       greenFlag: (data['greenFlag'] as num?)?.toInt() ?? 0,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
     );
+  }
+
+  @override
+  Future<void> followUser({
+    required String currentUserId,
+    required String targetUserId,
+  }) async {
+    final currentUserRef = firestore.collection('users').doc(currentUserId);
+    final targetUserRef = firestore.collection('users').doc(targetUserId);
+
+    await firestore.runTransaction((transaction) async {
+      final currentSnap = await transaction.get(currentUserRef);
+      final targetSnap = await transaction.get(targetUserRef);
+
+      // Eğer alan yoksa boş liste ata
+      final currentFollowing = List<String>.from(
+        currentSnap.data()?['following'] ?? [],
+      );
+      final targetFollowers = List<String>.from(
+        targetSnap.data()?['followers'] ?? [],
+      );
+
+      if (!currentFollowing.contains(targetUserId)) {
+        currentFollowing.add(targetUserId);
+      }
+
+      if (!targetFollowers.contains(currentUserId)) {
+        targetFollowers.add(currentUserId);
+      }
+
+      transaction.update(currentUserRef, {'following': currentFollowing});
+      transaction.update(targetUserRef, {'followers': targetFollowers});
+    });
+  }
+
+  @override
+  Future<void> unfollowUser({
+    required String currentUserId,
+    required String targetUserId,
+  }) async {
+    final currentUserRef = firestore.collection('users').doc(currentUserId);
+    final targetUserRef = firestore.collection('users').doc(targetUserId);
+
+    await firestore.runTransaction((transaction) async {
+      final currentSnap = await transaction.get(currentUserRef);
+      final targetSnap = await transaction.get(targetUserRef);
+
+      final currentFollowing = List<String>.from(
+        currentSnap.data()?['following'] ?? [],
+      );
+      final targetFollowers = List<String>.from(
+        targetSnap.data()?['followers'] ?? [],
+      );
+
+      currentFollowing.remove(targetUserId);
+      targetFollowers.remove(currentUserId);
+
+      transaction.update(currentUserRef, {'following': currentFollowing});
+      transaction.update(targetUserRef, {'followers': targetFollowers});
+    });
   }
 }

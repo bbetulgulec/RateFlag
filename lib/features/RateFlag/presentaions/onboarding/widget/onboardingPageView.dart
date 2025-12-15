@@ -57,10 +57,7 @@ class _OnboardingPageViewState extends State<OnboardingPageView> {
             const SizedBox(height: 50),
 
             // TEXT
-            Rateflagtext(
-              text:
-                  "deneme deneme deneme kjhrlwehjwşfjealgf bsdkeasfhwleıhdsgf",
-            ),
+            RateFlagText.fadedItalic(text: model["text"]!),
 
             const SizedBox(height: 40),
 

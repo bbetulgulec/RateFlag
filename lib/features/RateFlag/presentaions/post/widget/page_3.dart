@@ -22,7 +22,7 @@ class Page3 extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Rateflagtext.Maintitle(text: "Sizi nerede bulabiliriz ?"),
+              RateFlagText.head2(text: "Sizi nerede bulabiliriz ?"),
 
               const SizedBox(height: 20),
               Rateflagtextfield(
@@ -59,7 +59,6 @@ class Page3 extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              /// ✔ İlerle butonu (şehir seçilmeden basılamaz)
               SizedBox(
                 child: Onboardingelevetedbutton.primary(
                   text: "Devam",

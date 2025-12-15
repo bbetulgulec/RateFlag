@@ -1,62 +1,38 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_state.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post_info/functions/calculateAge.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post_info/widget/post_image_widget.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post_info/widget/post_material_button.dart';
 
-class PostInfoScreen extends StatefulWidget {
+class PostInfoScreen extends StatelessWidget {
   final String postId;
   final String userId;
 
   const PostInfoScreen({super.key, required this.postId, required this.userId});
 
   @override
-  State<PostInfoScreen> createState() => _PostInfoScreenState();
-}
-
-class _PostInfoScreenState extends State<PostInfoScreen> {
-  @override
-  void initState() {
-    super.initState();
-
-    context.read<PostInfoCubit>().loadPostInfo(
-      userId: widget.userId,
-      postId: widget.postId,
-    );
-  }
-
-  Future<Map<String, dynamic>?> getUser(String userId) async {
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .get();
-
-    if (!doc.exists) return null;
-    return doc.data();
-  }
-
-  int calculateAge(String birthDate) {
-    final parts = birthDate.split('/');
-    final day = int.parse(parts[0]);
-    final month = int.parse(parts[1]);
-    final year = int.parse(parts[2]);
-
-    final birth = DateTime(year, month, day);
-    final today = DateTime.now();
-
-    int age = today.year - birth.year;
-
-    if (today.month < birth.month ||
-        (today.month == birth.month && today.day < birth.day)) {
-      age--;
-    }
-
-    return age;
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PostInfoCubit, PostInfoState>(
+    final cubit = context.read<PostInfoCubit>()
+      ..loadPostInfo(userId: userId, postId: postId);
+
+    final calculateAge = Calculateage();
+
+    return BlocConsumer<PostInfoCubit, PostInfoState>(
+      listener: (context, state) {
+        if (state.errorMessage != null) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        }
+        if (state.followMessage != null) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.followMessage!)));
+        }
+      },
       builder: (context, state) {
         if (state.isLoadPostInfoLoading) {
           return const Scaffold(
@@ -64,78 +40,99 @@ class _PostInfoScreenState extends State<PostInfoScreen> {
           );
         }
 
-        if (state.errorMessage != null) {
-          return Scaffold(body: Center(child: Text(state.errorMessage!)));
+        final post = state.post;
+        final user = state.user;
+
+        if (post == null || user == null) {
+          return const Scaffold(body: Center(child: Text("Veri bulunamadı")));
         }
 
-        final post = state.post;
-        if (post == null) {
-          return const Scaffold(body: Center(child: Text("Post bulunamadı")));
-        }
+        final age = calculateAge.calculateAge(user['birthDate']);
 
         return Scaffold(
-          appBar: AppBar(),
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: TextButton(
+                  onPressed: () {
+                    cubit.toggleFollow(userId);
+                  },
+                  child: state.isFollowActionLoading
+                      ? const SizedBox(
+                          width: 80,
+                          height: 20,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          state.isFollowing ? "Takibi Bırak" : "Takip Et",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.share, color: Colors.white),
+                onPressed: () {},
+              ),
+            ],
+          ),
           body: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// 🔹 KULLANICI BİLGİSİ
-                FutureBuilder<Map<String, dynamic>?>(
-                  future: getUser(widget.userId),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Text("Kullanıcı yükleniyor..."),
-                      );
-                    }
-
-                    if (!snapshot.hasData) {
-                      return const Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Text("Kullanıcı bulunamadı"),
-                      );
-                    }
-
-                    final user = snapshot.data!;
-                    final age = calculateAge(user['birthDate']);
-
-                    return Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "${user['firstName']} ${user['lastName']}",
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "$age yaşında",
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                PostImageWidget(imageUrl: post.imageUrl, height: 500),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        RateFlagText.head2(
+                          text: "${user['firstName']} ${user['lastName']}",
+                        ),
+                        const SizedBox(width: 10),
+                        RateFlagText.fadedItalic(text: "$age"),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        FlagButton(
+                          isGreen: true,
+                          count: (state.greenFlagCount ?? post.greenFlag)!,
+                          onPressedCallback: cubit.ratePost,
+                        ),
+                        FlagButton(
+                          isGreen: false,
+                          count: (state.redFlagCount ?? post.redFlag)!,
+                          onPressedCallback: cubit.ratePost,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-
-                /// 🔹 POST
-                Image.network(post.imageUrl ?? ''),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(post.description),
+                const SizedBox(height: 8),
+                RateFlagText.fadedItalic(
+                  text: "📍 ${post.city} / ${post.district}",
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text("🔴 ${post.redFlag ?? 0}"),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text("🟢 ${post.greenFlag ?? 0}"),
-                ),
+                const SizedBox(height: 8),
+                Text(post.description, style: const TextStyle(fontSize: 16)),
+                const SizedBox(height: 16),
               ],
             ),
           ),

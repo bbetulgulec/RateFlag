@@ -33,7 +33,7 @@ class Page5 extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Rateflagtext.Maintitle(text: "Story Açıklaması"),
+          RateFlagText.head2(text: "Story Açıklaması"),
 
           SizedBox(height: 20),
 
@@ -63,8 +63,9 @@ class Page5 extends StatelessWidget {
                 latitude: cubit.state.latitude ?? 0.0,
                 longitude: cubit.state.longitude ?? 0.0,
               );
-              cubit.createPost(post);
-              Navigator.pushReplacement(
+              cubit.createPost(post, context);
+
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => MainScreen()),
               );

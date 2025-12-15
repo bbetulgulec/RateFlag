@@ -8,36 +8,25 @@ import 'package:rate_flag/features/RateFlag/common/widget/rateFlagTextField.dart
 import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/widget/show_setting_dialog.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/settings/functions/show_delete_dialog.dart';
 
-class AccountInfoScreen extends StatefulWidget {
+class AccountInfoScreen extends StatelessWidget {
   const AccountInfoScreen({super.key});
-
-  @override
-  State<AccountInfoScreen> createState() => _AccountInfoScreenState();
-}
-
-class _AccountInfoScreenState extends State<AccountInfoScreen> {
-  @override
-  void initState() {
-    super.initState();
-
-    final cubit = context.read<AccountInfoCubit>();
-
-    final userID = FirebaseAuth.instance.currentUser!.uid;
-
-    /// SAYFA AÇILIR AÇILMAZ VERİ ÇEKİLİYOR
-    cubit.loadUser(userID);
-  }
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AccountInfoCubit>();
+    final showDeleteDialog = ShowDeleteDialog();
 
     final userID = FirebaseAuth.instance.currentUser!.uid;
+    cubit.loadUser(userID);
 
     return Scaffold(
-      appBar: AppBar(title: Rateflagtext.Maintitle(text: "Profil Güncelleme")),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: RateFlagText.head2(text: "Profil Güncelleme"),
+      ),
       body: BlocConsumer<AccountInfoCubit, AccountInfoState>(
         listener: (context, state) {
           if (state.isUpdateInfoSuccess) {
@@ -49,9 +38,12 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(const SnackBar(content: Text("Kullanıcı silindi")));
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => LoginScreen()),
+            );
           }
         },
-
         builder: (context, state) {
           if (state.isGetInfoLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -69,7 +61,6 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                   keyboardType: TextInputType.text,
                 ),
                 const SizedBox(height: 20),
-
                 Rateflagtextfield(
                   controller: cubit.lastNameController,
                   label: "Soyisim :",
@@ -88,13 +79,12 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                   controller: cubit.dateController,
                   label: "Doğum Tarihi :",
                   validator: Validators.date,
-                  isDateField: true,
                   keyboardType: TextInputType.datetime,
-                  onDateSelected: (date) {
-                    cubit.setBirthDate(date);
-                  },
+                  isDateField: true,
+                  onDateSelected: cubit.setBirthDate,
                 ),
                 const SizedBox(height: 40),
+
                 Onboardingelevetedbutton.primary(
                   text: state.isUpdateInfoLoading
                       ? "Güncelleniyor..."
@@ -106,21 +96,15 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
 
                 const SizedBox(height: 20),
 
-                Onboardingelevetedbutton.primary(
+                Onboardingelevetedbutton.secondary(
                   text: "Hesap Sil",
                   onPressed: () {
-                    showDeleteDialog(
+                    showDeleteDialog.showDeleteDialog(
                       context,
                       "Hesap Silme",
                       "Hesap silmeyi onaylıyor musun?",
                       () {
                         cubit.deleteUser(userID);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LoginScreen(),
-                          ),
-                        );
                       },
                     );
                   },

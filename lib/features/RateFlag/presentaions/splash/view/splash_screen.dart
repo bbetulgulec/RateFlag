@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/main/view/main_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/view/onboarding_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/splash/cubit/splash_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/splash/cubit/splash_state.dart';
@@ -16,21 +17,21 @@ class SplashScreen extends StatelessWidget {
     return BlocListener<SplashCubit, SplashState>(
       listener: (context, state) {
         if (state.isFinished) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-          );
+          if (state.isAuthenticated) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => MainScreen()),
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+            );
+          }
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: Lottie.asset(
-            'assets/lottie/splash.json',
-            width: 400,
-            height: 400,
-          ),
-        ),
+        body: Center(child: Lottie.asset('assets/lottie/splash.json')),
       ),
     );
   }

@@ -28,16 +28,12 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
     emit(state.copyWith(birthDate: date));
   }
 
-  /// ----------------------------------------------------------
-  ///                GET USER INFO
-  /// ----------------------------------------------------------
   Future<void> loadUser(String userID) async {
     emit(state.copyWith(isGetInfoLoading: true, errorMessage: null));
 
     try {
       final userData = await updateInfoUserUsecase.fetchUser(userID);
 
-      /// 🔴 Kullanıcı yoksa
       if (userData == null) {
         emit(
           state.copyWith(
@@ -56,7 +52,7 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
       final birth = userData["birthDate"];
 
       dateController.text = birth is Timestamp
-          ? _formatDate(birth.toDate()) // → okunabilir tarih
+          ? _formatDate(birth.toDate())
           : (birth ?? "");
 
       emit(
@@ -76,9 +72,6 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
     }
   }
 
-  /// ----------------------------------------------------------
-  ///                UPDATE USER INFO
-  /// ----------------------------------------------------------
   Future<void> updateUser(String userID) async {
     emit(state.copyWith(isUpdateInfoLoading: true));
 

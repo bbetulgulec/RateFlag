@@ -5,7 +5,6 @@ import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_state.d
 import 'package:rate_flag/features/RateFlag/presentaions/home/widget/feed_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/widget/home_app_bar.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/widget/map_screen.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/widget/open_dialog.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -23,21 +22,6 @@ class HomeScreen extends StatelessWidget {
                 const MapScreen()
               else
                 const FeedScreen(),
-
-              if (state.openedPost != null &&
-                  state.openedPost!.imageUrl != null)
-                OpenDialog(
-                  openedImageUrl: state.openedPost!.imageUrl!,
-                  onClose: () {
-                    context.read<HomeCubit>().closeImage();
-                  },
-                  onRedFlag: () {
-                    context.read<HomeCubit>().ratePost(isGreen: false);
-                  },
-                  onGreenFlag: () {
-                    context.read<HomeCubit>().ratePost(isGreen: true);
-                  },
-                ),
             ],
           );
         },

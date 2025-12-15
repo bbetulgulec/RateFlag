@@ -4,9 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/data/repositories/firebase_auth_%C4%B1mpl.dart';
 import 'package:rate_flag/features/RateFlag/data/repositories/firebase_firestore_%C4%B1mpl.dart';
 import 'package:rate_flag/features/RateFlag/data/repositories/firebase_storage_%C4%B1mpl.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/check_auth_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/create_post_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/create_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/delete_account_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/follow_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/forgot_password_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/load_all_post_user_usercase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/load_post_user_usecase.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/login_user_usecase.dart';
@@ -18,7 +21,6 @@ import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/accou
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/cubit/onboarding_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/onboarding/view/onboarding_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_cubit.dart';
@@ -44,6 +46,8 @@ class MyApp extends StatelessWidget {
     final authRepository = FirebaseAuthImpl();
     final fireStore = FirebaseFirestoreImpl();
     final storageRepository = FirebaseStorageImpl();
+    final checkAuthUsecase = CheckAuthUserUsecase(authRepository);
+
     return MultiBlocProvider(
       providers: [
         // 1. Onboarding Cubit
@@ -59,7 +63,10 @@ class MyApp extends StatelessWidget {
         //3.Login Cubit
         BlocProvider<LoginCubit>(
           create: (context) {
-            return LoginCubit(LoginUserUsecase(authRepository));
+            return LoginCubit(
+              LoginUserUsecase(authRepository),
+              ForgotPasswordUserUsecase(authRepository),
+            );
           },
         ),
         //4.AccountInfo Cubit
@@ -84,7 +91,10 @@ class MyApp extends StatelessWidget {
         //6.Profile Cubit
         BlocProvider<ProfileCubit>(
           create: (context) {
-            return ProfileCubit(LoadPostUserUsecase(fireStore));
+            return ProfileCubit(
+              LoadPostUserUsecase(fireStore),
+              FollowUserUsecase(fireStore),
+            );
           },
         ),
 
@@ -110,10 +120,16 @@ class MyApp extends StatelessWidget {
         ),
         // 9. PostInfo Cubit
         BlocProvider<PostInfoCubit>(
-          create: (context) => PostInfoCubit(LoadPostUserUsecase(fireStore)),
+          create: (context) => PostInfoCubit(
+            LoadPostUserUsecase(fireStore),
+            RateTheImageUserUsecase(fireStore),
+            FollowUserUsecase(fireStore),
+          ),
         ),
         // 9. Splash Cubit
-        BlocProvider(create: (_) => SplashCubit()..startSplash()),
+        BlocProvider(
+          create: (_) => SplashCubit(checkAuthUsecase)..startSplash(),
+        ),
       ],
 
       child: MaterialApp(
