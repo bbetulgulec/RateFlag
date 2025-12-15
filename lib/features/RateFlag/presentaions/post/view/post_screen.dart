@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/home/view/home_screen.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/main/view/main_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/widget/build_indicator.dart';
@@ -35,14 +37,22 @@ class _PostPageViewState extends State<PostPageView> {
         children: [
           const SizedBox(height: 50),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              pages.length,
-              (i) => BuildIndicator(currentIndex: currentIndex, index: i),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MainScreen()),
+              );
+            },
+            child: Align(
+              alignment: AlignmentGeometry.centerRight,
+
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(Icons.close),
+              ),
             ),
           ),
-
           Expanded(
             child: BlocListener<PostCubit, PostState>(
               listener: (context, state) {
