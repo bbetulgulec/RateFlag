@@ -1,29 +1,33 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/load_all_post_user_usercase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/rate_the_image_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_all_post.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/rate_post.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  final LoadAllPostsUsecase loadAllPostUserUsercase;
-  final RateTheImageUserUsecase rateTheImageUserUsecase;
-  final String currentUserId;
+  final LoadAllPost loadAllPostUserUsercase;
+  final RatePost rateTheImageUserUsecase;
 
-  HomeCubit(
-    this.loadAllPostUserUsercase,
-    this.currentUserId,
-    this.rateTheImageUserUsecase,
-  ) : super(HomeState());
+  HomeCubit(this.loadAllPostUserUsercase, this.rateTheImageUserUsecase)
+    : super(HomeState());
 
   Future<void> loadAllPosts() async {
     emit(state.copyWith(isAllPostLoading: true));
 
     try {
+      // Firestore'dan tüm postları çek
       final posts = await loadAllPostUserUsercase.execute();
 
-      final Set<Marker> markers = {};
+      // Ek güvenlik: createdAt null olursa en sona koy, yoksa descending sırala
+      posts.sort((a, b) {
+        if (a.createdAt == null) return 1;
+        if (b.createdAt == null) return -1;
+        return b.createdAt!.compareTo(a.createdAt!); // descending
+      });
 
+      // Markerları oluştur
+      final Set<Marker> markers = {};
       for (final post in posts) {
         markers.add(
           Marker(

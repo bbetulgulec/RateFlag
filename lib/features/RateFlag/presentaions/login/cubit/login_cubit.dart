@@ -1,12 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/forgot_password_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/login_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/auth/forgot_password_user.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/auth/login_user.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
-  final LoginUserUsecase loginUserUsecase;
-  final ForgotPasswordUserUsecase forgotPasswordUserUsecase;
+  final LoginUser loginUserUsecase;
+  final ForgotPasswordUser forgotPasswordUserUsecase;
 
   LoginCubit(this.loginUserUsecase, this.forgotPasswordUserUsecase)
     : super(const LoginState());
@@ -17,33 +16,12 @@ class LoginCubit extends Cubit<LoginState> {
     try {
       await loginUserUsecase.execute(email, password);
 
-      emit(
-        state.copyWith(loginStatus: LoginStatus.success, errorMessage: null),
-      );
-    } on FirebaseAuthException catch (e) {
-      String message = "";
-      if (e.code == 'invalid-email') {
-        message = "Geçerli bir e-posta giriniz";
-      } else if (e.code == 'user-not-found') {
-        message = "Bu e-posta ile kayıt bulunamadı";
-      } else if (e.code == 'wrong-password') {
-        message = "Şifre yanlış";
-      } else {
-        message =
-            e.message ?? "E-posta doğrulaması yaptıktan sonra tekrar deneyin";
-      }
-
-      emit(
-        state.copyWith(
-          loginStatus: LoginStatus.failure,
-          errorMessage: "Şifre yada e-posta yanlış tekrar deneyin",
-        ),
-      );
+      emit(state.copyWith(loginStatus: LoginStatus.success));
     } catch (e) {
       emit(
         state.copyWith(
           loginStatus: LoginStatus.failure,
-          errorMessage: "E-posta doğrulaması yaptıktan sonra tekrar deneyin",
+          errorMessage: e.toString().replaceFirst('Exception: ', ''),
         ),
       );
     }
@@ -52,43 +30,20 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> forgotPassword(String email) async {
     emit(
       state.copyWith(
-        loginStatus: LoginStatus.initial,
         passwordResetStatus: LoginStatus.loading,
         errorMessage: null,
       ),
     );
 
     try {
-      await forgotPasswordUserUsecase.forgotPassword(email);
+      await forgotPasswordUserUsecase.execute(email);
 
-      emit(
-        state.copyWith(
-          passwordResetStatus: LoginStatus.success,
-          errorMessage: null,
-        ),
-      );
-    } on FirebaseAuthException catch (e) {
-      String message = "";
-
-      if (e.code == 'invalid-email') {
-        message = "Geçerli bir e-posta giriniz";
-      } else if (e.code == 'user-not-found') {
-        message = "Bu e-posta ile kayıtlı kullanıcı yok";
-      } else {
-        message = e.message ?? "Bir hata oluştu";
-      }
-
-      emit(
-        state.copyWith(
-          passwordResetStatus: LoginStatus.failure,
-          errorMessage: message,
-        ),
-      );
+      emit(state.copyWith(passwordResetStatus: LoginStatus.success));
     } catch (e) {
       emit(
         state.copyWith(
           passwordResetStatus: LoginStatus.failure,
-          errorMessage: "Şifre sıfırlama maili gönderilemedi",
+          errorMessage: e.toString().replaceFirst('Exception: ', ''),
         ),
       );
     }

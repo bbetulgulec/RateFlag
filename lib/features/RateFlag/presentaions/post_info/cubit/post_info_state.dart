@@ -1,11 +1,14 @@
+import 'package:rate_flag/features/RateFlag/domain/entity/comment.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/user.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/user.dart' as MyUser;
 
 class PostInfoState {
   final bool isLoadPostInfoLoading;
   final bool isLoadPostInfoSuccess;
   final String? errorMessage;
   final Post? post;
-  final Map<String, dynamic>? user;
+  final User? user;
 
   final int? redFlagCount;
   final int? greenFlagCount;
@@ -16,6 +19,11 @@ class PostInfoState {
   final String? followMessage;
   final bool? hasGreenFlag;
   final bool? hasRedFlag;
+
+  final bool isCommentLoading;
+  final bool isCommentSuccess;
+  final List<Comment>? comments;
+  final Map<String, MyUser.User>? commentUsers;
 
   PostInfoState({
     this.isLoadPostInfoLoading = false,
@@ -31,6 +39,10 @@ class PostInfoState {
     this.followMessage,
     this.hasGreenFlag,
     this.hasRedFlag,
+    this.isCommentLoading = false,
+    this.isCommentSuccess = false,
+    this.comments,
+    this.commentUsers,
   });
 
   PostInfoState copyWith({
@@ -38,7 +50,7 @@ class PostInfoState {
     bool? isLoadPostInfoSuccess,
     String? errorMessage,
     Post? post,
-    Map<String, dynamic>? user,
+    User? user,
     int? redFlagCount,
     int? greenFlagCount,
     bool? isFollowActionLoading,
@@ -47,6 +59,10 @@ class PostInfoState {
     String? followMessage,
     bool? hasGreenFlag,
     bool? hasRedFlag,
+    bool? isCommentLoading,
+    bool? isCommentSuccess,
+    List<Comment>? comments,
+    Map<String, MyUser.User>? commentUsers,
   }) {
     return PostInfoState(
       isLoadPostInfoLoading:
@@ -66,6 +82,10 @@ class PostInfoState {
       followMessage: followMessage ?? this.followMessage,
       hasGreenFlag: hasGreenFlag ?? this.hasGreenFlag,
       hasRedFlag: hasRedFlag ?? this.hasRedFlag,
+      isCommentLoading: isCommentLoading ?? this.isCommentLoading,
+      isCommentSuccess: isCommentSuccess ?? this.isCommentSuccess,
+      comments: comments ?? this.comments,
+      commentUsers: commentUsers ?? this.commentUsers,
     );
   }
 
@@ -82,5 +102,9 @@ class PostInfoState {
     followMessage,
     hasGreenFlag,
     hasRedFlag,
+    isCommentLoading,
+    isCommentSuccess,
+    comments,
+    commentUsers,
   ];
 }

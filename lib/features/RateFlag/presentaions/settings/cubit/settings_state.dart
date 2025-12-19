@@ -5,7 +5,7 @@ class SettingsState extends Equatable {
   final bool isSignOutSuccess;
   final String? errorMessage;
 
-  SettingsState({
+  const SettingsState({
     this.isSignOutLoading = false,
     this.isSignOutSuccess = false,
     this.errorMessage,
@@ -23,5 +23,6 @@ class SettingsState extends Equatable {
     );
   }
 
+  @override
   List<Object?> get props => [isSignOutLoading, isSignOutSuccess, errorMessage];
 }

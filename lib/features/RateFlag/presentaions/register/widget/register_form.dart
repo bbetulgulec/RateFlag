@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rate_flag/features/RateFlag/common/utils/validators/validators.dart';
-import 'package:rate_flag/features/RateFlag/common/widget/elevatedButtonWidget.dart';
-import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
-import 'package:rate_flag/features/RateFlag/common/widget/rateFlagTextField.dart';
+import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
+import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
+import 'package:rate_flag/features/RateFlag/common/widgets/text_fields/custom_text_field.dart';
 
 class RegisterFormWidget extends StatelessWidget {
   const RegisterFormWidget({
@@ -45,7 +45,7 @@ class RegisterFormWidget extends StatelessWidget {
           RateFlagText.head1(text: "Kayıt ol"),
           const SizedBox(height: 30),
 
-          Rateflagtextfield(
+          CustomTextField(
             controller: firstNameController,
             label: "İsim",
             validator: Validators.onlyLetters,
@@ -53,7 +53,7 @@ class RegisterFormWidget extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          Rateflagtextfield(
+          CustomTextField(
             controller: lastNameController,
             label: "Soyisim",
             validator: Validators.onlyLetters,
@@ -61,7 +61,7 @@ class RegisterFormWidget extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          Rateflagtextfield(
+          CustomTextField(
             controller: emailController,
             label: "E-posta",
             keyboardType: TextInputType.emailAddress,
@@ -69,7 +69,7 @@ class RegisterFormWidget extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          Rateflagtextfield(
+          CustomTextField(
             controller: dateController,
             label: "Doğum Tarihi (YYYY-MM-DD)",
             isDateField: true,
@@ -79,7 +79,7 @@ class RegisterFormWidget extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          Rateflagtextfield(
+          CustomTextField(
             controller: passwordController,
             label: "Şifre",
             isPassword: true,
@@ -88,7 +88,7 @@ class RegisterFormWidget extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          Rateflagtextfield(
+          CustomTextField(
             controller: repeatPasswordController,
             label: "Şifre (Tekrar)",
             isPassword: true,
@@ -101,11 +101,11 @@ class RegisterFormWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Onboardingelevetedbutton.secondary(
+              CustomElevatedButton.secondary(
                 text: "Zaten hesabım var",
                 onPressed: onAlreadyHaveAccount,
               ),
-              Onboardingelevetedbutton.primary(
+              CustomElevatedButton.primary(
                 text: isLoading ? "Kaydediliyor..." : "Kayıt ol",
                 onPressed: isLoading ? null : onRegisterPressed,
               ),

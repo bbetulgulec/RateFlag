@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/create_user_usecase.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/user.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/auth/create_user.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/register/cubit/register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
-  final CreateUserUsecase createUserUsecase;
+  final CreateUser createUserUsecase;
 
   RegisterCubit(this.createUserUsecase) : super(const RegisterState());
 
-  // Doğum tarihi cubitte tutulacak
   void setBirthDate(DateTime date) {
     emit(state.copyWith(birthDate: date));
   }
@@ -24,16 +24,19 @@ class RegisterCubit extends Cubit<RegisterState> {
       return;
     }
 
-    emit(state.copyWith(isRegisterLoading: true, errorMessage: null));
+    emit(state.copyWith(isRegisterLoading: true));
+
+    final user = User(
+      uid: "",
+      firstName: firstName,
+      lastName: lastName,
+      mail: mail,
+      birthDate: birthDate,
+      password: password,
+    );
 
     try {
-      await createUserUsecase.execute(
-        firstName,
-        lastName,
-        mail,
-        state.birthDate!,
-        password,
-      );
+      await createUserUsecase.execute(user);
 
       final verified = await createUserUsecase.authRepository
           .checkEmailVerified();

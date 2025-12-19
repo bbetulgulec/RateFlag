@@ -7,19 +7,16 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         OnboardingState(currentPageIndex: 0, totalPageCount: totalPageCount),
       );
 
-  //PageView içinde sayfa değiştiğinde çağırılır
   void pageChanged(int index) {
     emit(state.copyWith(currentPageIndex: index));
   }
 
-  //Sonraki sayfaya geç
   void nextPage() {
     if (!state.isLastPage) {
       emit(state.copyWith(currentPageIndex: state.currentPageIndex + 1));
     }
   }
 
-  // total atlama
   void skip() {
     emit(state.copyWith(currentPageIndex: state.totalPageCount - 1));
   }

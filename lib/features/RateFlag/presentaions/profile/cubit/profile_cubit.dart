@@ -1,142 +1,135 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/domain/entity/user.dart' as model;
-import 'package:rate_flag/features/RateFlag/domain/usecase/follow_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/load_post_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/update_info_user_usecase.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:rate_flag/features/RateFlag/domain/repositories/firestore_repository.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/get_user_info.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_user_posts.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_saved_posts.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/update_user_info.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/storage/upload_profile_image.dart';
+
 import 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  final LoadPostUserUsecase loadPostUserUsecase;
-  final FollowUserUsecase followUserUsecase;
-  final UpdateInfoUserUsecase updateInfoUserUsecase;
-
+  final GetUserInfo getUserInfo;
+  final UpdateUserInfo updateUserInfo;
+  final UploadProfileImage uploadProfileImage;
+  final LoadUserPosts loadUserPosts;
+  final LoadSavedPosts loadUserPrivatePosts;
+  final FirestoreRepository firestoreRepository;
   ProfileCubit(
-    this.loadPostUserUsecase,
-    this.followUserUsecase,
-    this.updateInfoUserUsecase,
-  ) : super(const ProfileState());
-
-  void changeTab(int index) {
-    emit(state.copyWith(tabIndex: index));
+    this.getUserInfo,
+    this.updateUserInfo,
+    this.uploadProfileImage,
+    this.loadUserPosts,
+    this.loadUserPrivatePosts,
+    this.firestoreRepository,
+  ) : super(const ProfileState()) {
+    _loadInitial();
   }
 
-  Future<void> loadPosts() async {
-    emit(state.copyWith(isPostLoading: true));
+  final ImagePicker picker = ImagePicker();
 
-    try {
-      final userId = FirebaseAuth.instance.currentUser!.uid;
-
-      final posts = await loadPostUserUsecase.loadUserPosts(userId);
-
-      emit(
-        state.copyWith(
-          isPostLoading: false,
-          posts: posts,
-          postCount: posts.length,
-        ),
-      );
-    } catch (e) {
-      emit(state.copyWith(isPostLoading: false, errorMessage: e.toString()));
-    }
-  }
-
-  Future<void> loadUserFollowData(String userId) async {
-    emit(state.copyWith(isFollowActionLoading: true));
-
-    try {
-      final userData = await followUserUsecase.getUserFollowData(userId);
-
-      final followers = List<String>.from(userData['followers'] ?? []);
-      final following = List<String>.from(userData['following'] ?? []);
-
-      emit(
-        state.copyWith(
-          isFollowActionLoading: false,
-          followersCount: followers.length,
-          followingCount: following.length,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          isFollowActionLoading: false,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> followUser(String targetUserId) async {
-    emit(state.copyWith(isFollowActionLoading: true));
-    try {
-      final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-      await followUserUsecase.execute(
-        currentUserId: currentUserId,
-        targetUserId: targetUserId,
-        isFollow: true,
-      );
-      await loadUserFollowData(currentUserId);
-      emit(
-        state.copyWith(
-          isFollowActionLoading: false,
-          isFollowActionSuccess: true,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          isFollowActionLoading: false,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> unfollowUser(String targetUserId) async {
-    emit(state.copyWith(isFollowActionLoading: true));
-    try {
-      final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-      await followUserUsecase.execute(
-        currentUserId: currentUserId,
-        targetUserId: targetUserId,
-        isFollow: false,
-      );
-      await loadUserFollowData(currentUserId);
-      emit(
-        state.copyWith(
-          isFollowActionLoading: false,
-          isFollowActionSuccess: true,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          isFollowActionLoading: false,
-          errorMessage: e.toString(),
-        ),
-      );
+  void _loadInitial() {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      loadUser(uid);
+      loadAllPosts(uid);
     }
   }
 
   Future<void> loadUser(String uid) async {
+    final user = await getUserInfo.execute(uid);
+    if (user != null) {
+      emit(state.copyWith(user: user));
+    }
+  }
+
+  Future<void> loadAllPosts(String uid) async {
+    emit(state.copyWith(isPostLoading: true));
+
+    final publicPosts = await loadUserPosts.execute(uid);
+
+    emit(state.copyWith(publicPosts: publicPosts, isPostLoading: false));
+  }
+
+  Future<void> loadSavedPosts() async {
+    final user = state.user;
+    if (user == null) return;
+
+    emit(state.copyWith(isPostLoading: true));
+
+    final List<String> savedIds = user.postSaved ?? [];
+
+    if (savedIds.isEmpty) {
+      emit(state.copyWith(savedPost: [], isPostLoading: false));
+      return;
+    }
+
+    final posts = await firestoreRepository.getSavedPostsByIds(savedIds);
+
+    emit(state.copyWith(savedPost: posts, isPostLoading: false));
+  }
+
+  Future<void> pickFromGallery() async {
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (picked != null) {
+      final file = File(picked.path);
+      emit(state.copyWith(selectedImage: file));
+      await _uploadProfilePhoto(file);
+    }
+  }
+
+  Future<void> pickFromCamera() async {
+    final picked = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
+
+    if (picked != null) {
+      final file = File(picked.path);
+      emit(state.copyWith(selectedImage: file));
+      await _uploadProfilePhoto(file);
+    }
+  }
+
+  Future<void> _uploadProfilePhoto(File file) async {
     try {
-      final data = await updateInfoUserUsecase.fetchUser(uid);
+      final uid = FirebaseAuth.instance.currentUser!.uid;
 
-      if (data != null) {
-        final user = model.User(
-          uid: uid,
-          firstName: data['firstName'] ?? '',
-          lastName: data['lastName'] ?? '',
-          mail: '', // placeholder
-          birthDate: DateTime.now(), // placeholder
-          password: '', // placeholder
-        );
+      // 1️⃣ Storage
+      final imageUrl = await uploadProfileImage.execute(image: file, uid: uid);
 
-        emit(state.copyWith(user: user));
-      }
+      if (imageUrl == null) return;
+
+      // 2️⃣ Mevcut user
+      final currentUser = state.user;
+      if (currentUser == null) return;
+
+      // 3️⃣ User copy
+      final updatedUser = currentUser.copyWith(photoUrl: imageUrl);
+
+      // 4️⃣ Firestore (USER OLARAK)
+      await updateUserInfo.execute(updatedUser);
+
+      // 5️⃣ State
+      emit(state.copyWith(user: updatedUser));
     } catch (e) {
       emit(state.copyWith(errorMessage: e.toString()));
+    }
+  }
+
+  void changeTab(int index) {
+    emit(state.copyWith(tabIndex: index));
+
+    if (index == 1) {
+      loadSavedPosts();
     }
   }
 }

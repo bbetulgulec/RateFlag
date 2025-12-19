@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:rate_flag/features/RateFlag/common/utils/validators/validators.dart';
-import 'package:rate_flag/features/RateFlag/common/widget/elevatedButtonWidget.dart';
-import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
-import 'package:rate_flag/features/RateFlag/common/widget/rateFlagTextField.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/login/widget/loginTextButton.dart';
+import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
+import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
+import 'package:rate_flag/features/RateFlag/common/widgets/text_fields/custom_text_field.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/login/widget/login_text_button.dart';
 
 class LoginFormWidget extends StatelessWidget {
   const LoginFormWidget({
@@ -47,7 +47,7 @@ class LoginFormWidget extends StatelessWidget {
                       RateFlagText.head1(text: "Giriş Yap"),
                       const SizedBox(height: 40),
 
-                      Rateflagtextfield(
+                      CustomTextField(
                         controller: emailController,
                         label: "E-posta giriniz",
                         icon: Icons.email,
@@ -57,7 +57,7 @@ class LoginFormWidget extends StatelessWidget {
 
                       const SizedBox(height: 40),
 
-                      Rateflagtextfield(
+                      CustomTextField(
                         controller: passwordController,
                         label: "Şifre giriniz",
                         icon: Icons.password_outlined,
@@ -71,13 +71,13 @@ class LoginFormWidget extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Onboardingelevetedbutton.primary(
+                          CustomElevatedButton.primary(
                             text: isLoading
                                 ? "Giriş yapılıyor..."
                                 : "Giriş yap",
                             onPressed: isLoading ? null : onLoginPressed,
                           ),
-                          Onboardingelevetedbutton.secondary(
+                          CustomElevatedButton.secondary(
                             text: isResetLoading
                                 ? "Şifre Unutuluyor..."
                                 : "Şifremi Unuttum",

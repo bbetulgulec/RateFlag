@@ -1,32 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/comment.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/user.dart';
 import 'package:rate_flag/features/RateFlag/domain/repositories/firestore_repository.dart';
 
 class FirebaseFirestoreImpl implements FirestoreRepository {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   @override
-  Future<void> createUser(String collection, Map<String, dynamic> data) async {
-    final userID = data["userID"];
-
-    if (userID != null && collection == "users") {
-      await firestore.collection(collection).doc(userID).set({
-        ...data,
-        "createdAt": FieldValue.serverTimestamp(),
-      });
-    }
+  Future<void> createUser(String collection, User user) async {
+    await firestore.collection(collection).doc(user.uid).set({
+      "userID": user.uid,
+      "firstName": user.firstName,
+      "lastName": user.lastName,
+      "mail": user.mail,
+      "birthDate": user.birthDate.toIso8601String(),
+      "createdAt": FieldValue.serverTimestamp(),
+    });
   }
 
   @override
-  Future<Map<String, dynamic>?> getUserInfo(String userID) async {
+  Future<User?> getUserInfo(String userID) async {
     try {
       final doc = await firestore.collection("users").doc(userID).get();
 
-      if (doc.exists) {
-        return doc.data();
-      } else {
-        return null;
-      }
+      if (!doc.exists || doc.data() == null) return null;
+
+      return User.fromJson(doc.data()!);
     } catch (e) {
       print("getUserInfo ERROR: $e");
       return null;
@@ -34,11 +34,11 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
   }
 
   @override
-  Future<void> updateUserInfo(String userID, Map<String, dynamic> data) async {
+  Future<void> updateUser(User user) async {
     try {
-      await firestore.collection("users").doc(userID).update(data);
+      await firestore.collection("users").doc(user.uid).update(user.toJson());
     } catch (e) {
-      print("updateUserInfo ERROR: $e");
+      print("updateUser ERROR: $e");
     }
   }
 
@@ -59,29 +59,14 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
   }
 
   @override
-  Future<void> createPost(String collection, Post post) async {
+  Future<void> createPost(Post post) async {
     try {
-      // users/{userId}/posts/{postId}
-      await firestore
-          .collection("users")
-          .doc(post.userId)
-          .collection("posts")
-          .doc(post.postId)
-          .set({
-            "postId": post.postId,
-            "userId": post.userId,
-            "description": post.description,
-            "imageUrl": post.imageUrl,
-            "isPublic": post.isPublic,
-            "date": post.date.toIso8601String(),
-            "city": post.city,
-            "district": post.district,
-            "createdAt": FieldValue.serverTimestamp(),
-            "latitude": post.latitude,
-            "longitude": post.longitude,
-          });
+      await firestore.collection("posts").doc(post.postId).set({
+        ...post.toFirestore(),
+        "createdAt": FieldValue.serverTimestamp(),
+      });
 
-      print("Post saved successfully under user: ${post.userId}");
+      print("Post saved successfully");
     } catch (e) {
       print("createPost ERROR: $e");
       rethrow;
@@ -89,84 +74,138 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
   }
 
   @override
-  Future<List<Post>> loadAllPosts() async {
-    final snapshot = await firestore.collectionGroup('posts').get();
+  Future<void> createComment(Comment comment) async {
+    try {
+      final commentRef = firestore
+          .collection("comments")
+          .doc(comment.commentId);
 
-    return snapshot.docs.map((doc) {
-      final data = doc.data();
-      return Post(
-        postId: data['postId'],
-        userId: data['userId'],
-        description: data['description'],
-        imageUrl: data['imageUrl'],
-        isPublic: data['isPublic'],
-        city: data['city'],
-        district: data['district'],
-        date: DateTime.parse(data['date']),
-        latitude: (data['latitude'] as num).toDouble(),
-        longitude: (data['longitude'] as num).toDouble(),
-        createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
-        redFlag: (data['redFlag'] as num?)?.toInt() ?? 0, // Flagging part
-        greenFlag: (data['greenFlag'] as num?)?.toInt() ?? 0, // Flagging part
+      final postRef = firestore.collection("posts").doc(comment.postId);
+
+      await firestore.runTransaction((transaction) async {
+        /// 1️⃣ Yorumu oluştur
+        transaction.set(commentRef, {
+          ...comment.toFirestore(),
+          "createdAt": FieldValue.serverTimestamp(),
+        });
+
+        /// 2️⃣ Post içindeki commentIds listesine ekle
+        transaction.update(postRef, {
+          "comments": FieldValue.arrayUnion([comment.commentId]),
+        });
+      });
+    } catch (e) {
+      print("Create comment error: $e");
+    }
+  }
+
+  @override
+  Future<void> toggleSavedPost({
+    required String userId,
+    required String postId,
+  }) async {
+    final userRef = firestore.collection("users").doc(userId);
+
+    await firestore.runTransaction((transaction) async {
+      final snap = await transaction.get(userRef);
+
+      if (!snap.exists) {
+        throw Exception("User not found");
+      }
+
+      final data = snap.data()!;
+      final List<String> savedPosts = List<String>.from(
+        data['postSaved'] ?? [],
       );
-    }).toList();
+
+      if (savedPosts.contains(postId)) {
+        // ❌ Kayıttan çıkar
+        savedPosts.remove(postId);
+      } else {
+        // ✅ Kaydet
+        savedPosts.add(postId);
+      }
+
+      transaction.update(userRef, {'postSaved': savedPosts});
+    });
+  }
+
+  Future<void> addCommentIdToPost({
+    required String postId,
+    required String commentId,
+  }) async {
+    await firestore.collection("posts").doc(postId).update({
+      "comments": FieldValue.arrayUnion([commentId]),
+    });
+  }
+
+  Future<List<Comment>> getCommentsByIds(List<String> commentIds) async {
+    if (commentIds.isEmpty) return [];
+
+    final snapshot = await firestore
+        .collection("comments")
+        .where(FieldPath.documentId, whereIn: commentIds)
+        .get();
+
+    return snapshot.docs
+        .map((doc) => Comment.fromFirestore(doc.data()))
+        .toList();
+  }
+
+  @override
+  Future<List<Post>> loadAllPosts() async {
+    final snapshot = await firestore
+        .collection("posts")
+        .orderBy("createdAt", descending: true)
+        .get();
+
+    return snapshot.docs.map((doc) => Post.fromFirestore(doc.data())).toList();
   }
 
   @override
   Future<List<Post>> loadUserPosts(String userId) async {
-    try {
-      final query = await firestore
-          .collection("users")
-          .doc(userId)
-          .collection("posts")
-          .orderBy("createdAt", descending: true)
-          .get();
+    final query = await firestore
+        .collection("posts")
+        .where("userId", isEqualTo: userId)
+        .orderBy("createdAt", descending: true)
+        .get();
 
-      // QuerySnapshot → List<Post>
-      return query.docs.map((doc) {
-        final data = doc.data();
-        return Post(
-          postId: data["postId"],
-          userId: data["userId"],
-          description: data["description"],
-          imageUrl: data["imageUrl"],
-          isPublic: data["isPublic"],
-          date: DateTime.parse(data["date"]),
-          city: data["city"],
-          district: data["district"],
-          latitude: (data['latitude'] as num).toDouble(),
-          longitude: (data['longitude'] as num).toDouble(),
-          createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
-          redFlag: (data['redFlag'] as num?)?.toInt() ?? 0, // Flagging part
-          greenFlag: (data['greenFlag'] as num?)?.toInt() ?? 0, // Flagging part
-          // Flagging part
-        );
-      }).toList();
-    } catch (e) {
-      print("loadUserPosts ERROR: $e");
-      return [];
-    }
+    print("POST COUNT: ${query.docs.length}");
+
+    return query.docs.map((doc) => Post.fromFirestore(doc.data())).toList();
+  }
+
+  @override
+  Future<List<Post>> loadUserPrivatePosts(String userId) async {
+    final snap = await firestore
+        .collection("posts")
+        .where("userId", isEqualTo: userId)
+        .where("isPublic", isEqualTo: false) // 🔥 PRIVATE
+        .orderBy("createdAt", descending: true)
+        .get();
+
+    return snap.docs.map((d) => Post.fromFirestore(d.data())).toList();
   }
 
   @override
   Future<void> incrementFlag({
     required String userId,
     required String postOwnerId,
-    required String postId,
+    required Post post, // artık Post modelini parametre olarak alıyoruz
     required bool isGreen,
   }) async {
-    final postRef = firestore
-        .collection('users')
-        .doc(postOwnerId)
+    final postRef = FirebaseFirestore.instance
         .collection('posts')
-        .doc(postId);
+        .doc(post.postId);
 
-    await firestore.runTransaction((transaction) async {
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
       final postSnap = await transaction.get(postRef);
-      final data = postSnap.data()!;
+      final currentData = postSnap.data()!;
+      final currentPost = Post.fromFirestore(currentData);
+
       // Map olarak flaggedBy al
-      final Map<String, dynamic> flaggedBy = Map<String, dynamic>.from(
-        data['flaggedBy'] ?? {},
+      final Map<String, String> flaggedBy = Map<String, String>.from(
+        currentPost.flaggedBy ?? {},
       );
 
       final previousVote = flaggedBy[userId]; // null, "green" veya "red"
@@ -177,17 +216,34 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
         print("User already voted the same");
         return;
       }
+
       // Oy değişikliği yap
+      int greenCount = currentPost.greenFlag ?? 0;
+      int redCount = currentPost.redFlag ?? 0;
+
       if (previousVote == "green") {
-        transaction.update(postRef, {'greenFlag': FieldValue.increment(-1)});
+        greenCount--;
       } else if (previousVote == "red") {
-        transaction.update(postRef, {'redFlag': FieldValue.increment(-1)});
+        redCount--;
       }
 
-      // Yeni oy ekle
+      if (isGreen) {
+        greenCount++;
+      } else {
+        redCount++;
+      }
+
+      // Yeni oy ve flaggedBy map’ini güncelle
+      final updatedFlaggedBy = {
+        ...flaggedBy,
+        userId: isGreen ? "green" : "red",
+      };
+
+      // Firestore güncelle
       transaction.update(postRef, {
-        isGreen ? 'greenFlag' : 'redFlag': FieldValue.increment(1),
-        'flaggedBy': {...flaggedBy, userId: isGreen ? "green" : "red"},
+        'greenFlag': greenCount,
+        'redFlag': redCount,
+        'flaggedBy': updatedFlaggedBy,
       });
 
       print("Firestore vote updated successfully");
@@ -195,32 +251,17 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
   }
 
   @override
-  Future<Post?> getPostById(String userId, String postId) async {
-    final doc = await firestore
-        .collection('users')
-        .doc(userId)
-        .collection('posts')
-        .doc(postId)
-        .get();
+  Future<Post?> getPostById(String postId) async {
+    final doc = await firestore.collection('posts').doc(postId).get();
+    if (!doc.exists || doc.data() == null) return null;
+    return Post.fromFirestore(doc.data()!);
+  }
 
-    if (!doc.exists) return null;
-
-    final data = doc.data()!;
-    return Post(
-      postId: data['postId'],
-      userId: data['userId'],
-      description: data['description'],
-      imageUrl: data['imageUrl'],
-      isPublic: data['isPublic'],
-      date: DateTime.parse(data['date']),
-      city: data['city'],
-      district: data['district'],
-      latitude: (data['latitude'] as num).toDouble(),
-      longitude: (data['longitude'] as num).toDouble(),
-      redFlag: (data['redFlag'] as num?)?.toInt() ?? 0,
-      greenFlag: (data['greenFlag'] as num?)?.toInt() ?? 0,
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
-    );
+  @override
+  Future<User?> getUserById(String userId) async {
+    final doc = await firestore.collection('users').doc(userId).get();
+    if (!doc.exists || doc.data() == null) return null;
+    return User.fromJson(doc.data()!);
   }
 
   @override
@@ -235,24 +276,33 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
       final currentSnap = await transaction.get(currentUserRef);
       final targetSnap = await transaction.get(targetUserRef);
 
-      // Eğer alan yoksa boş liste ata
-      final currentFollowing = List<String>.from(
-        currentSnap.data()?['following'] ?? [],
+      // Mevcut user modellerini oluştur
+      final currentUser = currentSnap.exists
+          ? User.fromJson(currentSnap.data()!)
+          : throw Exception("Current user not found");
+
+      final targetUser = targetSnap.exists
+          ? User.fromJson(targetSnap.data()!)
+          : throw Exception("Target user not found");
+
+      // Followers & following listelerini güncelle
+      final updatedFollowing = List<String>.from(currentUser.following ?? []);
+      final updatedFollowers = List<String>.from(targetUser.followers ?? []);
+
+      if (!updatedFollowing.contains(targetUserId))
+        updatedFollowing.add(targetUserId);
+      if (!updatedFollowers.contains(currentUserId))
+        updatedFollowers.add(currentUserId);
+
+      // Transaction update
+      transaction.update(
+        currentUserRef,
+        currentUser.copyWith(following: updatedFollowing).toJson(),
       );
-      final targetFollowers = List<String>.from(
-        targetSnap.data()?['followers'] ?? [],
+      transaction.update(
+        targetUserRef,
+        targetUser.copyWith(followers: updatedFollowers).toJson(),
       );
-
-      if (!currentFollowing.contains(targetUserId)) {
-        currentFollowing.add(targetUserId);
-      }
-
-      if (!targetFollowers.contains(currentUserId)) {
-        targetFollowers.add(currentUserId);
-      }
-
-      transaction.update(currentUserRef, {'following': currentFollowing});
-      transaction.update(targetUserRef, {'followers': targetFollowers});
     });
   }
 
@@ -268,18 +318,64 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
       final currentSnap = await transaction.get(currentUserRef);
       final targetSnap = await transaction.get(targetUserRef);
 
-      final currentFollowing = List<String>.from(
-        currentSnap.data()?['following'] ?? [],
-      );
-      final targetFollowers = List<String>.from(
-        targetSnap.data()?['followers'] ?? [],
-      );
+      final currentUser = currentSnap.exists
+          ? User.fromJson(currentSnap.data()!)
+          : throw Exception("Current user not found");
 
-      currentFollowing.remove(targetUserId);
-      targetFollowers.remove(currentUserId);
+      final targetUser = targetSnap.exists
+          ? User.fromJson(targetSnap.data()!)
+          : throw Exception("Target user not found");
 
-      transaction.update(currentUserRef, {'following': currentFollowing});
-      transaction.update(targetUserRef, {'followers': targetFollowers});
+      final updatedFollowing = List<String>.from(currentUser.following ?? []);
+      final updatedFollowers = List<String>.from(targetUser.followers ?? []);
+
+      updatedFollowing.remove(targetUserId);
+      updatedFollowers.remove(currentUserId);
+
+      transaction.update(
+        currentUserRef,
+        currentUser.copyWith(following: updatedFollowing).toJson(),
+      );
+      transaction.update(
+        targetUserRef,
+        targetUser.copyWith(followers: updatedFollowers).toJson(),
+      );
     });
+  }
+
+  @override
+  Future<bool> isFollowing({
+    required String currentUserId,
+    required String targetUserId,
+  }) async {
+    final currentUserDoc = await firestore
+        .collection('users')
+        .doc(currentUserId)
+        .get();
+    if (!currentUserDoc.exists) return false;
+
+    final currentUser = User.fromJson(currentUserDoc.data()!);
+    final following = currentUser.following ?? [];
+
+    return following.contains(targetUserId);
+  }
+
+  @override
+  Future<List<Post>> getSavedPostsByIds(List<String> postIds) async {
+    if (postIds.isEmpty) return [];
+
+    final snapshot = await firestore
+        .collection('posts')
+        .where(FieldPath.documentId, whereIn: postIds)
+        .get();
+
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+
+      // 🔥 postId'yi manuel ekliyoruz
+      data['postId'] = doc.id;
+
+      return Post.fromFirestore(data);
+    }).toList();
   }
 }

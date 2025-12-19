@@ -29,10 +29,10 @@ class BottomBar extends StatelessWidget {
 
           IconButton(
             icon: Icon(
-              Icons.location_city_outlined,
-              color: currentIndex == 2 ? Colors.white : Colors.deepPurple,
+              Icons.person,
+              color: currentIndex == 1 ? Colors.white : Colors.deepPurple,
             ),
-            onPressed: () => onTap(2),
+            onPressed: () => onTap(1),
           ),
         ],
       ),

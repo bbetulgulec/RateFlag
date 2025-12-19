@@ -17,7 +17,7 @@ class HomeState extends Equatable {
   final String? openedImageUrl;
   final Post? openedPost;
 
-  HomeState({
+  const HomeState({
     this.isAllPostLoading = false,
     this.isAllPostSuccess = false,
     this.errorMessage,

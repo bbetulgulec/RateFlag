@@ -6,30 +6,21 @@ class FirebaseAuthImpl extends AuthRepository {
   final fb.FirebaseAuth auth = fb.FirebaseAuth.instance;
 
   @override
-  Future<User> register(
-    String firstName,
-    String lastName,
-    String mail,
-    DateTime birthDate,
-    String password,
-  ) async {
-    // Firebase Auth ile kullanıcı oluştur
+  Future<User> register(String email, String password) async {
     final credential = await auth.createUserWithEmailAndPassword(
-      email: mail,
+      email: email,
       password: password,
     );
-    await auth.setLanguageCode("tr");
 
-    // E-mail doğrulama maili gönder
+    await auth.setLanguageCode("tr");
     await credential.user!.sendEmailVerification();
 
-    // Domain User nesnesi dön
     return User(
       uid: credential.user!.uid,
-      firstName: firstName,
-      lastName: lastName,
-      mail: mail,
-      birthDate: birthDate,
+      firstName: "",
+      lastName: "",
+      mail: email,
+      birthDate: DateTime.now(),
       password: password,
     );
   }

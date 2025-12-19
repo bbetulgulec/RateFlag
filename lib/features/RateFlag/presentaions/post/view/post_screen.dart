@@ -2,25 +2,26 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/view/home_screen.dart';
+import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/main/cubit/main_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/main/view/main_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_state.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post/widget/build_indicator.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post/widget/page_1.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post/widget/page_2.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post/widget/page_3.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post/widget/page_4.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post/widget/page_5.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post/view/post_visibility_step.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post/view/post_image_picker_step.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post/view/post_city_selection_step.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post/view/post_district_selection_step.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/post/view/post_description_step.dart';
 
-class PostPageView extends StatefulWidget {
-  const PostPageView({super.key});
+class PostScreen extends StatefulWidget {
+  const PostScreen({super.key});
 
   @override
-  State<PostPageView> createState() => _PostPageViewState();
+  State<PostScreen> createState() => _PostScreenState();
 }
 
-class _PostPageViewState extends State<PostPageView> {
+class _PostScreenState extends State<PostScreen> {
   final PageController _controller = PageController();
   int currentIndex = 0;
   bool? isPublic;
@@ -29,7 +30,13 @@ class _PostPageViewState extends State<PostPageView> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = [Page1(), Page2(), Page3(), Page4(), Page5()];
+    final pages = [
+      PostVisibilityStep(),
+      PostImagePickerStep(),
+      PostCitySelectionStep(),
+      PostDistrictSelectionStep(),
+      PostDescriptionStep(),
+    ];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -41,7 +48,15 @@ class _PostPageViewState extends State<PostPageView> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MainScreen()),
+                MaterialPageRoute(
+                  builder: (_) => MultiBlocProvider(
+                    providers: [
+                      BlocProvider(create: (_) => getIt<MainCubit>()),
+                      BlocProvider(create: (_) => getIt<HomeCubit>()),
+                    ],
+                    child: MainScreen(),
+                  ),
+                ),
               );
             },
             child: Align(
@@ -66,9 +81,8 @@ class _PostPageViewState extends State<PostPageView> {
                 controller: _controller,
                 itemCount: pages.length,
                 onPageChanged: (i) => context.read<PostCubit>().goToPage(i),
-                physics: currentIndex == 0 && selectedImage == null
-                    ? const NeverScrollableScrollPhysics()
-                    : const AlwaysScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
+
                 itemBuilder: (_, i) =>
                     Padding(padding: const EdgeInsets.all(16), child: pages[i]),
               ),

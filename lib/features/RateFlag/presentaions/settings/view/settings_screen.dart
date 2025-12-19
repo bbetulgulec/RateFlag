@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/widget/rateFlagText.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/view/account_info_screen.dart';
+import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
+import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/account_info/cubit/account_info_cubit.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/account_info/view/account_info_screen.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_state.dart';
@@ -85,7 +88,10 @@ class SettingsScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AccountInfoScreen(),
+                        builder: (context) => BlocProvider(
+                          create: (_) => getIt<AccountInfoCubit>(),
+                          child: AccountInfoScreen(),
+                        ),
                       ),
                     );
                   },
@@ -106,7 +112,10 @@ class SettingsScreen extends StatelessWidget {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => LoginScreen(),
+                            builder: (context) => BlocProvider(
+                              create: (_) => getIt<LoginCubit>(),
+                              child: LoginScreen(),
+                            ),
                           ),
                         );
                       },

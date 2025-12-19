@@ -1,42 +1,26 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/data/repositories/firebase_auth_%C4%B1mpl.dart';
-import 'package:rate_flag/features/RateFlag/data/repositories/firebase_firestore_%C4%B1mpl.dart';
-import 'package:rate_flag/features/RateFlag/data/repositories/firebase_storage_%C4%B1mpl.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/check_auth_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/create_post_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/create_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/delete_account_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/follow_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/forgot_password_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/load_all_post_user_usercase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/load_post_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/login_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/post_info_share_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/rate_the_image_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/sign_out_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/update_info_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/upload_image_storage_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/accountInfo/cubit/account_info_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/onboarding/cubit/onboarding_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/register/cubit/register_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/RateFlag/common/theme/app_theme.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/splash/cubit/splash_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/splash/view/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp();
 
-  runApp(const MyApp());
+  setupGetIt();
+
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<SplashCubit>(create: (_) => getIt<SplashCubit>()..init()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -44,106 +28,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authRepository = FirebaseAuthImpl();
-    final fireStore = FirebaseFirestoreImpl();
-    final storageRepository = FirebaseStorageImpl();
-    final checkAuthUsecase = CheckAuthUserUsecase(authRepository);
+    return MaterialApp(
+      title: 'RateFlag',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.system,
+      home: const SplashScreen(),
 
-    return MultiBlocProvider(
-      providers: [
-        // 1. Onboarding Cubit
-        BlocProvider<OnboardingCubit>(
-          create: (context) => OnboardingCubit(totalPageCount: 3),
-        ),
-        //2.Register Cubit
-        BlocProvider<RegisterCubit>(
-          create: (context) {
-            return RegisterCubit(CreateUserUsecase(fireStore, authRepository));
-          },
-        ),
-        //3.Login Cubit
-        BlocProvider<LoginCubit>(
-          create: (context) {
-            return LoginCubit(
-              LoginUserUsecase(authRepository),
-              ForgotPasswordUserUsecase(authRepository),
-            );
-          },
-        ),
-        //4.AccountInfo Cubit
-        BlocProvider<AccountInfoCubit>(
-          create: (context) {
-            return AccountInfoCubit(
-              UpdateInfoUserUsecase(fireStore),
-              DeleteAccountUserUsecase(fireStore, authRepository),
-            );
-          },
-        ),
-        //5. PoST cUBİT
-        BlocProvider<PostCubit>(
-          create: (context) {
-            return PostCubit(
-              CreatePostUserUsecase(fireStore),
-              UploadImageStorageUserUsecase(storageRepository),
-            );
-          },
-        ),
-
-        //6.Profile Cubit
-        BlocProvider<ProfileCubit>(
-          create: (context) {
-            return ProfileCubit(
-              LoadPostUserUsecase(fireStore),
-              FollowUserUsecase(fireStore),
-              UpdateInfoUserUsecase(fireStore),
-            );
-          },
-        ),
-
-        //7. Settings Cubit
-        BlocProvider<SettingsCubit>(
-          create: (context) {
-            return SettingsCubit(SignOutUserUsecase(authRepository));
-          },
-        ),
-
-        //8. Home Cubit
-        BlocProvider<HomeCubit>(
-          create: (context) {
-            final userId = FirebaseAuth.instance.currentUser!.uid;
-
-            return HomeCubit(
-              LoadAllPostsUsecase(fireStore),
-
-              userId,
-              RateTheImageUserUsecase(fireStore),
-            )..loadAllPosts();
-          },
-        ),
-        // 9. PostInfo Cubit
-        BlocProvider<PostInfoCubit>(
-          create: (context) => PostInfoCubit(
-            LoadPostUserUsecase(fireStore),
-            RateTheImageUserUsecase(fireStore),
-            FollowUserUsecase(fireStore),
-            PostInfoShareUserUsecase(),
-          ),
-        ),
-        // 9. Splash Cubit
-        BlocProvider(
-          create: (_) => SplashCubit(checkAuthUsecase)..startSplash(),
-        ),
-      ],
-
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: const SplashScreen(),
-      ),
+      builder: (context, child) {
+        ResponsiveConfig.init(context);
+        return child!;
+      },
     );
   }
 }

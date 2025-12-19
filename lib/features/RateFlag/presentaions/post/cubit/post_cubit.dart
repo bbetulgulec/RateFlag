@@ -1,92 +1,72 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:rate_flag/features/RateFlag/common/widget/toast_message.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/create_post_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/upload_image_storage_user_usecase.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/create_post.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/storage/upload_image_storage.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_state.dart';
 
 class PostCubit extends Cubit<PostState> {
-  final CreatePostUserUsecase createPostUserUsecase;
-  final UploadImageStorageUserUsecase uploadImageUsecase;
+  final CreatePost createPostUserUsecase;
+  final UploadImageStorage uploadImageUsecase;
 
   PostCubit(this.createPostUserUsecase, this.uploadImageUsecase)
-    : super(const PostState());
-  Future<void> createPost(Post post, BuildContext context) async {
-    // 🔹 Resim yoksa post oluşturma işlemini durdur
-    if (post.imageUrl == null || post.imageUrl!.isEmpty) {
-      ToastMessage.show(context, message: "Lütfen bir resim seçin");
+    : super(const PostState()) {
+    loadAllCities();
+  }
+
+  final ImagePicker picker = ImagePicker();
+
+  Future<void> createPost(Post post) async {
+    if (post.imageUrl == null) {
+      emit(
+        state.copyWith(
+          isCreatePostLoading: false,
+          isCreatePostSuccess: false,
+          errorMessage: "Lütfen bir resim seçin!",
+        ),
+      );
       return;
     }
-    print("createPost started: ${post.postId}");
+
     emit(state.copyWith(isCreatePostLoading: true));
+
     try {
-      final coords = await fetchCoordinates(
-        city: post.city,
-        district: post.district,
+      // Storage'a yükle
+      final uploadedImageUrl = await uploadImageUsecase.execute(
+        File(post.imageUrl!),
+        post.postId,
       );
 
-      String? uploadedImageUrl;
-      if (post.imageUrl != null) {
-        uploadedImageUrl = await uploadImageUsecase.execute(
-          File(post.imageUrl!),
-          post.postId,
+      if (uploadedImageUrl == null) {
+        emit(
+          state.copyWith(
+            isCreatePostLoading: false,
+            isCreatePostSuccess: false,
+            errorMessage: "Resim yüklenirken bir hata oluştu",
+          ),
         );
-
-        // 🔥 STORAGE URL'yi post nesnesine yaz
-        post = Post(
-          postId: post.postId,
-          userId: post.userId,
-          description: post.description,
-          imageUrl: uploadedImageUrl,
-          isPublic: post.isPublic,
-          date: post.date,
-          city: post.city,
-          district: post.district,
-          latitude: coords["latitude"]!,
-          longitude: coords["longitude"]!,
-          createdAt: DateTime.now(),
-        );
+        return;
       }
 
-      try {
-        await createPostUserUsecase.execute(
-          collection: "posts",
-          data: {
-            "postId": post.postId,
-            "userId": post.userId,
-            "description": post.description,
-            "imageUrl": uploadedImageUrl,
-            "isPublic": post.isPublic,
-            "date": post.date.toIso8601String(),
-            "city": post.city,
-            "district": post.district,
-            "latitude": post.latitude,
-            "longitude": post.longitude,
-            "createdAt": post.createdAt?.toIso8601String(),
-          },
-          post: post,
-        );
-        ToastMessage.show(context, message: "Post Paylaşıldı");
-        print("Post successfully saved to Firestore");
-      } catch (e) {
-        print("Firestore save failed: $e");
-      }
+      // Firestore'a kaydedilecek post objesi
+      final postToSave = post.copyWith(
+        imageUrl: uploadedImageUrl, // artık Storage URL
+        createdAt: DateTime.now(),
+      );
 
-      final homeCubit = context.read<HomeCubit>();
-      homeCubit.addPost(post);
+      await createPostUserUsecase.execute(post: postToSave);
+
       emit(
         state.copyWith(isCreatePostLoading: false, isCreatePostSuccess: true),
       );
+
+      print("Post başarıyla kaydedildi!");
     } catch (e) {
-      print("createPost ERROR: $e");
       emit(
         state.copyWith(
           isCreatePostLoading: false,
@@ -94,6 +74,7 @@ class PostCubit extends Cubit<PostState> {
           errorMessage: e.toString(),
         ),
       );
+      print("createPost ERROR: $e");
     }
   }
 
@@ -128,42 +109,44 @@ class PostCubit extends Cubit<PostState> {
     }
   }
 
-  Future<void> pickImage() async {
-    final picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+  Future<void> pickFromGallery() async {
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
 
-    if (image != null) {
-      emit(state.copyWith(selectedImage: File(image.path)));
+    if (pickedFile != null) {
+      emit(state.copyWith(selectedImage: File(pickedFile.path)));
     }
   }
 
-  Future<void> searchCities(String query) async {
-    if (query.length < 2) {
-      emit(state.copyWith(citySuggestions: []));
+  Future<void> pickFromCamera() async {
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
+
+    if (pickedFile != null) {
+      emit(state.copyWith(selectedImage: File(pickedFile.path)));
+    }
+  }
+
+  void searchCities(String query) {
+    final allCities = state.citySuggestions;
+
+    if (query.isEmpty) {
+      emit(state.copyWith(filteredCities: allCities));
       return;
     }
 
-    emit(state.copyWith(isCityLoading: true));
+    final filtered = allCities
+        .where(
+          (c) =>
+              c["name"].toString().toLowerCase().contains(query.toLowerCase()),
+        )
+        .toList();
 
-    final url = Uri.parse(
-      "https://turkiyeapi.dev/api/v1/provinces?name=$query",
-    );
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-
-        emit(
-          state.copyWith(citySuggestions: data["data"], isCityLoading: false),
-        );
-      } else {
-        emit(state.copyWith(isCityLoading: false));
-      }
-    } catch (e) {
-      emit(state.copyWith(isCityLoading: false));
-    }
+    emit(state.copyWith(filteredCities: filtered));
   }
 
   void selectCity(Map<String, dynamic> city) {
@@ -181,6 +164,31 @@ class PostCubit extends Cubit<PostState> {
         currentPage: state.currentPage + 1,
       ),
     );
+  }
+
+  Future<void> loadAllCities() async {
+    emit(state.copyWith(isCityLoading: true));
+
+    final url = Uri.parse("https://turkiyeapi.dev/api/v1/provinces");
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        emit(
+          state.copyWith(
+            citySuggestions: data["data"],
+            filteredCities: data["data"],
+            isCityLoading: false,
+          ),
+        );
+      } else {
+        emit(state.copyWith(isCityLoading: false));
+      }
+    } catch (_) {
+      emit(state.copyWith(isCityLoading: false));
+    }
   }
 
   void selectDistrict(String districtName) {

@@ -21,6 +21,7 @@ class PostState extends Equatable {
 
   //3.page
   final List<dynamic> citySuggestions;
+  final List<dynamic> filteredCities;
   final bool isCityLoading;
   final String? selectedCity;
 
@@ -41,6 +42,7 @@ class PostState extends Equatable {
     this.isPermissionGranted = false,
     this.isPermissionPermanentlyDenied = false,
     this.citySuggestions = const [],
+    this.filteredCities = const [],
     this.isCityLoading = false,
     this.selectedCity,
     this.selectedDistrict,
@@ -60,6 +62,7 @@ class PostState extends Equatable {
     bool? isPermissionGranted,
     bool? isPermissionPermanentlyDenied,
     List<dynamic>? citySuggestions,
+    List<dynamic>? filteredCities,
     bool? isCityLoading,
     String? selectedCity,
     String? selectedDistrict,
@@ -79,6 +82,7 @@ class PostState extends Equatable {
       isPermissionPermanentlyDenied:
           isPermissionPermanentlyDenied ?? this.isPermissionPermanentlyDenied,
       citySuggestions: citySuggestions ?? this.citySuggestions,
+      filteredCities: filteredCities ?? this.filteredCities,
       isCityLoading: isCityLoading ?? this.isCityLoading,
       selectedCity: selectedCity ?? this.selectedCity,
       selectedDistrict: selectedDistrict ?? this.selectedDistrict,
@@ -100,6 +104,7 @@ class PostState extends Equatable {
     isPermissionGranted,
     isPermissionPermanentlyDenied,
     citySuggestions,
+    filteredCities,
     isCityLoading,
     selectedCity,
     selectedDistrict,
