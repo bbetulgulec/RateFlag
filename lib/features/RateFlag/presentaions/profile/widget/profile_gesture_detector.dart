@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class ProfileGestureDetector extends StatelessWidget {
-  final VoidCallback? onTap; // Burayı onTap yap
+  final VoidCallback? onTap;
   final IconData icon;
   final int tabIndex;
-  final int index; // hangi tab ile karşılaştırılacak
+  final int index;
 
   const ProfileGestureDetector({
     super.key,
@@ -20,8 +21,10 @@ class ProfileGestureDetector extends StatelessWidget {
       onTap: onTap,
       child: Icon(
         icon,
-        color: tabIndex == index ? Colors.black : Colors.grey,
-        size: 28,
+        color: tabIndex == index
+            ? Theme.of(context).colorScheme.onSurface
+            : Theme.of(context).colorScheme.onSurfaceVariant,
+        size: 28.sp,
       ),
     );
   }

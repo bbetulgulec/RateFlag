@@ -1,23 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/utils/validators/validators.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
+import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/text_fields/custom_text_field.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/account_info/cubit/account_info_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/account_info/cubit/account_info_state.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/account_info/widget/account_info_form.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/functions/show_delete_dialog.dart';
+import 'package:rate_flag/features/RateFlag/common/widgets/dialog/common_delete_confirm_dialog.dart';
 
 class AccountInfoScreen extends StatelessWidget {
-  const AccountInfoScreen({super.key});
+  AccountInfoScreen({super.key});
+
+  final TextEditingController birthDateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AccountInfoCubit>();
     final userID = FirebaseAuth.instance.currentUser!.uid;
-    final showDeleteDialog = ShowDeleteDialog();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!cubit.state.isGetInfoSuccess && !cubit.state.isGetInfoLoading) {
@@ -26,10 +27,8 @@ class AccountInfoScreen extends StatelessWidget {
     });
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: RateFlagText.head2(text: "Profil Güncelleme"),
+        title: RateFlagText.head2(text: "Profil Güncelleme", context: context),
       ),
       body: BlocConsumer<AccountInfoCubit, AccountInfoState>(
         listener: (context, state) {
@@ -40,12 +39,14 @@ class AccountInfoScreen extends StatelessWidget {
           }
 
           if (state.isDeleteAccountSuccess) {
-            ScaffoldMessenger.of(
+            Navigator.push(
               context,
-            ).showSnackBar(const SnackBar(content: Text("Kullanıcı silindi")));
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => LoginScreen()),
+              MaterialPageRoute(
+                builder: (_) => BlocProvider(
+                  create: (_) => getIt<LoginCubit>(),
+                  child: LoginScreen(),
+                ),
+              ),
             );
           }
 
@@ -56,73 +57,60 @@ class AccountInfoScreen extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          if (state.isGetInfoLoading) {
-            return const Center(child: CircularProgressIndicator());
+          if (state.birthDate != null) {
+            birthDateController.text = state.birthDate!
+                .toIso8601String()
+                .split("T")
+                .first;
           }
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                CustomTextField(
-                  controller: cubit.firstNameController,
-                  label: "İsim :",
-                  validator: Validators.onlyLetters,
-                  keyboardType: TextInputType.text,
+          return Stack(
+            children: [
+              AccountInfoFormWidget(
+                key: ValueKey(
+                  '${state.firstName}-${state.lastName}-${state.email}-${state.gender}',
                 ),
-                const SizedBox(height: 20),
+                firstName: state.firstName,
+                lastName: state.lastName,
+                email: state.email,
+                gender: state.gender,
+                birthDateController: birthDateController,
+                isLoading: state.isUpdateInfoLoading,
 
-                CustomTextField(
-                  controller: cubit.lastNameController,
-                  label: "Soyisim :",
-                  validator: Validators.onlyLetters,
-                  keyboardType: TextInputType.text,
+                onFirstNameChanged: cubit.firstNameChanged,
+                onLastNameChanged: cubit.lastNameChanged,
+                onEmailChanged: cubit.emailChanged,
+                onBirthDateSelected: cubit.birthDateChanged,
+                onGenderChanged: (gender) {
+                  if (gender != null) {
+                    cubit.genderChanged(gender);
+                  }
+                },
+
+                onSavePressed: () => cubit.updateUser(userID),
+                onDeletePressed: () {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) => DeleteConfirmDialog(
+                      title: "Hesap Sil",
+                      content: "Hesabını silmek istediğine emin misin?",
+                      onConfirm: () {
+                        cubit.deleteUser(userID);
+                      },
+                    ),
+                  );
+                },
+              ),
+              if (state.isUpdateInfoLoading)
+                Container(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withAlpha(77),
+
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
-                const SizedBox(height: 20),
-
-                CustomTextField(
-                  controller: cubit.mailController,
-                  label: "E-posta :",
-                  validator: Validators.email,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 20),
-
-                CustomTextField(
-                  controller: cubit.dateController,
-                  label: "Doğum Tarihi :",
-                  validator: Validators.date,
-                  keyboardType: TextInputType.datetime,
-                  isDateField: true,
-                ),
-
-                const SizedBox(height: 40),
-
-                CustomElevatedButton.primary(
-                  text: state.isUpdateInfoLoading
-                      ? "Güncelleniyor..."
-                      : "Bilgileri Kaydet",
-                  onPressed: state.isUpdateInfoLoading
-                      ? null
-                      : () => cubit.updateUser(userID),
-                ),
-
-                const SizedBox(height: 20),
-
-                CustomElevatedButton.secondary(
-                  text: "Hesap Sil",
-                  onPressed: () {
-                    showDeleteDialog.showDeleteDialog(
-                      context,
-                      "Hesap Silme",
-                      "Hesabını silmek istediğine emin misin?",
-                      () => cubit.deleteUser(userID),
-                    );
-                  },
-                ),
-              ],
-            ),
+            ],
           );
         },
       ),

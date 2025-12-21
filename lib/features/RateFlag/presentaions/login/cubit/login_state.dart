@@ -3,28 +3,31 @@ import 'package:equatable/equatable.dart';
 enum LoginStatus { initial, loading, success, failure }
 
 class LoginState extends Equatable {
+  final String email;
+  final String password;
   final LoginStatus loginStatus;
-  final LoginStatus googleLoginStatus;
   final LoginStatus passwordResetStatus;
-
   final String? errorMessage;
 
   const LoginState({
+    this.email = '',
+    this.password = '',
     this.loginStatus = LoginStatus.initial,
-    this.googleLoginStatus = LoginStatus.initial,
     this.passwordResetStatus = LoginStatus.initial,
     this.errorMessage,
   });
 
   LoginState copyWith({
+    String? email,
+    String? password,
     LoginStatus? loginStatus,
-    LoginStatus? googleLoginStatus,
     LoginStatus? passwordResetStatus,
     String? errorMessage,
   }) {
     return LoginState(
+      email: email ?? this.email,
+      password: password ?? this.password,
       loginStatus: loginStatus ?? this.loginStatus,
-      googleLoginStatus: googleLoginStatus ?? this.googleLoginStatus,
       passwordResetStatus: passwordResetStatus ?? this.passwordResetStatus,
       errorMessage: errorMessage,
     );
@@ -32,8 +35,9 @@ class LoginState extends Equatable {
 
   @override
   List<Object?> get props => [
+    email,
+    password,
     loginStatus,
-    googleLoginStatus,
     passwordResetStatus,
     errorMessage,
   ];

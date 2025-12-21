@@ -8,6 +8,12 @@ class SettingsCubit extends Cubit<SettingsState> {
   SettingsCubit(this.signOutUserUsecase) : super(SettingsState());
 
   Future<void> signOut() async {
-    signOutUserUsecase.signOut();
+    emit(state.copyWith(isSignOutLoading: true, errorMessage: null));
+    try {
+      await signOutUserUsecase.signOut();
+      emit(state.copyWith(isSignOutLoading: false, isSignOutSuccess: true));
+    } catch (e) {
+      emit(state.copyWith(isSignOutLoading: false, errorMessage: e.toString()));
+    }
   }
 }

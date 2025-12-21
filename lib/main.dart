@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/theme/app_theme.dart';
+import 'package:rate_flag/features/RateFlag/core/notifications/local_notification_service.dart';
+import 'package:rate_flag/features/RateFlag/domain/repositories/notification_permission_repository.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/splash/cubit/splash_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/splash/view/splash_screen.dart';
 
@@ -12,6 +14,11 @@ Future<void> main() async {
   await Firebase.initializeApp();
 
   setupGetIt();
+  final notificationRepo = getIt<NotificationPermissionRepository>();
+
+  await notificationRepo.init();
+
+  await LocalNotificationService.init();
 
   runApp(
     MultiBlocProvider(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class RegisterDatePickerWidget extends StatelessWidget {
   final DateTime? selectedDate;
@@ -26,16 +27,18 @@ class RegisterDatePickerWidget extends StatelessWidget {
         }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: EdgeInsets.symmetric(vertical: 20.w, horizontal: 20.h),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(30),
+          ),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
           selectedDate == null
               ? "Doğum Tarihini Seç"
               : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
-          style: const TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 16.sp),
         ),
       ),
     );

@@ -1,37 +1,39 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/comment.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/add_comment_post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/create_comment.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/get_user_follow_data.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/get_Saved_post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/get_user_info.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/is_following.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_post_by_id.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_post_comments.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_post_comment.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_user_posts.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/toggle_follow.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/share_post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/rate_post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/toogle_saved_post.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/local/local_send_notification.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_state.dart';
-import 'package:rate_flag/features/RateFlag/domain/entity/user.dart' as MyUser;
+import 'package:rate_flag/features/RateFlag/domain/entity/user.dart' as myuser;
 
 class PostInfoCubit extends Cubit<PostInfoState> {
   final LoadUserPosts loadPostUserUsecase;
   final LoadPostById loadPostById;
   final IsFollowing isFollowing;
-  final GetUserFollowData getUserFollowData;
   final RatePost rateTheImageUserUsecase;
   final RatePost followUserUsecase;
   final GetUserInfo getUserInfo;
   final CreateComment createComment;
   final PostShare postInfoShareUserUsecase;
   final ToggleFollows toggleFollow;
-  final AddCommentPost addCommentPost;
-  final LoadPostComments loadPostComments;
   final ToggleSavedPost toggleSavedPost;
+  final GetSavedPosts getSavedPosts;
+  final LoadPostComment loadPostComments;
 
+  final LocalSendNotification localSendNotification;
   PostInfoCubit(
     this.loadPostUserUsecase,
     this.rateTheImageUserUsecase,
@@ -39,61 +41,141 @@ class PostInfoCubit extends Cubit<PostInfoState> {
     this.postInfoShareUserUsecase,
     this.toggleFollow,
     this.loadPostById,
-    this.getUserFollowData,
     this.isFollowing,
     this.getUserInfo,
     this.createComment,
-    this.addCommentPost,
-    this.loadPostComments,
     this.toggleSavedPost,
+    this.localSendNotification,
+    this.getSavedPosts,
+    this.loadPostComments,
   ) : super(PostInfoState());
 
+  final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+  Future<void> loadPostCommentsByPostId(String postId) async {
+    if (isClosed) return;
+    emit(state.copyWith(commentStatus: RequestStatus.loading));
+
+    try {
+      final comments = await loadPostComments.execute(postId: postId);
+      if (isClosed) return;
+      final Map<String, myuser.User> usersMap = {};
+
+      for (final comment in comments) {
+        if (!usersMap.containsKey(comment.userId)) {
+          final user = await getUserInfo.execute(comment.userId);
+          if (user != null) {
+            usersMap[comment.userId] = user;
+          }
+        }
+      }
+      if (isClosed) return;
+      emit(
+        state.copyWith(
+          commentStatus: RequestStatus.success,
+          comments: comments,
+          commentUsers: usersMap,
+        ),
+      );
+    } catch (e) {
+      if (isClosed) return;
+      emit(
+        state.copyWith(
+          commentStatus: RequestStatus.failure,
+          errorMessage: "Yorumlar yüklenemedi",
+        ),
+      );
+    }
+  }
+
+  Future<void> submitComment(String postId, String text) async {
+    if (text.trim().isEmpty) return;
+
+    final comment = Comment(
+      commentId: DateTime.now().millisecondsSinceEpoch.toString(),
+      postId: postId,
+      userId: currentUserId,
+      content: text.trim(),
+    );
+
+    try {
+      await createComment.execute(comment: comment);
+      await loadPostCommentsByPostId(postId);
+
+      final postOwner = state.user; // post sahibi zaten state’te var
+
+      if (postOwner != null) {
+        await localSendNotification.call(
+          title: "Yorum Gönderildi",
+          body:
+              "${postOwner.firstName} ${postOwner.lastName} kişisine yorum attın",
+        );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(
+          commentStatus: RequestStatus.failure,
+          errorMessage: "Yorum eklenemedi",
+        ),
+      );
+    }
+  }
+
   Future<void> loadPostInfo({required String postId}) async {
-    emit(state.copyWith(isLoadPostInfoLoading: true, errorMessage: null));
+    emit(
+      state.copyWith(postInfoStatus: RequestStatus.loading, errorMessage: null),
+    );
 
     try {
       // 1️⃣ Postu çek
       final post = await loadPostById.execute(postId);
+
       if (post == null) {
         emit(
           state.copyWith(
-            isLoadPostInfoLoading: false,
+            postInfoStatus: RequestStatus.failure,
             errorMessage: "Post bulunamadı",
           ),
         );
         return;
       }
 
+      final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
       // 2️⃣ Kullanıcıyı çek
-      final MyUser.User? user = await getUserInfo.execute(post.userId);
+      final myuser.User? user = await getUserInfo.execute(post.userId);
 
       if (user == null) {
         emit(
           state.copyWith(
-            isLoadPostInfoLoading: false,
+            postInfoStatus: RequestStatus.failure,
             errorMessage: "Kullanıcı bulunamadı",
           ),
         );
         return;
       }
-      final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-      // 3️⃣ State güncelle
+      // 3️⃣ Post + User state
+      if (isClosed) return;
       emit(
         state.copyWith(
+          postInfoStatus: RequestStatus.success,
           post: post,
           user: user,
           greenFlagCount: post.greenFlag,
           redFlagCount: post.redFlag,
           hasGreenFlag: post.flaggedBy?[currentUserId] == "green",
           hasRedFlag: post.flaggedBy?[currentUserId] == "red",
-          isLoadPostInfoLoading: false,
         ),
       );
+      // 🔥 BURASI EKSİKTİ
+      await loadPostCommentsByPostId(post.postId);
+
+      // ✅ 4️⃣ KAYDEDİLME DURUMUNU BURADA YÜKLE
+      await loadSavedStatus(post.postId);
     } catch (e) {
       emit(
         state.copyWith(
-          isLoadPostInfoLoading: false,
+          postInfoStatus: RequestStatus.failure,
           errorMessage: e.toString(),
         ),
       );
@@ -101,8 +183,6 @@ class PostInfoCubit extends Cubit<PostInfoState> {
   }
 
   Future<void> ratePost({required Post post, required bool isGreen}) async {
-    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-
     // UI için önceki değerler
     final prevGreen = state.greenFlagCount ?? post.greenFlag ?? 0;
     final prevRed = state.redFlagCount ?? post.redFlag ?? 0;
@@ -127,6 +207,11 @@ class PostInfoCubit extends Cubit<PostInfoState> {
       else
         newRed++;
     }
+
+    await localSendNotification.call(
+      title: "Oy Verildi ",
+      body: "Bir gönderiye ${isGreen ? 'yeşil' : 'kırmızı'} bayrak verdin",
+    );
 
     // UI güncelle
     emit(
@@ -160,11 +245,9 @@ class PostInfoCubit extends Cubit<PostInfoState> {
   }
 
   Future<void> handleToggleFollow(String targetUserId) async {
-    emit(state.copyWith(isFollowActionLoading: true));
+    emit(state.copyWith(followStatus: RequestStatus.loading));
 
     try {
-      final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-
       // Firestore’dan güncel durumu al
       final currentlyFollowing = await isFollowing.execute(
         currentUserId: currentUserId,
@@ -188,7 +271,7 @@ class PostInfoCubit extends Cubit<PostInfoState> {
 
       emit(
         state.copyWith(
-          isFollowActionLoading: false,
+          followStatus: RequestStatus.success,
           isFollowing: updatedFollowing,
           followMessage: updatedFollowing
               ? "Kullanıcı takip edildi"
@@ -200,23 +283,12 @@ class PostInfoCubit extends Cubit<PostInfoState> {
     } catch (e) {
       emit(
         state.copyWith(
-          isFollowActionLoading: false,
+          followStatus: RequestStatus.failure,
           errorMessage: "Takip işlemi başarısız oldu",
           followMessage: null,
         ),
       );
     }
-  }
-
-  Future<void> loadFollowStatus(String targetUserId) async {
-    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-
-    final following = await isFollowing.execute(
-      currentUserId: currentUserId,
-      targetUserId: targetUserId,
-    );
-
-    emit(state.copyWith(isFollowing: following));
   }
 
   Future<void> sharePost() async {
@@ -237,58 +309,29 @@ class PostInfoCubit extends Cubit<PostInfoState> {
     }
   }
 
-  Future<void> addComment(Comment comment) async {
-    emit(state.copyWith(isCommentLoading: true, errorMessage: null));
-
-    try {
-      // 1️⃣ Yorumu comments collection'a ekle
-      await createComment.execute(comment: comment);
-
-      // 2️⃣ Post içindeki commentId listesine ekle
-      await addCommentPost.execute(
-        postId: comment.postId,
-        commentId: comment.commentId,
-      );
-
-      // 3️⃣ UI güncelle
-      final updatedComments = List<Comment>.from(state.comments ?? [])
-        ..add(comment);
-
-      emit(state.copyWith(isCommentLoading: false, comments: updatedComments));
-    } catch (e) {
-      emit(
-        state.copyWith(
-          isCommentLoading: false,
-          errorMessage: "Yorum eklenemedi: $e",
-        ),
-      );
-    }
-  }
-
-  Future<MyUser.User?> fetchCommentUser(String userId) async {
+  Future<myuser.User?> fetchCommentUser(String userId) async {
     return await getUserInfo.execute(userId);
   }
 
-  Future<void> loadPostComment(Post post) async {
-    emit(state.copyWith(isCommentLoading: true));
+  Future<void> toggleSavePost(Post post) async {
+    final userId = currentUserId;
+
+    // ⚡ Anında UI
+    emit(state.copyWith(isSaved: !state.isSaved));
 
     try {
-      final comments = await loadPostComments.execute(
-        commentIds: List<String>.from(post.comments ?? []),
-      );
-
-      emit(state.copyWith(isCommentLoading: false, comments: comments));
+      await toggleSavedPost.execute(userId: userId, postId: post.postId);
     } catch (e) {
-      emit(state.copyWith(isCommentLoading: false));
+      // ❌ hata olursa geri al
+      emit(state.copyWith(isSaved: !state.isSaved));
     }
   }
 
-  Future<void> toggleSavePost(Post post) async {
-    final userId = FirebaseAuth.instance.currentUser!.uid;
+  Future<void> loadSavedStatus(String postId) async {
+    final userId = currentUserId;
 
-    await toggleSavedPost.execute(userId: userId, postId: post.postId);
+    final savedPosts = await getSavedPosts.execute(userId: userId);
 
-    final updatedUser = await getUserInfo.execute(userId);
-    emit(state.copyWith(user: updatedUser));
+    emit(state.copyWith(isSaved: savedPosts.contains(postId)));
   }
 }

@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
+import 'package:rate_flag/features/RateFlag/common/widgets/buttons/common_icon_button.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/filter_page/cubit/filter_page_cubit.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/filter_page/view/filter_page_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/widget/tabItem.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/notificaiton/cubit/notification_cubit.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/notificaiton/view/notification_screen.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
@@ -15,9 +21,20 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       surfaceTintColor: Colors.transparent,
       shadowColor: Colors.transparent,
       centerTitle: true,
-
-      leading: const Icon(Icons.notifications_none, color: Colors.black),
-
+      leading: CommonIconButton(
+        icon: Icons.notifications_none,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                create: (_) => getIt<NotificationCubit>(),
+                child: NotificationScreen(),
+              ),
+            ),
+          );
+        },
+      ),
       title: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           return Row(
@@ -26,29 +43,32 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               Tabitem(
                 title: "Haritalar",
                 isActive: state.selectedTab == HomeTab.map,
-                onTap: () {
-                  context.read<HomeCubit>().selectMap();
-                },
+                onTap: () => context.read<HomeCubit>().selectMap(),
               ),
-
               const SizedBox(width: 20),
-
               Tabitem(
                 title: "Senin için ",
                 isActive: state.selectedTab == HomeTab.forYou,
-                onTap: () {
-                  context.read<HomeCubit>().selectForYou();
-                },
+                onTap: () => context.read<HomeCubit>().selectForYou(),
               ),
             ],
           );
         },
       ),
-
       actions: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.search, color: Colors.black),
+        CommonIconButton(
+          icon: Icons.search,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => BlocProvider(
+                  create: (_) => getIt<FilterPageCubit>()..loadAllUsers(),
+                  child: const FilterPage(),
+                ),
+              ),
+            );
+          },
         ),
       ],
     );

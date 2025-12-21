@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class SettingCard extends StatelessWidget {
   final IconData icon;
@@ -17,34 +18,39 @@ class SettingCard extends StatelessWidget {
     this.onTap,
     this.isDestructive = false,
   });
-
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    final iconClr = isDestructive
+        ? colors.error
+        : (iconColor ?? colors.primary);
+
     return InkWell(
       borderRadius: BorderRadius.circular(14),
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 14.w),
         decoration: BoxDecoration(
-          color: isDestructive ? Colors.red.shade50 : Colors.white,
+          color: isDestructive
+              ? colors.error.withAlpha(80)
+              : colors.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(color: colors.outlineVariant.withAlpha(60)),
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: (iconColor ?? Colors.deepPurpleAccent).withOpacity(.1),
+                color: iconClr.withAlpha(12),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: isDestructive ? Colors.red : (iconColor ?? Colors.blue),
-              ),
+              child: Icon(icon, color: iconClr),
             ),
 
-            const SizedBox(width: 14),
+            SizedBox(width: 14.w),
 
             Expanded(
               child: Column(
@@ -52,26 +58,23 @@ class SettingCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDestructive ? Colors.red : Colors.black,
+                      color: isDestructive ? colors.error : colors.onSurface,
                     ),
                   ),
                   if (subtitle != null)
                     Text(
                       subtitle!,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey.shade600,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                 ],
               ),
             ),
 
-            // ARROW
-            const Icon(Icons.chevron_right, color: Colors.grey),
+            Icon(Icons.chevron_right, color: colors.onSurfaceVariant),
           ],
         ),
       ),

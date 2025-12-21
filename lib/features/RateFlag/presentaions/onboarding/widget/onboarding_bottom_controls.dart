@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/cubit/onboarding_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/onboarding/widget/onboarding_button.dart';
 

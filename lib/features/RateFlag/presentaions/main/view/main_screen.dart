@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/main/cubit/main_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/main/cubit/main_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/view/home_screen.dart';
@@ -29,7 +30,7 @@ class MainScreen extends StatelessWidget {
             extendBody: true,
             body: pages[state.currentIndex],
             floatingActionButton: FloatingActionButton(
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               elevation: 4,
               onPressed: () {
                 Navigator.push(
@@ -42,7 +43,7 @@ class MainScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: const Icon(Icons.add, color: Colors.deepPurple, size: 30),
+              child: Icon(Icons.add, color: Colors.white, size: 30.sp),
             ),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,

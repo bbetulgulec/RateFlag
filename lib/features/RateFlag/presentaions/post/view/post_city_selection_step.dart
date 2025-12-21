@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/text_fields/custom_text_field.dart';
@@ -13,30 +14,26 @@ class PostCitySelectionStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<PostCubit>();
-    final cityController = TextEditingController();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (cubit.state.citySuggestions.isEmpty) {
-        cubit.searchCities("");
-      }
-    });
 
     return BlocBuilder<PostCubit, PostState>(
       builder: (context, state) {
         return Column(
           children: [
-            RateFlagText.head2(text: "Sizi nerede bulabiliriz ?"),
+            RateFlagText.head2(
+              text: "Sizi nerede bulabiliriz ?",
+              context: context,
+            ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             CustomTextField(
-              controller: cityController,
+              initialValue: state.cityQuery,
               icon: Icons.search,
               keyboardType: TextInputType.text,
-              onChanged: cubit.searchCities,
+              onChanged: cubit.onCityQueryChanged,
               label: 'Şehir ara',
             ),
 
-            const SizedBox(height: 15),
+            SizedBox(height: 15.h),
 
             if (state.isCityLoading) const CircularProgressIndicator(),
 
@@ -46,19 +43,24 @@ class PostCitySelectionStep extends StatelessWidget {
                   itemCount: state.filteredCities.length,
                   itemBuilder: (context, index) {
                     final item = state.filteredCities[index];
+
                     return ListTile(
                       title: Text(item["name"]),
-                      onTap: () => cubit.selectCity(item),
+                      onTap: () {
+                        cubit.selectCity(cityName: item["name"] ?? "");
+                      },
                     );
                   },
                 ),
               ),
 
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
 
             CustomElevatedButton.primary(
               text: "Devam",
-              onPressed: state.selectedCity == null
+              onPressed:
+                  (state.draftPost?.city == null ||
+                      state.draftPost!.city.isEmpty)
                   ? null
                   : () => cubit.nextPage(),
             ),

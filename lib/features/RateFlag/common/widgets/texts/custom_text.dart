@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class RateFlagText extends StatelessWidget {
   final String text;
@@ -16,38 +17,77 @@ class RateFlagText extends StatelessWidget {
     this.fontSize = 16,
   });
 
-  /// Faded Italic
-  factory RateFlagText.fadedItalic({Key? key, required String text}) {
+  factory RateFlagText.fadedItalic({
+    Key? key,
+    required String text,
+    required BuildContext context,
+  }) {
     return RateFlagText(
       key: key,
       text: text,
+
       isItalic: true,
-      color: Colors.black54,
+      color: Theme.of(context).colorScheme.onSurface.withAlpha(60),
     );
   }
 
   /// Head1
-  factory RateFlagText.head1({Key? key, required String text}) {
+  factory RateFlagText.head1({
+    Key? key,
+    required String text,
+    required BuildContext context,
+  }) {
     return RateFlagText(
       key: key,
       text: text,
       isBold: true,
-      fontSize: 28,
-      color: Colors.deepPurple,
+      fontSize: 28.sp,
+      color: Theme.of(context).colorScheme.primary,
     );
   }
 
   /// Head2
-  factory RateFlagText.head2({Key? key, required String text}) {
+  factory RateFlagText.head2({
+    Key? key,
+    required String text,
+    required BuildContext context,
+  }) {
     return RateFlagText(
       key: key,
       text: text,
       isBold: true,
-      fontSize: 24,
-      color: Colors.black87,
+      fontSize: 24.sp,
+      color: Theme.of(context).colorScheme.onSurface,
     );
   }
 
+  factory RateFlagText.head3({
+    Key? key,
+    required String text,
+    required BuildContext context,
+  }) {
+    return RateFlagText(
+      key: key,
+      text: text,
+      isBold: true,
+      fontSize: 14.sp,
+      color: Theme.of(context).colorScheme.onSurface,
+    );
+  }
+
+  factory RateFlagText.head4({
+    Key? key,
+    required String text,
+    required BuildContext context,
+  }) {
+    return RateFlagText(
+      key: key,
+      text: text,
+      isBold: true,
+      fontSize: 12.sp,
+      color: Theme.of(context).colorScheme.onSurface,
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Text(

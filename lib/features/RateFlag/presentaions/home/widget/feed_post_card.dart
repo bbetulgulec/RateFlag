@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/widget/self_post_badget.dart';
 
 class FeedPostCard extends StatelessWidget {
   final String? imageUrl;
   final bool isSelfPost;
-  final String viewCount;
   final bool isBig;
   final VoidCallback? onPressed;
 
@@ -13,7 +13,6 @@ class FeedPostCard extends StatelessWidget {
     super.key,
     this.imageUrl,
     required this.isSelfPost,
-    required this.viewCount,
     required this.isBig,
     this.onPressed,
   });
@@ -45,7 +44,7 @@ class FeedPostCard extends StatelessWidget {
             ),
 
             if (isSelfPost)
-              const Positioned(top: 8, left: 8, child: SelfPostBadget()),
+              Positioned(top: 8.h, left: 8.h, child: SelfPostBadget()),
           ],
         ),
       ),

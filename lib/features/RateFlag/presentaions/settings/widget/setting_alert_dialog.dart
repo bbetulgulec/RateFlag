@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class SettingAlertDialog extends StatelessWidget {
   final String title;
@@ -15,7 +16,7 @@ class SettingAlertDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(title),
       content: SingleChildScrollView(
-        child: Text(content, style: const TextStyle(fontSize: 14)),
+        child: Text(content, style: TextStyle(fontSize: 14.sp)),
       ),
       actions: [
         TextButton(

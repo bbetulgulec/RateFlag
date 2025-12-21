@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
-import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/view/post_info_screen.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/follow_list/view/follow_list_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_avatar.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_buid_count.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_gesture_detector.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_grid_view.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_icon_widget.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_image_picker_sheet.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_posts_empty.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_post_content.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/view/settings_screen.dart';
 
@@ -25,10 +23,9 @@ class ProfileScreen extends StatelessWidget {
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: Colors.white,
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.h),
               child: Column(
                 children: [
                   Align(
@@ -49,7 +46,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
 
                   ProfileAvatar(
                     radius: 45,
@@ -66,11 +63,12 @@ class ProfileScreen extends StatelessWidget {
                     },
                   ),
 
-                  const SizedBox(height: 25),
+                  SizedBox(height: 25.h),
 
                   RateFlagText.head2(
                     text:
                         "${state.user?.firstName ?? ""} ${state.user?.lastName ?? ""}",
+                    context: context,
                   ),
 
                   const SizedBox(height: 20),
@@ -82,24 +80,50 @@ class ProfileScreen extends StatelessWidget {
                         label: "Posts",
                         count: "${state.postCount}",
                       ),
+
                       ProfileBuildCount(
                         label: "Followers",
                         count: "${state.followersCount}",
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => FollowListScreen(
+                                title: "Followers",
+                                userIds: state.followers,
+                              ),
+                            ),
+                          );
+                        },
                       ),
+
                       ProfileBuildCount(
                         label: "Following",
                         count: "${state.followingCount}",
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => FollowListScreen(
+                                title: "Following",
+                                userIds: state.following,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 35),
+                  SizedBox(height: 35.h),
 
                   Container(
-                    height: 45,
+                    height: 45.h,
                     decoration: BoxDecoration(
                       border: Border(
-                        bottom: BorderSide(color: Colors.grey.shade300),
+                        bottom: BorderSide(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                        ),
                       ),
                     ),
                     child: Row(
@@ -127,7 +151,7 @@ class ProfileScreen extends StatelessWidget {
                   Expanded(
                     child: state.isPostLoading
                         ? const Center(child: CircularProgressIndicator())
-                        : _buildPostContent(context, state),
+                        : ProfilePostContent(state: state),
                   ),
                 ],
               ),
@@ -137,36 +161,4 @@ class ProfileScreen extends StatelessWidget {
       },
     );
   }
-}
-
-Widget _buildPostContent(BuildContext context, ProfileState state) {
-  List<Post> postsToShow = state.tabIndex == 0
-      ? state.publicPosts
-      : state.savedPost;
-
-  if (postsToShow.isEmpty) {
-    return ProfilePostsEmpty(
-      mainText: state.tabIndex == 0 ? "No posts yet 👎" : "No saved posts ⭐",
-      subText: state.tabIndex == 0
-          ? "They will show up here"
-          : "Posts you save will appear here",
-      icon: state.tabIndex == 0 ? Icons.hourglass_empty : Icons.bookmark_border,
-    );
-  }
-
-  return ProfileGridView(
-    posts: postsToShow,
-    lottieAsset: 'assets/lottie/image_loading.json',
-    onTap: (post) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => getIt<PostInfoCubit>(),
-            child: PostInfoScreen(postId: post.postId),
-          ),
-        ),
-      );
-    },
-  );
 }

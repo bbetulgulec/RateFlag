@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class Tabitem extends StatelessWidget {
   final String title;
@@ -10,9 +11,10 @@ class Tabitem extends StatelessWidget {
     required this.isActive,
     required this.onTap,
   });
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -21,16 +23,20 @@ class Tabitem extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              color: Colors.black,
+              color: theme.brightness == Brightness.light
+                  ? Colors.black
+                  : Colors.white, // Light siyah, Dark beyaz
               fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4.h),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            height: 2,
-            width: isActive ? 24 : 0,
-            color: Colors.black,
+            height: 2.h,
+            width: isActive ? 24.w : 0,
+            color: theme.brightness == Brightness.light
+                ? Colors.black
+                : Colors.white,
           ),
         ],
       ),

@@ -16,7 +16,7 @@ class LoginUser {
 
       return user;
     } catch (e) {
-      throw Exception("Giriş yapılamadı. Bilgileri kontrol edin.");
+      throw Exception("Giriş yapılamadı. Mailden epostayı onaylayın");
     }
   }
 }

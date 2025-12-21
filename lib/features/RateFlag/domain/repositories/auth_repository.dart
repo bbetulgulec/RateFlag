@@ -1,7 +1,8 @@
 import 'package:rate_flag/features/RateFlag/domain/entity/user.dart';
 
 abstract class AuthRepository {
-  Future<User> register(String email, String password);
+  Future<String> register(String email, String password);
+  Future<void> sendEmailVerification();
   Future<bool> checkEmailVerified();
   Future<User?> login(String email, String password);
 

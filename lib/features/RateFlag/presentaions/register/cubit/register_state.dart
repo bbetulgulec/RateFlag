@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/user.dart';
 
 class RegisterState extends Equatable {
   final bool isRegisterLoading;
@@ -6,6 +7,11 @@ class RegisterState extends Equatable {
   final bool isEmailVerified;
   final String? errorMessage;
 
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String password;
+  final Gender? gender;
   final DateTime? birthDate;
 
   const RegisterState({
@@ -13,6 +19,11 @@ class RegisterState extends Equatable {
     this.isRegisterSuccess = false,
     this.isEmailVerified = false,
     this.errorMessage,
+    this.firstName = '',
+    this.lastName = '',
+    this.email = '',
+    this.password = '',
+    this.gender,
     this.birthDate,
   });
 
@@ -21,14 +32,24 @@ class RegisterState extends Equatable {
     bool? isRegisterSuccess,
     bool? isEmailVerified,
     String? errorMessage,
+    String? firstName,
+    String? lastName,
+    String? email,
+    String? password,
     DateTime? birthDate,
+    Gender? gender,
   }) {
     return RegisterState(
       isRegisterLoading: isRegisterLoading ?? this.isRegisterLoading,
       isRegisterSuccess: isRegisterSuccess ?? this.isRegisterSuccess,
       isEmailVerified: isEmailVerified ?? this.isEmailVerified,
       errorMessage: errorMessage ?? this.errorMessage,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      email: email ?? this.email,
+      password: password ?? this.password,
       birthDate: birthDate ?? this.birthDate,
+      gender: gender ?? this.gender,
     );
   }
 
@@ -38,6 +59,11 @@ class RegisterState extends Equatable {
     isRegisterSuccess,
     isEmailVerified,
     errorMessage,
+    firstName,
+    lastName,
+    email,
+    password,
     birthDate,
+    gender,
   ];
 }

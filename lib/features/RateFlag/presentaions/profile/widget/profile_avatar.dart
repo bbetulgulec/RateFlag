@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class ProfileAvatar extends StatelessWidget {
   final double radius;
@@ -32,23 +33,15 @@ class ProfileAvatar extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: radius,
-            backgroundColor: Colors.grey.shade300,
             backgroundImage: backgroundImage,
-            child: backgroundImage == null
-                ? Icon(Icons.person, size: radius * 1.3, color: Colors.white)
-                : null,
+            child: backgroundImage == null ? Icon(Icons.person) : null,
           ),
           Positioned(
-            bottom: 0,
-            right: 4,
+            bottom: 0.h,
+            right: 10.h,
             child: CircleAvatar(
-              radius: radius / 3,
-              backgroundColor: Colors.blue,
-              child: Icon(
-                Icons.camera_alt,
-                size: radius / 2.5,
-                color: Colors.white,
-              ),
+              radius: radius / 4,
+              child: Icon(Icons.camera_alt, size: radius / 3),
             ),
           ),
         ],

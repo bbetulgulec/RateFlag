@@ -8,19 +8,37 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   RegisterCubit(this.createUserUsecase) : super(const RegisterState());
 
+  void firstNameChanged(String value) => emit(state.copyWith(firstName: value));
+
+  void lastNameChanged(String value) => emit(state.copyWith(lastName: value));
+
+  void emailChanged(String value) => emit(state.copyWith(email: value));
+
+  void passwordChanged(String value) => emit(state.copyWith(password: value));
+
   void setBirthDate(DateTime date) {
     emit(state.copyWith(birthDate: date));
   }
 
-  Future<void> register(
-    String firstName,
-    String lastName,
-    String mail,
-    DateTime birthDate,
-    String password,
-  ) async {
+  void setGender(Gender gender) => emit(state.copyWith(gender: gender));
+
+  Future<void> register() async {
+    // 🔎 VALIDATION
+    if (state.firstName.isEmpty ||
+        state.lastName.isEmpty ||
+        state.email.isEmpty ||
+        state.password.isEmpty) {
+      emit(state.copyWith(errorMessage: "Tüm alanları doldur"));
+      return;
+    }
+
     if (state.birthDate == null) {
       emit(state.copyWith(errorMessage: "Doğum tarihini seçmelisin"));
+      return;
+    }
+
+    if (state.gender == null) {
+      emit(state.copyWith(errorMessage: "Cinsiyet seçmelisin"));
       return;
     }
 
@@ -28,34 +46,27 @@ class RegisterCubit extends Cubit<RegisterState> {
 
     final user = User(
       uid: "",
-      firstName: firstName,
-      lastName: lastName,
-      mail: mail,
-      birthDate: birthDate,
-      password: password,
+      firstName: state.firstName,
+      lastName: state.lastName,
+      mail: state.email,
+      birthDate: state.birthDate!,
+      password: state.password,
+      gender: state.gender!,
     );
 
     try {
+      // 1️⃣ AUTH + FIRESTORE
       await createUserUsecase.execute(user);
 
-      final verified = await createUserUsecase.authRepository
-          .checkEmailVerified();
-      if (!verified) {
-        emit(
-          state.copyWith(
-            isRegisterLoading: false,
-            isEmailVerified: false,
-            errorMessage: "Lütfen e-postanızı doğrulayın",
-          ),
-        );
-        return;
-      }
+      // 2️⃣ EMAIL DOĞRULAMA GÖNDER
+      await createUserUsecase.authRepository.sendEmailVerification();
 
+      // 3️⃣ LOGIN’E GEÇ
       emit(
         state.copyWith(
           isRegisterLoading: false,
           isRegisterSuccess: true,
-          isEmailVerified: true,
+          errorMessage: "Lütfen e-postanızı doğrulayın",
         ),
       );
     } catch (e) {

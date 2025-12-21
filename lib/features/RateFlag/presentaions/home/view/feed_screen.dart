@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_all_post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/rate_post.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
@@ -38,7 +39,7 @@ class FeedScreen extends StatelessWidget {
           return Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8.sp),
               child: RefreshIndicator(
                 onRefresh: () async {
                   await context.read<HomeCubit>().loadAllPosts();
@@ -56,16 +57,16 @@ class FeedScreen extends StatelessWidget {
                       imageUrl: post.imageUrl,
                       isSelfPost: post.userId == currentUserId,
                       isBig: isBig,
-                      viewCount: "9.9K",
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) => BlocProvider(
-                              create: (_) => getIt<PostInfoCubit>(),
-                              child: PostInfoScreen(
-                                postId: post.postId,
-                              ), // ✅ postId gönderiliyor
+                              create: (_) =>
+                                  getIt<PostInfoCubit>()
+                                    ..loadPostInfo(postId: post.postId),
+
+                              child: PostInfoScreen(postId: post.postId),
                             ),
                           ),
                         );

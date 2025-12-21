@@ -1,92 +1,90 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
 
 class PostState extends Equatable {
   final bool isCreatePostLoading;
   final bool isCreatePostSuccess;
   final String? errorMessage;
-  final String? description;
-  final double? latitude;
-  final double? longitude;
+
+  final Post? draftPost;
 
   //1.page
-  final bool? isPublic;
+
   final int currentPage;
 
   //2.page
   final File? selectedImage;
   final bool isPermissionGranted;
   final bool isPermissionPermanentlyDenied;
+  final String cityQuery;
 
   //3.page
   final List<dynamic> citySuggestions;
   final List<dynamic> filteredCities;
   final bool isCityLoading;
-  final String? selectedCity;
+  final String districtQuery;
 
   //4.page
-  final String? selectedDistrict;
+
   final List<dynamic> filteredDistricts;
 
   const PostState({
     this.isCreatePostLoading = false,
     this.isCreatePostSuccess = false,
     this.errorMessage,
-    this.description,
-    this.latitude,
-    this.longitude,
-    this.isPublic,
+
     this.currentPage = 0,
     this.selectedImage,
     this.isPermissionGranted = false,
     this.isPermissionPermanentlyDenied = false,
+    this.cityQuery = '',
     this.citySuggestions = const [],
     this.filteredCities = const [],
     this.isCityLoading = false,
-    this.selectedCity,
-    this.selectedDistrict,
+    this.districtQuery = '',
+
     this.filteredDistricts = const [],
+    this.draftPost,
   });
 
   PostState copyWith({
     bool? isCreatePostLoading,
     bool? isCreatePostSuccess,
     String? errorMessage,
-    String? description,
-    double? latitude,
-    double? longitude,
-    bool? isPublic,
+
     int? currentPage,
     File? selectedImage,
     bool? isPermissionGranted,
     bool? isPermissionPermanentlyDenied,
+    String? cityQuery,
     List<dynamic>? citySuggestions,
     List<dynamic>? filteredCities,
     bool? isCityLoading,
-    String? selectedCity,
-    String? selectedDistrict,
+    String? districtQuery,
+
     List<dynamic>? filteredDistricts,
+    Post? draftPost,
   }) {
     return PostState(
       isCreatePostLoading: isCreatePostLoading ?? this.isCreatePostLoading,
       isCreatePostSuccess: isCreatePostSuccess ?? this.isCreatePostSuccess,
       errorMessage: errorMessage ?? this.errorMessage,
-      description: description ?? this.description,
-      latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude,
-      isPublic: isPublic ?? this.isPublic,
+
       currentPage: currentPage ?? this.currentPage,
       selectedImage: selectedImage ?? this.selectedImage,
       isPermissionGranted: isPermissionGranted ?? this.isPermissionGranted,
       isPermissionPermanentlyDenied:
           isPermissionPermanentlyDenied ?? this.isPermissionPermanentlyDenied,
+      cityQuery: cityQuery ?? this.cityQuery,
       citySuggestions: citySuggestions ?? this.citySuggestions,
       filteredCities: filteredCities ?? this.filteredCities,
       isCityLoading: isCityLoading ?? this.isCityLoading,
-      selectedCity: selectedCity ?? this.selectedCity,
-      selectedDistrict: selectedDistrict ?? this.selectedDistrict,
+      districtQuery: districtQuery ?? this.districtQuery,
+
       filteredDistricts: filteredDistricts ?? this.filteredDistricts,
+      draftPost: draftPost ?? this.draftPost,
     );
   }
 
@@ -95,19 +93,17 @@ class PostState extends Equatable {
     isCreatePostLoading,
     isCreatePostSuccess,
     errorMessage,
-    description,
-    latitude,
-    longitude,
-    isPublic,
+
     currentPage,
     selectedImage,
     isPermissionGranted,
     isPermissionPermanentlyDenied,
+    cityQuery,
     citySuggestions,
     filteredCities,
     isCityLoading,
-    selectedCity,
-    selectedDistrict,
+    districtQuery,
     filteredDistricts,
+    draftPost,
   ];
 }

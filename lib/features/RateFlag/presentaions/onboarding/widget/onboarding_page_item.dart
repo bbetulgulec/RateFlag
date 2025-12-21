@@ -32,10 +32,9 @@ class OnboardingPageItem extends StatelessWidget {
 
         return SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            padding: EdgeInsets.symmetric(horizontal: 20.h),
             child: Column(
               children: [
-                // 🔹 ÜST (SKIP)
                 Align(
                   alignment: Alignment.topRight,
                   child: !isLastPage && isActivePage
@@ -51,22 +50,24 @@ class OnboardingPageItem extends StatelessWidget {
                               ),
                             );
                           },
-                          child: RateFlagText.fadedItalic(text: "Skip"),
+                          child: RateFlagText.fadedItalic(
+                            text: "Skip",
+                            context: context,
+                          ),
                         )
                       : const SizedBox.shrink(),
                 ),
 
-                // 🔹 ORTA ALAN
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset(
-                        model["image"]!,
-                        height: 350.h, // 🔥 ekrana göre
+                      SvgPicture.asset(model["image"]!, height: 300.h),
+                      SizedBox(height: 30.h),
+                      RateFlagText.fadedItalic(
+                        text: model["text"]!,
+                        context: context,
                       ),
-                      SizedBox(height: 24.h),
-                      RateFlagText.fadedItalic(text: model["text"]!),
                     ],
                   ),
                 ),
@@ -74,7 +75,7 @@ class OnboardingPageItem extends StatelessWidget {
                 // 🔹 ALT KONTROLLER
                 if (isActivePage)
                   Padding(
-                    padding: EdgeInsets.only(bottom: 16.h),
+                    padding: EdgeInsets.only(bottom: 30.h),
                     child: OnboardingBottomControls(
                       index: index,
                       isLastPage: isLastPage,

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
 
 class ProfileGridView extends StatelessWidget {
   final List<Post> posts;
   final String lottieAsset;
-  final void Function(Post post)? onTap; // <-- buraya post parametresi eklendi
+  final void Function(Post post)? onTap;
 
   const ProfileGridView({
     super.key,
@@ -21,10 +22,9 @@ class ProfileGridView extends StatelessWidget {
       itemBuilder: (context, index) {
         final post = posts[index];
         return ClipRRect(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(1),
           child: InkWell(
-            onTap: () =>
-                onTap?.call(post), // <-- tıklanacak post burada veriliyor
+            onTap: () => onTap?.call(post),
             child: Image.network(
               post.imageUrl ?? "",
               fit: BoxFit.cover,
@@ -33,8 +33,8 @@ class ProfileGridView extends StatelessWidget {
                 return Center(
                   child: Lottie.asset(
                     lottieAsset,
-                    width: 50,
-                    height: 50,
+                    width: 50.w,
+                    height: 50.h,
                     fit: BoxFit.cover,
                   ),
                 );

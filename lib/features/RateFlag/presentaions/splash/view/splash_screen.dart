@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/assets_path.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/main/cubit/main_cubit.dart';
@@ -44,9 +45,7 @@ class SplashScreen extends StatelessWidget {
           }
         }
       },
-      child: Scaffold(
-        body: Center(child: Lottie.asset('assets/lottie/splash.json')),
-      ),
+      child: Scaffold(body: Center(child: Lottie.asset(AssetsPath.splash))),
     );
   }
 }

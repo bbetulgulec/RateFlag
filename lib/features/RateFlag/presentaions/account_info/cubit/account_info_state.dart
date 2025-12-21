@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/entity/user.dart'; // User modelini import et
+import '../../../domain/entity/user.dart';
 
 class AccountInfoState extends Equatable {
   final bool isGetInfoLoading;
@@ -9,10 +9,15 @@ class AccountInfoState extends Equatable {
   final bool isUpdateInfoSuccess;
 
   final String? errorMessage;
-  final User? user; // artık User modeli
 
   final bool isDeleteAccountLoading;
   final bool isDeleteAccountSuccess;
+
+  final String firstName;
+  final String lastName;
+  final String email;
+  final DateTime? birthDate;
+  final Gender? gender;
 
   const AccountInfoState({
     this.isGetInfoLoading = false,
@@ -20,9 +25,14 @@ class AccountInfoState extends Equatable {
     this.isGetInfoSuccess = false,
     this.isUpdateInfoSuccess = false,
     this.errorMessage,
-    this.user,
+
     this.isDeleteAccountLoading = false,
     this.isDeleteAccountSuccess = false,
+    this.firstName = '',
+    this.lastName = '',
+    this.email = '',
+    this.birthDate,
+    this.gender,
   });
 
   AccountInfoState copyWith({
@@ -31,9 +41,14 @@ class AccountInfoState extends Equatable {
     bool? isGetInfoSuccess,
     bool? isUpdateInfoSuccess,
     String? errorMessage,
-    User? user,
+
     bool? isDeleteAccountLoading,
     bool? isDeleteAccountSuccess,
+    String? firstName,
+    String? lastName,
+    String? email,
+    DateTime? birthDate,
+    Gender? gender,
   }) {
     return AccountInfoState(
       isGetInfoLoading: isGetInfoLoading ?? this.isGetInfoLoading,
@@ -41,11 +56,16 @@ class AccountInfoState extends Equatable {
       isGetInfoSuccess: isGetInfoSuccess ?? this.isGetInfoSuccess,
       isUpdateInfoSuccess: isUpdateInfoSuccess ?? this.isUpdateInfoSuccess,
       errorMessage: errorMessage ?? this.errorMessage,
-      user: user ?? this.user,
+
       isDeleteAccountLoading:
           isDeleteAccountLoading ?? this.isDeleteAccountLoading,
       isDeleteAccountSuccess:
           isDeleteAccountSuccess ?? this.isDeleteAccountSuccess,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      email: email ?? this.email,
+      birthDate: birthDate ?? this.birthDate,
+      gender: gender ?? this.gender,
     );
   }
 
@@ -56,8 +76,13 @@ class AccountInfoState extends Equatable {
     isGetInfoSuccess,
     isUpdateInfoSuccess,
     errorMessage,
-    user,
+
     isDeleteAccountLoading,
     isDeleteAccountSuccess,
+    firstName,
+    lastName,
+    email,
+    birthDate,
+    gender,
   ];
 }

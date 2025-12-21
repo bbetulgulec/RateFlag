@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/theme/app_color.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/app_color.dart';
+import 'package:rate_flag/features/RateFlag/common/theme/text_field_theme.dart';
 
 class AppTheme {
   static ThemeData dark = ThemeData(
@@ -14,6 +15,8 @@ class AppTheme {
       error: AppColors.redFlag,
       onSurface: AppColors.textPrimary,
     ),
+
+    inputDecorationTheme: AppTextFieldTheme.dark,
 
     scaffoldBackgroundColor: AppColors.surface,
   );
@@ -30,6 +33,8 @@ class AppTheme {
       error: AppColors.redFlag,
       onSurface: Colors.black,
     ),
+
+    inputDecorationTheme: AppTextFieldTheme.light,
 
     scaffoldBackgroundColor: Colors.white,
   );

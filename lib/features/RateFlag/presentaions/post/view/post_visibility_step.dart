@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_state.dart';
@@ -13,15 +14,16 @@ class PostVisibilityStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<PostCubit, PostState>(
       builder: (context, state) {
-        final postCubit = context.read<PostCubit>();
-
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-            RateFlagText.head2(text: "Kiminle paylaşmak istersiniz?"),
+            RateFlagText.head2(
+              text: "Kiminle paylaşmak istersiniz?",
+              context: context,
+            ),
 
-            const SizedBox(height: 40),
+            SizedBox(height: 40.h),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -30,28 +32,30 @@ class PostVisibilityStep extends StatelessWidget {
                   child: PageCard(
                     icon: Icons.lock,
                     title: "Yalnızca Kendime",
-                    isSelected: state.isPublic == false,
-                    onTap: () => postCubit.setPublic(false),
+                    isSelected: state.draftPost?.isPublic == false,
+                    onTap: () => context.read<PostCubit>().setPublic(false),
                   ),
                 ),
-                const SizedBox(width: 20),
+                SizedBox(width: 20.h),
                 Expanded(
                   child: PageCard(
                     icon: Icons.public,
                     title: "Başka Birine",
-                    isSelected: state.isPublic == true,
-                    onTap: () => postCubit.setPublic(true),
+                    isSelected: state.draftPost?.isPublic == true,
+                    onTap: () => context.read<PostCubit>().setPublic(true),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 40),
+            SizedBox(height: 40.h),
 
             CustomElevatedButton.primary(
               text: "Devam",
-              onPressed: () {
-                postCubit.nextPage();
-              },
+              onPressed: state.draftPost?.isPublic == null
+                  ? null
+                  : () {
+                      context.read<PostCubit>().nextPage();
+                    },
             ),
           ],
         );

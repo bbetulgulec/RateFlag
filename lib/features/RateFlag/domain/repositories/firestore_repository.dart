@@ -13,17 +13,17 @@ abstract class FirestoreRepository {
     required String postId,
     required String commentId,
   });
-  Future<List<Comment>> getCommentsByIds(List<String> commentIds);
   Future<List<Post>> loadUserPosts(String userId);
   Future<List<Post>> loadUserPrivatePosts(String userId);
   Future<List<Post>> loadAllPosts();
-
+  Future<List<String>> getSavedPosts({required String userId});
   Future<void> incrementFlag({
     required String userId,
     required String postOwnerId,
     required Post post,
     required bool isGreen,
   });
+  Future<List<Comment>> getCommentsByPostId(String postId);
   Future<Post?> getPostById(String postId);
   Future<User?> getUserById(String userId);
   Future<void> followUser({
@@ -39,9 +39,14 @@ abstract class FirestoreRepository {
     required String targetUserId,
   });
 
+  Future<List<User>> searchUserByFirstName(String name);
   Future<void> toggleSavedPost({
     required String userId,
     required String postId,
   });
   Future<List<Post>> getSavedPostsByIds(List<String> postIds);
+
+  Future<List<Post>> loadPostsByCity(String city);
+
+  Future<List<User>> getAllUsers();
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class ProfileIconWidget extends StatelessWidget {
   final IconData icon;
@@ -16,14 +17,14 @@ class ProfileIconWidget extends StatelessWidget {
     required IconData icon,
     VoidCallback? onPressed,
   }) {
-    return ProfileIconWidget(icon: icon, onPressed: onPressed, size: 24);
+    return ProfileIconWidget(icon: icon, onPressed: onPressed, size: 24.sp);
   }
 
   factory ProfileIconWidget.big({
     required IconData icon,
     VoidCallback? onPressed,
   }) {
-    return ProfileIconWidget(icon: icon, onPressed: onPressed, size: 90);
+    return ProfileIconWidget(icon: icon, onPressed: onPressed, size: 90.sp);
   }
 
   @override

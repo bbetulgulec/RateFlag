@@ -1,37 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/utils/validators/validators.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/text_fields/custom_text_field.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/user.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/register/widget/register_gender_radio_group.dart';
 
 class RegisterFormWidget extends StatelessWidget {
   const RegisterFormWidget({
     super.key,
     required this.formKey,
-    required this.firstNameController,
-    required this.lastNameController,
-    required this.emailController,
-    required this.dateController,
-    required this.passwordController,
-    required this.repeatPasswordController,
     required this.isLoading,
+    required this.onFirstNameChanged,
+    required this.onLastNameChanged,
+    required this.onEmailChanged,
+    required this.onPasswordChanged,
+    required this.onChanged,
+    required this.selectedGender,
+    required this.birthDateController,
+
+    required this.onRepeatPasswordChanged,
     required this.onBirthDateSelected,
     required this.onRegisterPressed,
     required this.onAlreadyHaveAccount,
   });
 
   final GlobalKey<FormState> formKey;
-
-  final TextEditingController firstNameController;
-  final TextEditingController lastNameController;
-  final TextEditingController emailController;
-  final TextEditingController dateController;
-  final TextEditingController passwordController;
-  final TextEditingController repeatPasswordController;
-
   final bool isLoading;
-
+  final Gender? selectedGender;
+  final ValueChanged<Gender?> onChanged;
+  final ValueChanged<String> onFirstNameChanged;
+  final ValueChanged<String> onLastNameChanged;
+  final ValueChanged<String> onEmailChanged;
+  final ValueChanged<String> onPasswordChanged;
+  final ValueChanged<String> onRepeatPasswordChanged;
   final ValueChanged<DateTime> onBirthDateSelected;
+
+  final TextEditingController birthDateController;
+
   final VoidCallback onRegisterPressed;
   final VoidCallback onAlreadyHaveAccount;
 
@@ -42,61 +49,66 @@ class RegisterFormWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          RateFlagText.head1(text: "Kayıt ol"),
-          const SizedBox(height: 30),
+          RateFlagText.head1(text: "Kayıt ol", context: context),
+          SizedBox(height: 30.h),
 
           CustomTextField(
-            controller: firstNameController,
             label: "İsim",
-            validator: Validators.onlyLetters,
             keyboardType: TextInputType.text,
+            validator: Validators.onlyLetters,
+            onChanged: onFirstNameChanged,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
 
           CustomTextField(
-            controller: lastNameController,
             label: "Soyisim",
-            validator: Validators.onlyLetters,
             keyboardType: TextInputType.text,
+            validator: Validators.onlyLetters,
+            onChanged: onLastNameChanged,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
 
           CustomTextField(
-            controller: emailController,
             label: "E-posta",
             keyboardType: TextInputType.emailAddress,
             validator: Validators.email,
+            onChanged: onEmailChanged,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
 
           CustomTextField(
-            controller: dateController,
-            label: "Doğum Tarihi (YYYY-MM-DD)",
+            controller: birthDateController,
+
+            label: "Doğum Tarihi",
             isDateField: true,
+            keyboardType: TextInputType.datetime,
             validator: Validators.date,
             onDateSelected: onBirthDateSelected,
-            keyboardType: TextInputType.datetime,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
+
+          GenderRadioGroup(
+            selectedGender: selectedGender,
+            onChanged: onChanged,
+          ),
 
           CustomTextField(
-            controller: passwordController,
             label: "Şifre",
             isPassword: true,
-            validator: Validators.password,
             keyboardType: TextInputType.visiblePassword,
+            validator: Validators.password,
+            onChanged: onPasswordChanged,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
 
           CustomTextField(
-            controller: repeatPasswordController,
             label: "Şifre (Tekrar)",
             isPassword: true,
-            validator: (value) =>
-                Validators.passwordMatch(value, passwordController.text),
             keyboardType: TextInputType.visiblePassword,
+            validator: Validators.password,
+            onChanged: onRepeatPasswordChanged,
           ),
-          const SizedBox(height: 30),
+          SizedBox(height: 30.h),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class CommonImagePicker extends StatelessWidget {
   final File? selectedImage;
@@ -58,11 +59,19 @@ class CommonImagePicker extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: Colors.grey[300],
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: selectedImage == null
-            ? Icon(Icons.image, size: 60, color: Colors.grey[600])
+            ? Icon(
+                Icons.image,
+                size: 60.sp,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurfaceVariant.withAlpha(100),
+              )
             : ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.file(selectedImage!, fit: BoxFit.cover),

@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+enum Gender { male, female }
+
 class User extends Equatable {
   final String uid;
   final String firstName;
@@ -7,6 +9,7 @@ class User extends Equatable {
   final String mail;
   final DateTime birthDate;
   final String password;
+  final Gender gender;
   final String? photoUrl;
   final List? followers;
   final List? following;
@@ -19,6 +22,7 @@ class User extends Equatable {
     required this.mail,
     required this.birthDate,
     required this.password,
+    required this.gender,
     this.photoUrl,
     this.followers,
     this.following,
@@ -36,6 +40,10 @@ class User extends Equatable {
           ? DateTime.tryParse(json['birthDate']) ?? DateTime.now()
           : DateTime.now(),
       password: '',
+      gender: Gender.values.firstWhere(
+        (e) => e.name == json['gender'],
+        orElse: () => Gender.male,
+      ),
       photoUrl: json['photoUrl'],
       followers: json['followers'],
       following: json['following'],
@@ -53,6 +61,7 @@ class User extends Equatable {
       'lastName': lastName,
       'mail': mail,
       'birthDate': birthDate.toIso8601String(),
+      'gender': gender.name,
       'photoUrl': photoUrl,
       'followers': followers,
       'following': following,
@@ -67,6 +76,7 @@ class User extends Equatable {
     String? mail,
     DateTime? birthDate,
     String? password,
+    Gender? gender,
     String? photoUrl,
     List? followers,
     List? following,
@@ -79,6 +89,7 @@ class User extends Equatable {
       mail: mail ?? this.mail,
       birthDate: birthDate ?? this.birthDate,
       password: password ?? this.password,
+      gender: gender ?? this.gender,
       photoUrl: photoUrl ?? this.photoUrl,
       followers: followers ?? this.followers,
       following: following ?? this.following,
@@ -93,6 +104,7 @@ class User extends Equatable {
     lastName,
     mail,
     birthDate,
+    gender,
     password,
     photoUrl,
     followers,

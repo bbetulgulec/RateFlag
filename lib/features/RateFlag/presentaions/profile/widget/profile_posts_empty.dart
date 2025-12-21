@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class ProfilePostsEmpty extends StatelessWidget {
   final String mainText;
@@ -17,14 +18,23 @@ class ProfilePostsEmpty extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, size: 45, color: Colors.grey),
+        Icon(
+          icon,
+          size: 45.sp,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
         const SizedBox(height: 10),
         Text(
           mainText,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
-        Text(subText, style: const TextStyle(color: Colors.grey)),
+        SizedBox(height: 5.h),
+        Text(
+          subText,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
       ],
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/common_image_picker.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
@@ -20,8 +21,11 @@ class PostImagePickerStep extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RateFlagText.fadedItalic(text: "Yüklemek için resim seçin"),
-              SizedBox(height: 20),
+              RateFlagText.fadedItalic(
+                text: "Yüklemek için resim seçin",
+                context: context,
+              ),
+              SizedBox(height: 20.h),
 
               CommonImagePicker(
                 selectedImage: state.selectedImage,
@@ -29,7 +33,7 @@ class PostImagePickerStep extends StatelessWidget {
                 onPickFromCamera: cubit.pickFromCamera,
               ),
 
-              SizedBox(height: 40),
+              SizedBox(height: 40.h),
 
               CustomElevatedButton.secondary(
                 text: "Devam",

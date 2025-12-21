@@ -9,14 +9,20 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
 
   @override
   Future<void> createUser(String collection, User user) async {
-    await firestore.collection(collection).doc(user.uid).set({
-      "userID": user.uid,
-      "firstName": user.firstName,
-      "lastName": user.lastName,
-      "mail": user.mail,
-      "birthDate": user.birthDate.toIso8601String(),
-      "createdAt": FieldValue.serverTimestamp(),
-    });
+    try {
+      await firestore.collection(collection).doc(user.uid).set({
+        "userID": user.uid,
+        "firstName": user.firstName,
+        "lastName": user.lastName,
+        "mail": user.mail,
+        "gender": user.gender.name,
+        "birthDate": user.birthDate.toIso8601String(),
+        "createdAt": FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print("🔥 FIRESTORE CREATE USER ERROR: $e");
+      rethrow;
+    }
   }
 
   @override
@@ -31,6 +37,17 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
       print("getUserInfo ERROR: $e");
       return null;
     }
+  }
+
+  @override
+  Future<List<User>> searchUserByFirstName(String name) async {
+    final query = await firestore
+        .collection("users")
+        .where("firstName", isGreaterThanOrEqualTo: name)
+        .where("firstName", isLessThanOrEqualTo: "$name\uf8ff")
+        .get();
+
+    return query.docs.map((e) => User.fromJson(e.data())).toList();
   }
 
   @override
@@ -130,6 +147,7 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
     });
   }
 
+  @override
   Future<void> addCommentIdToPost({
     required String postId,
     required String commentId,
@@ -139,12 +157,20 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
     });
   }
 
-  Future<List<Comment>> getCommentsByIds(List<String> commentIds) async {
-    if (commentIds.isEmpty) return [];
+  @override
+  Future<List<String>> getSavedPosts({required String userId}) async {
+    final snap = await firestore.collection("users").doc(userId).get();
 
+    if (!snap.exists) return [];
+
+    return List<String>.from(snap.data()?['postSaved'] ?? []);
+  }
+
+  @override
+  Future<List<Comment>> getCommentsByPostId(String postId) async {
     final snapshot = await firestore
         .collection("comments")
-        .where(FieldPath.documentId, whereIn: commentIds)
+        .where("postId", isEqualTo: postId)
         .get();
 
     return snapshot.docs
@@ -180,7 +206,7 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
     final snap = await firestore
         .collection("posts")
         .where("userId", isEqualTo: userId)
-        .where("isPublic", isEqualTo: false) // 🔥 PRIVATE
+        .where("isPublic", isEqualTo: false)
         .orderBy("createdAt", descending: true)
         .get();
 
@@ -377,5 +403,29 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
 
       return Post.fromFirestore(data);
     }).toList();
+  }
+
+  @override
+  Future<List<Post>> loadPostsByCity(String city) async {
+    final snapshot = await firestore
+        .collection("posts")
+        .where("isPublic", isEqualTo: true)
+        .where("city", isEqualTo: city)
+        .orderBy("createdAt", descending: true)
+        .get();
+
+    return snapshot.docs.map((doc) => Post.fromFirestore(doc.data())).toList();
+  }
+
+  @override
+  Future<List<User>> getAllUsers() async {
+    try {
+      final snapshot = await firestore.collection("users").get();
+
+      return snapshot.docs.map((doc) => User.fromJson(doc.data())).toList();
+    } catch (e) {
+      print("getAllUsers ERROR: $e");
+      return [];
+    }
   }
 }

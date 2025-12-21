@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/user.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/auth/delete_account.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/get_user_info.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/update_user_info.dart';
@@ -10,26 +10,31 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
   final DeleteAccount deleteAccountUsecase;
   final GetUserInfo getUserInfoUsecase;
 
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
-  final mailController = TextEditingController();
-  final dateController = TextEditingController();
-
   AccountInfoCubit(
     this.updateUserInfoUsecase,
     this.deleteAccountUsecase,
     this.getUserInfoUsecase,
   ) : super(const AccountInfoState());
 
-  // ------------------ HELPERS ------------------
-
-  String _formatDate(DateTime date) {
-    return "${date.day.toString().padLeft(2, '0')}/"
-        "${date.month.toString().padLeft(2, '0')}/"
-        "${date.year}";
+  void firstNameChanged(String value) {
+    emit(state.copyWith(firstName: value));
   }
 
-  // ------------------ LOAD USER ------------------
+  void lastNameChanged(String value) {
+    emit(state.copyWith(lastName: value));
+  }
+
+  void emailChanged(String value) {
+    emit(state.copyWith(email: value));
+  }
+
+  void birthDateChanged(DateTime date) {
+    emit(state.copyWith(birthDate: date));
+  }
+
+  void genderChanged(Gender gender) {
+    emit(state.copyWith(gender: gender));
+  }
 
   Future<void> loadUser(String userID) async {
     emit(state.copyWith(isGetInfoLoading: true, errorMessage: null));
@@ -47,18 +52,15 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
         return;
       }
 
-      // Controller'ları doldur
-      firstNameController.text = user.firstName;
-      lastNameController.text = user.lastName;
-      mailController.text = user.mail;
-      dateController.text = _formatDate(user.birthDate);
-
-      // ✅ EN KRİTİK SATIR
       emit(
         state.copyWith(
           isGetInfoLoading: false,
           isGetInfoSuccess: true,
-          user: user,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.mail,
+          birthDate: user.birthDate,
+          gender: user.gender,
         ),
       );
     } catch (e) {
@@ -71,15 +73,7 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
     }
   }
 
-  // ------------------ UPDATE USER ------------------
-
   Future<void> updateUser(String userID) async {
-    final currentUser = state.user;
-    if (currentUser == null) {
-      emit(state.copyWith(errorMessage: "Kullanıcı bilgisi bulunamadı"));
-      return;
-    }
-
     emit(
       state.copyWith(
         isUpdateInfoLoading: true,
@@ -89,22 +83,20 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
     );
 
     try {
-      final updatedUser = currentUser.copyWith(
-        firstName: firstNameController.text.trim(),
-        lastName: lastNameController.text.trim(),
-        mail: mailController.text.trim(),
-        // birthDate UI’dan seçildiği için state’te zaten DateTime
-        birthDate: currentUser.birthDate,
+      final updatedUser = User(
+        uid: userID,
+        firstName: state.firstName.trim(),
+        lastName: state.lastName.trim(),
+        mail: state.email.trim(),
+        birthDate: state.birthDate!,
+        gender: state.gender!,
+        password: '',
       );
 
       await updateUserInfoUsecase.execute(updatedUser);
 
       emit(
-        state.copyWith(
-          isUpdateInfoLoading: false,
-          isUpdateInfoSuccess: true,
-          user: updatedUser,
-        ),
+        state.copyWith(isUpdateInfoLoading: false, isUpdateInfoSuccess: true),
       );
     } catch (e) {
       emit(
@@ -115,8 +107,6 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
       );
     }
   }
-
-  // ------------------ DELETE USER ------------------
 
   Future<void> deleteUser(String userID) async {
     emit(state.copyWith(isDeleteAccountLoading: true, errorMessage: null));
@@ -138,16 +128,5 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
         ),
       );
     }
-  }
-
-  // ------------------ CLEANUP ------------------
-
-  @override
-  Future<void> close() {
-    firstNameController.dispose();
-    lastNameController.dispose();
-    mailController.dispose();
-    dateController.dispose();
-    return super.close();
   }
 }

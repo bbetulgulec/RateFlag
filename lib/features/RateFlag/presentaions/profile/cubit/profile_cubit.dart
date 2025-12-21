@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:rate_flag/features/RateFlag/domain/repositories/firestore_repository.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/get_user_info.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_user_posts.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_saved_posts.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/update_user_info.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/storage/upload_profile_image.dart';
 
@@ -17,14 +16,12 @@ class ProfileCubit extends Cubit<ProfileState> {
   final UpdateUserInfo updateUserInfo;
   final UploadProfileImage uploadProfileImage;
   final LoadUserPosts loadUserPosts;
-  final LoadSavedPosts loadUserPrivatePosts;
   final FirestoreRepository firestoreRepository;
   ProfileCubit(
     this.getUserInfo,
     this.updateUserInfo,
     this.uploadProfileImage,
     this.loadUserPosts,
-    this.loadUserPrivatePosts,
     this.firestoreRepository,
   ) : super(const ProfileState()) {
     _loadInitial();
@@ -42,9 +39,24 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> loadUser(String uid) async {
     final user = await getUserInfo.execute(uid);
-    if (user != null) {
-      emit(state.copyWith(user: user));
-    }
+    if (user == null) return;
+
+    final followersList = (user.followers ?? [])
+        .map((e) => e.toString())
+        .toList();
+    final followingList = (user.following ?? [])
+        .map((e) => e.toString())
+        .toList();
+
+    emit(
+      state.copyWith(
+        user: user,
+        followers: followersList,
+        following: followingList,
+        followersCount: followersList.length,
+        followingCount: followingList.length,
+      ),
+    );
   }
 
   Future<void> loadAllPosts(String uid) async {

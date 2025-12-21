@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/account_info/cubit/account_info_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/account_info/view/account_info_screen.dart';
@@ -8,8 +9,8 @@ import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit
 import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_state.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/functions/show_delete_dialog.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/functions/show_setting_dialog.dart';
+import 'package:rate_flag/features/RateFlag/common/widgets/dialog/common_delete_confirm_dialog.dart';
+import 'package:rate_flag/features/RateFlag/presentaions/settings/widget/setting_dialog.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/settings/widget/setting_card.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -17,15 +18,11 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ShowSettingDialog showSettingDialog = ShowSettingDialog();
-    ShowDeleteDialog showDeleteDialog = ShowDeleteDialog();
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: Align(
           alignment: AlignmentGeometry.topLeft,
-          child: RateFlagText.head2(text: "Ayarlar"),
+          child: RateFlagText.head2(text: "Ayarlar", context: context),
         ),
       ),
       body: BlocConsumer<SettingsCubit, SettingsState>(
@@ -34,51 +31,67 @@ class SettingsScreen extends StatelessWidget {
             return CircularProgressIndicator();
           }
           return Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.0.h),
             child: Column(
               children: [
                 Align(
                   alignment: AlignmentGeometry.topLeft,
-                  child: RateFlagText.fadedItalic(text: "Destek"),
+                  child: RateFlagText.fadedItalic(
+                    text: "Destek",
+                    context: context,
+                  ),
                 ),
-                const SizedBox(height: 25),
+                SizedBox(height: 25.h),
+
                 SettingCard(
                   icon: Icons.description_outlined,
                   iconColor: Colors.deepPurple,
                   title: "Terms of Service",
                   onTap: () {
-                    showSettingDialog.showSettingDialog(
-                      context,
-                      "Terms of Service",
-                      "1. This app is provided “as is” without warranties.\n2. Users are responsible for content shared in the app.\n3. Premium purchases are non-refundable unless required by law.\n4. Misuse may result in account suspension.\n5. Using the app means you accept the latest Terms.",
+                    showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (_) => const SettingDialog(
+                        title: "Terms of Service",
+                        content:
+                            "1. This app is provided “as is” without warranties.\n2. Users are responsible for content shared in the app.\n3. Premium purchases are non-refundable unless required by law.\n4. Misuse may result in account suspension.\n5. Using the app means you accept the latest Terms.",
+                      ),
                     );
                   },
                 ),
-                const SizedBox(height: 15),
+
+                SizedBox(height: 15.h),
 
                 SettingCard(
                   icon: Icons.lock_outline,
                   iconColor: Colors.deepPurple,
                   title: "Privacy Policy",
                   onTap: () {
-                    showSettingDialog.showSettingDialog(
-                      context,
-                      "Privacy Policy",
-                      """
+                    showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (_) => const SettingDialog(
+                        title: "Privacy Policy",
+                        content: """
 • We collect basic analytics to improve the app.
 • Personal information is stored securely.
 • We do not sell your data to third parties.
 • You may request data deletion at any time.
 """,
+                      ),
                     );
                   },
                 ),
-                const SizedBox(height: 25),
+
+                SizedBox(height: 25.h),
                 Align(
                   alignment: AlignmentGeometry.topLeft,
-                  child: RateFlagText.fadedItalic(text: "Hesap"),
+                  child: RateFlagText.fadedItalic(
+                    text: "Hesap",
+                    context: context,
+                  ),
                 ),
-                const SizedBox(height: 25),
+                SizedBox(height: 25.h),
 
                 SettingCard(
                   icon: Icons.settings_accessibility,
@@ -96,29 +109,22 @@ class SettingsScreen extends StatelessWidget {
                     );
                   },
                 ),
-                const SizedBox(height: 15),
+                SizedBox(height: 15.h),
                 SettingCard(
                   icon: Icons.exit_to_app,
                   iconColor: Colors.deepPurple,
-                  title: "Çıkıs yap",
+                  title: "Çıkış yap",
                   onTap: () {
-                    showDeleteDialog.showDeleteDialog(
-                      context,
-                      "Çıkış yap",
-                      "Çıkış yapılsın mı ?",
-                      () {
-                        context.read<SettingsCubit>().signOut();
-
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BlocProvider(
-                              create: (_) => getIt<LoginCubit>(),
-                              child: LoginScreen(),
-                            ),
-                          ),
-                        );
-                      },
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (_) => DeleteConfirmDialog(
+                        title: "Çıkış yap",
+                        content: "Çıkış yapılsın mı ?",
+                        onConfirm: () {
+                          context.read<SettingsCubit>().signOut();
+                        },
+                      ),
                     );
                   },
                 ),
@@ -134,7 +140,12 @@ class SettingsScreen extends StatelessWidget {
               );
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
+                MaterialPageRoute(
+                  builder: (context) => BlocProvider(
+                    create: (_) => getIt<LoginCubit>(),
+                    child: LoginScreen(),
+                  ),
+                ),
               );
             }
           } catch (e) {

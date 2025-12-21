@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class PageCard extends StatelessWidget {
   final IconData icon;
@@ -19,8 +20,8 @@ class PageCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 130,
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+        width: 130.w,
+        padding: EdgeInsets.symmetric(vertical: 20.w, horizontal: 12.h),
         decoration: BoxDecoration(
           color: isSelected ? Colors.blue.shade50 : Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -30,7 +31,7 @@ class PageCard extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withAlpha(50),
               blurRadius: 4,
               offset: Offset(0, 2),
             ),
@@ -41,15 +42,15 @@ class PageCard extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 32,
+              size: 32.sp,
               color: isSelected ? Colors.blue : Colors.grey.shade700,
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 10.h),
             Text(
               title,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 15.sp,
                 fontWeight: FontWeight.w600,
                 color: isSelected ? Colors.blue : Colors.black,
               ),

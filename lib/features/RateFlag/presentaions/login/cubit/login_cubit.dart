@@ -10,11 +10,20 @@ class LoginCubit extends Cubit<LoginState> {
   LoginCubit(this.loginUserUsecase, this.forgotPasswordUserUsecase)
     : super(const LoginState());
 
-  Future<void> login(String email, String password) async {
-    emit(state.copyWith(loginStatus: LoginStatus.loading, errorMessage: null));
+  void emailChanged(String email) => emit(state.copyWith(email: email));
 
+  void passwordChanged(String password) =>
+      emit(state.copyWith(password: password));
+
+  Future<void> login() async {
+    if (state.email.isEmpty || state.password.isEmpty) {
+      emit(state.copyWith(errorMessage: "E-posta ve şifre boş olamaz"));
+      return;
+    }
+
+    emit(state.copyWith(loginStatus: LoginStatus.loading, errorMessage: null));
     try {
-      await loginUserUsecase.execute(email, password);
+      await loginUserUsecase.execute(state.email.trim(), state.password.trim());
 
       emit(state.copyWith(loginStatus: LoginStatus.success));
     } catch (e) {
@@ -27,7 +36,12 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
-  Future<void> forgotPassword(String email) async {
+  Future<void> forgotPassword() async {
+    if (state.email.isEmpty) {
+      emit(state.copyWith(errorMessage: "Lütfen e-posta giriniz"));
+      return;
+    }
+
     emit(
       state.copyWith(
         passwordResetStatus: LoginStatus.loading,
@@ -36,7 +50,7 @@ class LoginCubit extends Cubit<LoginState> {
     );
 
     try {
-      await forgotPasswordUserUsecase.execute(email);
+      await forgotPasswordUserUsecase.execute(state.email.trim());
 
       emit(state.copyWith(passwordResetStatus: LoginStatus.success));
     } catch (e) {

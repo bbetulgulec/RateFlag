@@ -1,33 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class CustomElevatedButtonText extends StatelessWidget {
   final String text;
-  final Color color;
+  final bool isPrimary;
+
   const CustomElevatedButtonText({
     super.key,
     required this.text,
-    required this.color,
+    this.isPrimary = true,
   });
 
-  factory CustomElevatedButtonText.primary({
-    required String text,
-    VoidCallback? onPressed,
-  }) {
-    return CustomElevatedButtonText(text: text, color: Colors.white);
+  /// Primary button
+  factory CustomElevatedButtonText.primary({required String text}) {
+    return CustomElevatedButtonText(text: text, isPrimary: true);
   }
 
-  factory CustomElevatedButtonText.secondary({
-    required String text,
-    VoidCallback? onPressed,
-  }) {
-    return CustomElevatedButtonText(text: text, color: Colors.deepPurple);
+  /// Secondary button
+  factory CustomElevatedButtonText.secondary({required String text}) {
+    return CustomElevatedButtonText(text: text, isPrimary: false);
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = isPrimary
+        ? theme.colorScheme.onPrimary
+        : theme.colorScheme.primary;
+
     return Text(
       text,
-      style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600),
+      style: TextStyle(
+        color: color,
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w600,
+      ),
     );
   }
 }

@@ -6,23 +6,23 @@ class FirebaseAuthImpl extends AuthRepository {
   final fb.FirebaseAuth auth = fb.FirebaseAuth.instance;
 
   @override
-  Future<User> register(String email, String password) async {
+  Future<String> register(String email, String password) async {
     final credential = await auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
 
     await auth.setLanguageCode("tr");
-    await credential.user!.sendEmailVerification();
 
-    return User(
-      uid: credential.user!.uid,
-      firstName: "",
-      lastName: "",
-      mail: email,
-      birthDate: DateTime.now(),
-      password: password,
-    );
+    return credential.user!.uid;
+  }
+
+  @override
+  Future<void> sendEmailVerification() async {
+    final user = auth.currentUser;
+    if (user != null && !user.emailVerified) {
+      await user.sendEmailVerification();
+    }
   }
 
   @override
@@ -56,6 +56,7 @@ class FirebaseAuthImpl extends AuthRepository {
       mail: fbUser.email ?? "",
       birthDate: DateTime.now(),
       password: "",
+      gender: Gender.female,
     );
   }
 
@@ -71,6 +72,7 @@ class FirebaseAuthImpl extends AuthRepository {
       mail: fbUser.email ?? "",
       birthDate: DateTime.now(),
       password: "",
+      gender: Gender.female,
     );
   }
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   // 🔮 Brand / Primary
   static const Color primary = Color(0xFF673AB7); // DeepPurple
-  static const Color secondary = Color(0xFF9C27B0);
+  static const Color secondary = Color.fromARGB(255, 169, 81, 185);
 
   // 🧱 Surfaces (Material 3 uyumlu)
   static const Color surface = Color(0xFF121212);

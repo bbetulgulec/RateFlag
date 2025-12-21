@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/text_fields/custom_text_field.dart';
@@ -13,14 +14,14 @@ class PostDistrictSelectionStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<PostCubit>();
-    final districtController = TextEditingController();
 
     return BlocBuilder<PostCubit, PostState>(
       builder: (context, state) {
         final districts = state.filteredDistricts.isNotEmpty
             ? state.filteredDistricts
             : (state.citySuggestions.firstWhere(
-                    (city) => city["name"] == state.selectedCity,
+                    (city) => city["name"] == state.draftPost?.city,
+
                     orElse: () => {"districts": []},
                   )["districts"] ??
                   []);
@@ -28,22 +29,22 @@ class PostDistrictSelectionStep extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (state.selectedCity != null)
-              RateFlagText.head2(text: "Seçilen Şehir : ${state.selectedCity}"),
+            if (state.draftPost?.city.isNotEmpty == true)
+              RateFlagText.head2(
+                text: "Seçilen Şehir : ${state.draftPost!.city}",
+                context: context,
+              ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             CustomTextField(
-              controller: districtController,
-
+              initialValue: state.districtQuery,
               icon: Icons.search,
               keyboardType: TextInputType.text,
-              onChanged: (query) {
-                cubit.filterDistricts(query);
-              },
-              label: 'Şehir ara ',
+              onChanged: cubit.onDistrictQueryChanged,
+              label: 'İlçe ara',
             ),
 
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
 
             districts.isEmpty
                 ? const Center(child: Text("İlçe bulunamadı"))
@@ -62,17 +63,15 @@ class PostDistrictSelectionStep extends StatelessWidget {
                     ),
                   ),
 
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
 
             SizedBox(
               width: double.infinity,
               child: CustomElevatedButton.secondary(
                 text: "İlerle",
-                onPressed: state.selectedDistrict == null
-                    ? null
-                    : () {
-                        cubit.nextPage();
-                      },
+                onPressed: () {
+                  cubit.nextPage();
+                },
               ),
             ),
           ],

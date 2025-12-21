@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class BottomBar extends StatelessWidget {
   final int currentIndex;
@@ -7,31 +8,29 @@ class BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return BottomAppBar(
-      height: 60,
-      color: Color(0xFFA889FC),
+      height: 60.h,
+      color: colors.primary,
       shape: const CircularNotchedRectangle(),
       notchMargin: 8,
       elevation: 8,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          // Sol ikon
           IconButton(
             icon: Icon(
               Icons.article_outlined,
-              color: currentIndex == 0 ? Colors.white : Colors.deepPurple,
+              color: Colors.white, // hep tema rengi
             ),
             onPressed: () => onTap(0),
           ),
 
-          const SizedBox(width: 20),
+          SizedBox(width: 20.w),
 
           IconButton(
-            icon: Icon(
-              Icons.person,
-              color: currentIndex == 1 ? Colors.white : Colors.deepPurple,
-            ),
+            icon: Icon(Icons.person, color: Colors.white),
             onPressed: () => onTap(1),
           ),
         ],

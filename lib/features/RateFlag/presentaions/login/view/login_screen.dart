@@ -11,18 +11,13 @@ import 'package:rate_flag/features/RateFlag/presentaions/register/cubit/register
 import 'package:rate_flag/features/RateFlag/presentaions/register/view/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
-
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<LoginCubit>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: BlocConsumer<LoginCubit, LoginState>(
         listener: (context, state) {
           if (state.errorMessage != null) {
@@ -55,50 +50,29 @@ class LoginScreen extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          return LoginFormWidget(
-            formKey: _formKey,
-            emailController: _emailController,
-            passwordController: _passwordController,
-            isLoading: state.loginStatus == LoginStatus.loading,
-            isResetLoading: state.passwordResetStatus == LoginStatus.loading,
-            onLoginPressed: () async {
-              if (!_formKey.currentState!.validate()) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Lütfen tüm alanları doğru doldurun"),
+          return Center(
+            child: LoginForm(
+              isLoading: state.loginStatus == LoginStatus.loading,
+              isResetLoading: state.passwordResetStatus == LoginStatus.loading,
+
+              onEmailChanged: cubit.emailChanged,
+              onPasswordChanged: cubit.passwordChanged,
+
+              onLoginPressed: cubit.login,
+              onForgotPasswordPressed: cubit.forgotPassword,
+
+              onRegisterPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                      create: (_) => getIt<RegisterCubit>(),
+                      child: RegisterScreen(),
+                    ),
                   ),
                 );
-                return;
-              }
-
-              await cubit.login(
-                _emailController.text.trim(),
-                _passwordController.text.trim(),
-              );
-            },
-            onForgotPasswordPressed: () {
-              final email = _emailController.text.trim();
-
-              if (email.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Lütfen e-posta giriniz")),
-                );
-                return;
-              }
-
-              cubit.forgotPassword(email);
-            },
-            onRegisterPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider(
-                    create: (_) => getIt<RegisterCubit>(),
-                    child: RegisterScreen(),
-                  ),
-                ),
-              );
-            },
+              },
+            ),
           );
         },
       ),

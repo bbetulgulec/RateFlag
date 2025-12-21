@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/app_color.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class FlagButton extends StatelessWidget {
   final bool isGreen;
   final int count;
-  final bool hasFlagged; // kullanıcı oy verdi mi
+  final bool hasFlagged;
   final VoidCallback onPressedCallback;
 
   const FlagButton({
@@ -23,14 +25,19 @@ class FlagButton extends StatelessWidget {
           icon: Icon(
             Icons.flag,
             color: isGreen
-                ? (hasFlagged ? Colors.green : Colors.green.shade400)
-                : (hasFlagged ? Colors.red : Colors.red.shade400),
+                ? (hasFlagged
+                      ? AppColors.greenFlag
+                      : AppColors.greenFlag.withAlpha(60))
+                : (hasFlagged
+                      ? Theme.of(context).colorScheme.error
+                      : Theme.of(context).colorScheme.error.withAlpha(60)),
+
             size: 30,
           ),
         ),
         Text(
           '$count',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
         ),
       ],
     );

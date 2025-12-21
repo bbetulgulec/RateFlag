@@ -39,7 +39,7 @@ class ProfileState extends Equatable {
     this.isImageUploading = false,
   });
 
-  int get postCount => publicPosts.length + savedPost.length;
+  int get postCount => publicPosts.length;
 
   ProfileState copyWith({
     int? tabIndex,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class PostImageWidget extends StatelessWidget {
   final String? imageUrl;
@@ -27,8 +28,8 @@ class PostImageWidget extends StatelessWidget {
               ),
             )
           : Container(
-              color: Colors.grey[300],
-              child: const Center(child: Icon(Icons.image, size: 50)),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              child: Center(child: Icon(Icons.image, size: 50.sp)),
             ),
     );
   }

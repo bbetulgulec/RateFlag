@@ -9,13 +9,13 @@ class CreateUser {
   CreateUser(this.authRepository, this.firestoreRepository);
 
   Future<void> execute(User user) async {
-    // 1. Firebase Auth
-    final authUser = await authRepository.register(user.mail, user.password);
+    // 1️⃣ Auth → uid al
+    final uid = await authRepository.register(user.mail, user.password);
 
-    // 2. UID'yi modele ekle
-    final createdUser = user.copyWith(uid: authUser.uid);
+    // 2️⃣ User objesini uid ile güncelle
+    final createdUser = user.copyWith(uid: uid);
 
-    // 3. Firestore'a kaydet
+    // 3️⃣ Firestore’a kaydet (TEK GERÇEK USER)
     await firestoreRepository.createUser("users", createdUser);
   }
 }

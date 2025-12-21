@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
+import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/register/cubit/register_cubit.dart';
@@ -11,21 +12,14 @@ class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
 
   final _formKey = GlobalKey<FormState>();
-
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _dateController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _repeatPasswordController = TextEditingController();
+  final TextEditingController _birthDateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<RegisterCubit>();
-
     return Scaffold(
-      backgroundColor: Colors.white,
       body: BlocConsumer<RegisterCubit, RegisterState>(
+        listenWhen: (previous, current) =>
+            previous.isRegisterSuccess != current.isRegisterSuccess,
         listener: (context, state) {
           if (state.errorMessage != null) {
             ScaffoldMessenger.of(
@@ -34,11 +28,7 @@ class RegisterScreen extends StatelessWidget {
           }
 
           if (state.isRegisterSuccess) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text("Kayıt başarılı!")));
-
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (_) => BlocProvider(
@@ -48,23 +38,22 @@ class RegisterScreen extends StatelessWidget {
               ),
             );
           }
-
-          if (!state.isEmailVerified && state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("E-posta doğrulaması gerekli!")),
-            );
-            Navigator.pushReplacement(
+          if (state.errorMessage != null) {
+            ScaffoldMessenger.of(
               context,
-              MaterialPageRoute(
-                builder: (_) => BlocProvider(
-                  create: (_) => getIt<LoginCubit>(),
-                  child: LoginScreen(),
-                ),
-              ),
-            );
+            ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+            context.read<RegisterCubit>().clearError();
           }
         },
         builder: (context, state) {
+          final cubit = context.read<RegisterCubit>();
+          if (state.birthDate != null) {
+            _birthDateController.text = state.birthDate!
+                .toIso8601String()
+                .split("T")
+                .first;
+          }
+
           return Stack(
             children: [
               AbsorbPointer(
@@ -76,36 +65,37 @@ class RegisterScreen extends StatelessWidget {
                         constraints: BoxConstraints(
                           minHeight: constraints.maxHeight,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: RegisterFormWidget(
-                            formKey: _formKey,
-                            firstNameController: _firstNameController,
-                            lastNameController: _lastNameController,
-                            emailController: _emailController,
-                            dateController: _dateController,
-                            passwordController: _passwordController,
-                            repeatPasswordController: _repeatPasswordController,
-                            isLoading: state.isRegisterLoading,
-                            onBirthDateSelected: cubit.setBirthDate,
-                            onAlreadyHaveAccount: () {
-                              Navigator.pop(context);
-                            },
-                            onRegisterPressed: () {
-                              if (!_formKey.currentState!.validate()) return;
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.h),
+                            child: RegisterFormWidget(
+                              formKey: _formKey,
+                              isLoading: state.isRegisterLoading,
 
-                              final birthDate = DateTime.parse(
-                                _dateController.text.trim(),
-                              );
+                              selectedGender: state.gender,
+                              birthDateController: _birthDateController,
 
-                              cubit.register(
-                                _firstNameController.text.trim(),
-                                _lastNameController.text.trim(),
-                                _emailController.text.trim(),
-                                birthDate,
-                                _passwordController.text.trim(),
-                              );
-                            },
+                              onFirstNameChanged: cubit.firstNameChanged,
+                              onLastNameChanged: cubit.lastNameChanged,
+                              onEmailChanged: cubit.emailChanged,
+                              onPasswordChanged: cubit.passwordChanged,
+                              onRepeatPasswordChanged: (_) {},
+
+                              onBirthDateSelected: cubit.setBirthDate,
+
+                              onChanged: (gender) {
+                                if (gender != null) cubit.setGender(gender);
+                              },
+
+                              onRegisterPressed: () {
+                                if (!_formKey.currentState!.validate()) return;
+                                cubit.register();
+                              },
+
+                              onAlreadyHaveAccount: () {
+                                Navigator.pop(context);
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -116,7 +106,7 @@ class RegisterScreen extends StatelessWidget {
 
               if (state.isRegisterLoading)
                 Container(
-                  color: Colors.black.withAlpha(77),
+                  color: Theme.of(context).colorScheme.surface.withAlpha(77),
                   child: const Center(child: CircularProgressIndicator()),
                 ),
             ],
