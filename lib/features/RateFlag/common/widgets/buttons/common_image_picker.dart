@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class CommonImagePicker extends StatelessWidget {
@@ -29,7 +30,7 @@ class CommonImagePicker extends StatelessWidget {
             children: [
               ListTile(
                 leading: const Icon(Icons.photo_library),
-                title: const Text("Galeriden Seç"),
+                title: const Text(TextConstants.selectGallary),
                 onTap: () {
                   Navigator.pop(context);
                   onPickFromGallery();
@@ -37,7 +38,7 @@ class CommonImagePicker extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt),
-                title: const Text("Kameradan Çek"),
+                title: const Text(TextConstants.selectCamera),
                 onTap: () {
                   Navigator.pop(context);
                   onPickFromCamera();

@@ -5,7 +5,7 @@ class CommunTextButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final String text;
 
-  /// 🟢 Opsiyonel
+  // Opsiyonel
   final bool isLoading;
   final Color? color;
 
@@ -13,7 +13,7 @@ class CommunTextButton extends StatelessWidget {
     super.key,
     required this.text,
     this.onPressed,
-    this.isLoading = false, // 🔥 default = eski davranış
+    this.isLoading = false,
     this.color,
   });
 

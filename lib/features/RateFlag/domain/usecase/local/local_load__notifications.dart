@@ -6,7 +6,7 @@ class LoadLocalNotifications {
 
   LoadLocalNotifications(this.repository);
 
-  Future<List<AppNotification>> call() {
-    return repository.getNotifications();
+  Future<List<AppNotification>> call(String userId) {
+    return repository.getNotifications(userId);
   }
 }

@@ -1,17 +1,13 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/entity/user.dart';
+import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/user.dart';
 
 class AccountInfoState extends Equatable {
-  final bool isGetInfoLoading;
-  final bool isUpdateInfoLoading;
-
-  final bool isGetInfoSuccess;
-  final bool isUpdateInfoSuccess;
+  final RequestStatus getInfoStatus;
+  final RequestStatus updateInfoStatus;
+  final RequestStatus deleteAccountStatus;
 
   final String? errorMessage;
-
-  final bool isDeleteAccountLoading;
-  final bool isDeleteAccountSuccess;
 
   final String firstName;
   final String lastName;
@@ -20,14 +16,11 @@ class AccountInfoState extends Equatable {
   final Gender? gender;
 
   const AccountInfoState({
-    this.isGetInfoLoading = false,
-    this.isUpdateInfoLoading = false,
-    this.isGetInfoSuccess = false,
-    this.isUpdateInfoSuccess = false,
+    this.getInfoStatus = RequestStatus.initial,
+    this.updateInfoStatus = RequestStatus.initial,
+    this.deleteAccountStatus = RequestStatus.initial,
     this.errorMessage,
 
-    this.isDeleteAccountLoading = false,
-    this.isDeleteAccountSuccess = false,
     this.firstName = '',
     this.lastName = '',
     this.email = '',
@@ -36,14 +29,11 @@ class AccountInfoState extends Equatable {
   });
 
   AccountInfoState copyWith({
-    bool? isGetInfoLoading,
-    bool? isUpdateInfoLoading,
-    bool? isGetInfoSuccess,
-    bool? isUpdateInfoSuccess,
+    RequestStatus? getInfoStatus,
+    RequestStatus? updateInfoStatus,
+    RequestStatus? deleteAccountStatus,
     String? errorMessage,
 
-    bool? isDeleteAccountLoading,
-    bool? isDeleteAccountSuccess,
     String? firstName,
     String? lastName,
     String? email,
@@ -51,16 +41,12 @@ class AccountInfoState extends Equatable {
     Gender? gender,
   }) {
     return AccountInfoState(
-      isGetInfoLoading: isGetInfoLoading ?? this.isGetInfoLoading,
-      isUpdateInfoLoading: isUpdateInfoLoading ?? this.isUpdateInfoLoading,
-      isGetInfoSuccess: isGetInfoSuccess ?? this.isGetInfoSuccess,
-      isUpdateInfoSuccess: isUpdateInfoSuccess ?? this.isUpdateInfoSuccess,
       errorMessage: errorMessage ?? this.errorMessage,
 
-      isDeleteAccountLoading:
-          isDeleteAccountLoading ?? this.isDeleteAccountLoading,
-      isDeleteAccountSuccess:
-          isDeleteAccountSuccess ?? this.isDeleteAccountSuccess,
+      getInfoStatus: getInfoStatus ?? this.getInfoStatus,
+      updateInfoStatus: updateInfoStatus ?? this.updateInfoStatus,
+      deleteAccountStatus: deleteAccountStatus ?? this.deleteAccountStatus,
+
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
@@ -71,14 +57,11 @@ class AccountInfoState extends Equatable {
 
   @override
   List<Object?> get props => [
-    isGetInfoLoading,
-    isUpdateInfoLoading,
-    isGetInfoSuccess,
-    isUpdateInfoSuccess,
     errorMessage,
+    getInfoStatus,
+    updateInfoStatus,
+    deleteAccountStatus,
 
-    isDeleteAccountLoading,
-    isDeleteAccountSuccess,
     firstName,
     lastName,
     email,

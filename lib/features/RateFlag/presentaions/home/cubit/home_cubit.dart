@@ -1,21 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_all_post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/rate_post.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  final LoadAllPost loadAllPostUserUsercase;
+  final LoadAllPost loadAllPostUserUsecase;
   final RatePost rateTheImageUserUsecase;
 
-  HomeCubit(this.loadAllPostUserUsercase, this.rateTheImageUserUsecase)
-    : super(HomeState());
+  HomeCubit(this.loadAllPostUserUsecase, this.rateTheImageUserUsecase)
+    : super(const HomeState());
 
   Future<void> loadAllPosts() async {
-    emit(state.copyWith(isAllPostLoading: true));
+    emit(state.copyWith(loadPostsStatus: RequestStatus.loading));
 
     try {
-      final posts = await loadAllPostUserUsercase.execute();
+      final posts = await loadAllPostUserUsecase.execute();
 
       posts.sort((a, b) {
         if (a.createdAt == null) return 1;
@@ -24,16 +25,12 @@ class HomeCubit extends Cubit<HomeState> {
       });
 
       emit(
-        state.copyWith(
-          isAllPostLoading: false,
-          isAllPostSuccess: true,
-          posts: posts,
-        ),
+        state.copyWith(loadPostsStatus: RequestStatus.success, posts: posts),
       );
     } catch (e) {
       emit(
         state.copyWith(
-          isAllPostLoading: false,
+          loadPostsStatus: RequestStatus.failure,
           errorMessage: "Postlar yüklenemedi",
         ),
       );
@@ -47,20 +44,6 @@ class HomeCubit extends Cubit<HomeState> {
   void selectForYou() {
     emit(state.copyWith(selectedTab: HomeTab.forYou));
   }
-  /*
-  void openImage(String imageUrl) {
-    emit(state.copyWith(openedImageUrl: imageUrl));
-  }
-
-
-  void closeImage() {
-    emit(state.copyWith(openedImageUrl: null));
-  } 
-  void addPost(Post post) {
-    final updatedPosts = [post, ...state.posts];
-    emit(state.copyWith(posts: updatedPosts));
-  }
-   */
 
   void openPost(Post? post) {
     emit(state.copyWith(openedPost: post));

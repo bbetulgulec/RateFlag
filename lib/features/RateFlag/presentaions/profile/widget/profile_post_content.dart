@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/RateFlag/common/constants/assets_path.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_cubit.dart';
@@ -22,10 +23,12 @@ class ProfilePostContent extends StatelessWidget {
 
     if (postsToShow.isEmpty) {
       return ProfilePostsEmpty(
-        mainText: state.tabIndex == 0 ? "No posts yet " : "No saved posts ",
+        mainText: state.tabIndex == 0
+            ? TextConstants.noYetPost
+            : TextConstants.noYetSavedPost,
         subText: state.tabIndex == 0
-            ? "They will show up here"
-            : "Posts you save will appear here",
+            ? TextConstants.willShowUpHere
+            : TextConstants.saveAppearHere,
         icon: state.tabIndex == 0
             ? Icons.hourglass_empty
             : Icons.bookmark_border,
@@ -40,7 +43,8 @@ class ProfilePostContent extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (_) => BlocProvider(
-              create: (_) => getIt<PostInfoCubit>(),
+              create: (_) =>
+                  getIt<PostInfoCubit>()..loadPostInfo(postId: post.postId),
               child: PostInfoScreen(postId: post.postId),
             ),
           ),

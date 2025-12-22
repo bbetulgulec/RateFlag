@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class SettingAlertDialog extends StatelessWidget {
@@ -20,7 +21,7 @@ class SettingAlertDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          child: const Text("Close"),
+          child: const Text(TextConstants.close),
           onPressed: () => Navigator.pop(context),
         ),
       ],

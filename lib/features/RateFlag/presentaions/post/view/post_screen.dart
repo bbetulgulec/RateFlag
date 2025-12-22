@@ -21,10 +21,6 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   final PageController _controller = PageController();
-  int currentIndex = 0;
-  bool? isPublic;
-  File? selectedImage;
-  String? selectedCity;
 
   @override
   Widget build(BuildContext context) {
@@ -35,55 +31,75 @@ class _PostScreenState extends State<PostScreen> {
       PostDistrictSelectionStep(),
       PostDescriptionStep(),
     ];
-    return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(height: 50.h),
 
-          BlocBuilder<PostCubit, PostState>(
-            builder: (context, state) {
-              return Row(
+    return BlocBuilder<PostCubit, PostState>(
+      builder: (context, state) {
+        return Scaffold(
+          body: Stack(
+            children: [
+              // 🔹 NORMAL UI
+              Column(
                 children: [
-                  CommonIconButton(
-                    icon: Icons.arrow_back,
-                    isVisible: state.currentPage > 0,
-                    onPressed: () {
-                      context.read<PostCubit>().previousPage();
-                    },
+                  SizedBox(height: 50.h),
+
+                  Row(
+                    children: [
+                      CommonIconButton(
+                        icon: Icons.arrow_back,
+                        isVisible: state.currentPage > 0,
+                        onPressed: () {
+                          context.read<PostCubit>().previousPage();
+                        },
+                      ),
+                      const Spacer(),
+                      CommonIconButton(
+                        icon: Icons.close,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
                   ),
-                  const Spacer(),
-                  CommonIconButton(
-                    icon: Icons.close,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+
+                  Expanded(
+                    child: BlocListener<PostCubit, PostState>(
+                      listener: (context, state) {
+                        _controller.animateToPage(
+                          state.currentPage,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                      child: PageView.builder(
+                        controller: _controller,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: pages.length,
+                        onPageChanged: (i) =>
+                            context.read<PostCubit>().goToPage(i),
+                        itemBuilder: (_, i) => Padding(
+                          padding: EdgeInsets.all(16.sp),
+                          child: pages[i],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
-              );
-            },
-          ),
-
-          Expanded(
-            child: BlocListener<PostCubit, PostState>(
-              listener: (context, state) {
-                _controller.animateToPage(
-                  state.currentPage,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              },
-              child: PageView.builder(
-                controller: _controller,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: pages.length,
-                onPageChanged: (i) => context.read<PostCubit>().goToPage(i),
-                itemBuilder: (_, i) =>
-                    Padding(padding: EdgeInsets.all(16.sp), child: pages[i]),
               ),
-            ),
+
+              // 🔥 FULLSCREEN LOADING (HER ŞEYİ KARARTIR)
+              if (state.isCreatePostLoading)
+                Positioned.fill(
+                  child: AbsorbPointer(
+                    child: Container(
+                      color: Colors.black.withAlpha(45),
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+                  ),
+                ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

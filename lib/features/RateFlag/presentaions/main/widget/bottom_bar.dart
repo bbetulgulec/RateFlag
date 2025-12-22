@@ -20,10 +20,7 @@ class BottomBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton(
-            icon: Icon(
-              Icons.article_outlined,
-              color: Colors.white, // hep tema rengi
-            ),
+            icon: Icon(Icons.article_outlined, color: Colors.white),
             onPressed: () => onTap(0),
           ),
 

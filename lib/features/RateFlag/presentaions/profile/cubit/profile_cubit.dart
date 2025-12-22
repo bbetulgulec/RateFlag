@@ -94,7 +94,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     if (picked != null) {
       final file = File(picked.path);
       emit(state.copyWith(selectedImage: file));
-      await _uploadProfilePhoto(file);
+      _uploadProfilePhoto(file);
     }
   }
 

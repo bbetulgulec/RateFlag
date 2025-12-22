@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 
 class FollowUserTile extends StatelessWidget {
   final String fullName;
@@ -32,7 +33,7 @@ class FollowUserTile extends StatelessWidget {
         fullName,
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
-      subtitle: age != null ? Text("$age yaşında") : null,
+      subtitle: age != null ? Text("$age ${TextConstants.userAge}") : null,
       onTap: onTap,
     );
   }

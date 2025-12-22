@@ -4,25 +4,29 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:rate_flag/features/RateFlag/common/constants/api_constants.dart';
 import 'package:rate_flag/features/RateFlag/common/utils/functions/calculate_age.dart';
+import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
+import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
+import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_all_post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_all_user.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/search_post_city.dart';
 import 'filter_page_state.dart';
 
 class FilterPageCubit extends Cubit<FilterPageState> {
-  FilterPageCubit(this.searchPostCity, this.loadAllUser)
+  FilterPageCubit(this.searchPostCity, this.loadAllUser, this.loadAllPost)
     : super(const FilterPageState());
   final SearchPostCity searchPostCity;
   final LoadAllUser loadAllUser;
+  final LoadAllPost loadAllPost;
 
   Future<void> loadCities() async {
-    emit(state.copyWith(isCityLoading: true));
+    emit(state.copyWith(cityStatus: RequestStatus.loading));
 
     final response = await http.get(Uri.parse(kTurkeyCitiesApiUrl));
     final data = jsonDecode(response.body);
 
     emit(
       state.copyWith(
-        isCityLoading: false,
+        cityStatus: RequestStatus.success,
         allCities: data["data"],
         filteredCities: data["data"],
       ),
@@ -38,13 +42,13 @@ class FilterPageCubit extends Cubit<FilterPageState> {
   }
 
   Future<void> loadPostsBySelectedCity(String city) async {
-    emit(state.copyWith(isPostLoading: true));
+    emit(state.copyWith(postStatus: RequestStatus.loading));
 
     final posts = await searchPostCity.execute(city);
 
     emit(
       state.copyWith(
-        isPostLoading: false,
+        postStatus: RequestStatus.success,
         allPosts: posts,
         filteredPosts: posts,
       ),
@@ -73,30 +77,27 @@ class FilterPageCubit extends Cubit<FilterPageState> {
   }
 
   Future<void> loadAllUsers() async {
-    emit(state.copyWith(isUserLoading: true));
+    emit(state.copyWith(userStatus: RequestStatus.loading));
 
     try {
       final users = await loadAllUser.execute();
 
       emit(
         state.copyWith(
-          isUserLoading: false,
+          userStatus: RequestStatus.success,
           allUsers: users,
           filteredUsers: users,
         ),
       );
     } catch (e) {
-      emit(state.copyWith(isUserLoading: false, error: e.toString()));
+      emit(state.copyWith(userStatus: RequestStatus.failure));
     }
   }
 
   void selectGender(String gender) {
-    emit(
-      state.copyWith(gender: gender),
-    ); // Sadece state'e kaydet, filtreleme yapma
+    emit(state.copyWith(gender: gender));
   }
 
-  // Yaş filtresi — sadece "Uygula"da çağrılacak yeni fonksiyon
   void applyFilters(RangeValues ageRange, String gender, String? city) {
     emit(
       state.copyWith(ageRange: ageRange, gender: gender, selectedCity: city),
@@ -105,13 +106,11 @@ class FilterPageCubit extends Cubit<FilterPageState> {
     final ageCalculator = Calculateage();
 
     final filtered = state.allUsers.where((user) {
-      // Yaş
       final int age = ageCalculator.calculateAge(user.birthDate);
       final int minAge = ageRange.start.round();
       final int maxAge = ageRange.end.round();
       final bool matchesAge = age >= minAge && age <= maxAge;
 
-      // Cinsiyet
       final bool matchesGender =
           gender == 'all' ||
           (user.gender.toString().toLowerCase() == gender.toLowerCase());
@@ -136,13 +135,11 @@ class FilterPageCubit extends Cubit<FilterPageState> {
   void filterByAge(RangeValues range) {
     emit(state.copyWith(ageRange: range));
 
-    final ageCalculator = Calculateage(); // Tek seferlik instance
+    final ageCalculator = Calculateage();
 
     final filtered = state.allUsers.where((user) {
-      // user.birthDate artık dynamic olabilir (Timestamp, String veya DateTime)
       final int age = ageCalculator.calculateAge(user.birthDate);
 
-      // RangeValues double döndüğü için yaş aralığını int'e çeviriyoruz
       final int minAge = range.start.round();
       final int maxAge = range.end.round();
 
@@ -150,5 +147,34 @@ class FilterPageCubit extends Cubit<FilterPageState> {
     }).toList();
 
     emit(state.copyWith(filteredUsers: filtered));
+  }
+
+  Future<void> loadPosts() async {
+    emit(state.copyWith(postStatus: RequestStatus.loading));
+
+    final posts = await loadAllPost.execute();
+
+    emit(
+      state.copyWith(
+        postStatus: RequestStatus.success,
+        allPosts: posts,
+        filteredPosts: posts,
+      ),
+    );
+  }
+
+  void filterPosts() {
+    List<Post> posts = state.allPosts;
+
+    // 🔹 isPublic filtresi
+    if (state.isPublic != null) {
+      posts = posts.where((post) => post.isPublic == state.isPublic).toList();
+    }
+
+    emit(state.copyWith(filteredPosts: posts));
+  }
+
+  void setIsPublic(bool? value) {
+    emit(state.copyWith(isPublic: value));
   }
 }

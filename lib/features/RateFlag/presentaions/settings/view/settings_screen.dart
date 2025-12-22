@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
@@ -22,7 +23,10 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Align(
           alignment: AlignmentGeometry.topLeft,
-          child: RateFlagText.head2(text: "Ayarlar", context: context),
+          child: RateFlagText.head2(
+            text: TextConstants.setting,
+            context: context,
+          ),
         ),
       ),
       body: BlocConsumer<SettingsCubit, SettingsState>(
@@ -37,7 +41,7 @@ class SettingsScreen extends StatelessWidget {
                 Align(
                   alignment: AlignmentGeometry.topLeft,
                   child: RateFlagText.fadedItalic(
-                    text: "Destek",
+                    text: TextConstants.support,
                     context: context,
                   ),
                 ),
@@ -46,15 +50,14 @@ class SettingsScreen extends StatelessWidget {
                 SettingCard(
                   icon: Icons.description_outlined,
                   iconColor: Colors.deepPurple,
-                  title: "Terms of Service",
+                  title: TextConstants.termService,
                   onTap: () {
                     showDialog(
                       context: context,
                       barrierDismissible: true,
                       builder: (_) => const SettingDialog(
-                        title: "Terms of Service",
-                        content:
-                            "1. This app is provided “as is” without warranties.\n2. Users are responsible for content shared in the app.\n3. Premium purchases are non-refundable unless required by law.\n4. Misuse may result in account suspension.\n5. Using the app means you accept the latest Terms.",
+                        title: TextConstants.termService,
+                        content: TextConstants.termServiceData,
                       ),
                     );
                   },
@@ -65,19 +68,14 @@ class SettingsScreen extends StatelessWidget {
                 SettingCard(
                   icon: Icons.lock_outline,
                   iconColor: Colors.deepPurple,
-                  title: "Privacy Policy",
+                  title: TextConstants.privacyPolicy,
                   onTap: () {
                     showDialog(
                       context: context,
                       barrierDismissible: true,
                       builder: (_) => const SettingDialog(
-                        title: "Privacy Policy",
-                        content: """
-• We collect basic analytics to improve the app.
-• Personal information is stored securely.
-• We do not sell your data to third parties.
-• You may request data deletion at any time.
-""",
+                        title: TextConstants.privacyPolicy,
+                        content: TextConstants.privacyPolicyData,
                       ),
                     );
                   },
@@ -87,7 +85,7 @@ class SettingsScreen extends StatelessWidget {
                 Align(
                   alignment: AlignmentGeometry.topLeft,
                   child: RateFlagText.fadedItalic(
-                    text: "Hesap",
+                    text: TextConstants.account,
                     context: context,
                   ),
                 ),
@@ -96,7 +94,7 @@ class SettingsScreen extends StatelessWidget {
                 SettingCard(
                   icon: Icons.settings_accessibility,
                   iconColor: Colors.deepPurple,
-                  title: "Hesap Bilgileri güncelle",
+                  title: TextConstants.updateAccount,
                   onTap: () {
                     Navigator.push(
                       context,
@@ -113,14 +111,14 @@ class SettingsScreen extends StatelessWidget {
                 SettingCard(
                   icon: Icons.exit_to_app,
                   iconColor: Colors.deepPurple,
-                  title: "Çıkış yap",
+                  title: TextConstants.logout,
                   onTap: () {
                     showDialog(
                       context: context,
                       barrierDismissible: false,
                       builder: (_) => DeleteConfirmDialog(
-                        title: "Çıkış yap",
-                        content: "Çıkış yapılsın mı ?",
+                        title: TextConstants.logout,
+                        content: TextConstants.logoutQuiz,
                         onConfirm: () {
                           context.read<SettingsCubit>().signOut();
                         },
@@ -136,7 +134,7 @@ class SettingsScreen extends StatelessWidget {
           try {
             if (state.isSignOutSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("başarı ile çıkış yapıldı")),
+                SnackBar(content: Text(TextConstants.successLogout)),
               );
               Navigator.pushReplacement(
                 context,

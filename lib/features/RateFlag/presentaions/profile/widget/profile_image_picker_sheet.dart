@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_cubit.dart';
 
@@ -30,7 +31,7 @@ class ProfileImagePickerSheet extends StatelessWidget {
 
           ListTile(
             leading: const Icon(Icons.photo),
-            title: const Text("Galeriden seç"),
+            title: const Text(TextConstants.selectGallary),
             onTap: () {
               Navigator.pop(context);
               cubit.pickFromGallery();
@@ -39,7 +40,7 @@ class ProfileImagePickerSheet extends StatelessWidget {
 
           ListTile(
             leading: const Icon(Icons.camera_alt),
-            title: const Text("Kameradan çek"),
+            title: const Text(TextConstants.selectCamera),
             onTap: () {
               Navigator.pop(context);
               cubit.pickFromCamera();

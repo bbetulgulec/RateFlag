@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rate_flag/features/RateFlag/common/constants/onboarding_constants.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
@@ -51,7 +52,7 @@ class OnboardingPageItem extends StatelessWidget {
                             );
                           },
                           child: RateFlagText.fadedItalic(
-                            text: "Skip",
+                            text: TextConstants.skip,
                             context: context,
                           ),
                         )
@@ -86,7 +87,7 @@ class OnboardingPageItem extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(bottom: 24.h),
                     child: CustomElevatedButton.primary(
-                      text: "Hadi Başlayalım",
+                      text: TextConstants.letBegin,
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,

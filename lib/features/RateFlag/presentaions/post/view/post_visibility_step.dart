@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
@@ -19,7 +20,7 @@ class PostVisibilityStep extends StatelessWidget {
 
           children: [
             RateFlagText.head2(
-              text: "Kiminle paylaşmak istersiniz?",
+              text: TextConstants.howWantToShare,
               context: context,
             ),
 
@@ -31,7 +32,7 @@ class PostVisibilityStep extends StatelessWidget {
                 Expanded(
                   child: PageCard(
                     icon: Icons.lock,
-                    title: "Yalnızca Kendime",
+                    title: TextConstants.postMyself,
                     isSelected: state.draftPost?.isPublic == false,
                     onTap: () => context.read<PostCubit>().setPublic(false),
                   ),
@@ -40,7 +41,7 @@ class PostVisibilityStep extends StatelessWidget {
                 Expanded(
                   child: PageCard(
                     icon: Icons.public,
-                    title: "Başka Birine",
+                    title: TextConstants.postSomeoneElse,
                     isSelected: state.draftPost?.isPublic == true,
                     onTap: () => context.read<PostCubit>().setPublic(true),
                   ),
@@ -50,7 +51,7 @@ class PostVisibilityStep extends StatelessWidget {
             SizedBox(height: 40.h),
 
             CustomElevatedButton.primary(
-              text: "Devam",
+              text: TextConstants.move,
               onPressed: state.draftPost?.isPublic == null
                   ? null
                   : () {

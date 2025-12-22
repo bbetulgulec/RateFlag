@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_all_post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/rate_post.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
@@ -24,7 +26,7 @@ class FeedScreen extends StatelessWidget {
           HomeCubit(getIt<LoadAllPost>(), getIt<RatePost>())..loadAllPosts(),
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
-          if (state.isAllPostLoading) {
+          if (state.loadPostsStatus == RequestStatus.loading) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -33,7 +35,7 @@ class FeedScreen extends StatelessWidget {
           }
 
           if (state.posts.isEmpty) {
-            return const Center(child: Text("Henüz post yok"));
+            return const Center(child: Text(TextConstants.dontHaveAnyYetPost));
           }
 
           return Align(

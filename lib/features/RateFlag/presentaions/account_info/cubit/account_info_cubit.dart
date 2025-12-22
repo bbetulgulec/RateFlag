@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/user.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/auth/delete_account.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/get_user_info.dart';
@@ -37,7 +39,9 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
   }
 
   Future<void> loadUser(String userID) async {
-    emit(state.copyWith(isGetInfoLoading: true, errorMessage: null));
+    emit(
+      state.copyWith(getInfoStatus: RequestStatus.loading, errorMessage: null),
+    );
 
     try {
       final user = await getUserInfoUsecase.execute(userID);
@@ -45,8 +49,8 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
       if (user == null) {
         emit(
           state.copyWith(
-            isGetInfoLoading: false,
-            errorMessage: "Kullanıcı bulunamadı",
+            getInfoStatus: RequestStatus.failure,
+            errorMessage: TextConstants.doNotFoundPerson,
           ),
         );
         return;
@@ -54,8 +58,7 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
 
       emit(
         state.copyWith(
-          isGetInfoLoading: false,
-          isGetInfoSuccess: true,
+          getInfoStatus: RequestStatus.success,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.mail,
@@ -63,11 +66,11 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
           gender: user.gender,
         ),
       );
-    } catch (e) {
+    } catch (_) {
       emit(
         state.copyWith(
-          isGetInfoLoading: false,
-          errorMessage: "Bilgiler alınırken hata oluştu",
+          getInfoStatus: RequestStatus.failure,
+          errorMessage: TextConstants.doTakeInfoHaveError,
         ),
       );
     }
@@ -76,8 +79,7 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
   Future<void> updateUser(String userID) async {
     emit(
       state.copyWith(
-        isUpdateInfoLoading: true,
-        isUpdateInfoSuccess: false,
+        updateInfoStatus: RequestStatus.loading,
         errorMessage: null,
       ),
     );
@@ -95,36 +97,34 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
 
       await updateUserInfoUsecase.execute(updatedUser);
 
-      emit(
-        state.copyWith(isUpdateInfoLoading: false, isUpdateInfoSuccess: true),
-      );
-    } catch (e) {
+      emit(state.copyWith(updateInfoStatus: RequestStatus.success));
+    } catch (_) {
       emit(
         state.copyWith(
-          isUpdateInfoLoading: false,
-          errorMessage: "Güncelleme sırasında hata oluştu",
+          updateInfoStatus: RequestStatus.failure,
+          errorMessage: TextConstants.doHaveErrorForUpdate,
         ),
       );
     }
   }
 
   Future<void> deleteUser(String userID) async {
-    emit(state.copyWith(isDeleteAccountLoading: true, errorMessage: null));
+    emit(
+      state.copyWith(
+        deleteAccountStatus: RequestStatus.loading,
+        errorMessage: null,
+      ),
+    );
 
     try {
       await deleteAccountUsecase.execute();
 
+      emit(state.copyWith(deleteAccountStatus: RequestStatus.success));
+    } catch (_) {
       emit(
         state.copyWith(
-          isDeleteAccountLoading: false,
-          isDeleteAccountSuccess: true,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          isDeleteAccountLoading: false,
-          errorMessage: "Hesap silinemedi",
+          deleteAccountStatus: RequestStatus.failure,
+          errorMessage: TextConstants.didNotDeleteAccount,
         ),
       );
     }

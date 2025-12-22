@@ -16,12 +16,4 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       emit(state.copyWith(currentPageIndex: state.currentPageIndex + 1));
     }
   }
-
-  /*
-
-  void skip() {
-    emit(state.copyWith(currentPageIndex: state.totalPageCount - 1));
-  }
-
-  */
 }

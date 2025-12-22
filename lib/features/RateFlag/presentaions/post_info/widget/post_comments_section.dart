@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/comment.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/user.dart' as myuser;
@@ -20,18 +21,12 @@ class PostCommentsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     // ⏳ Loading + Initial
     if (status == RequestStatus.loading || status == RequestStatus.initial) {
-      return const Padding(
-        padding: EdgeInsets.all(12),
-        child: Center(child: CircularProgressIndicator()),
-      );
+      return Center(child: CircularProgressIndicator());
     }
 
     // 📭 Empty
     if (comments.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(12),
-        child: Text("Henüz yorum yok"),
-      );
+      return const Text(TextConstants.dontHaveCommentYet);
     }
 
     // 🗨️ Comments
@@ -73,8 +68,6 @@ class PostCommentsSection extends StatelessWidget {
                       )
                     : null,
               ),
-
-              SizedBox(width: 10.w),
 
               Expanded(
                 child: Column(

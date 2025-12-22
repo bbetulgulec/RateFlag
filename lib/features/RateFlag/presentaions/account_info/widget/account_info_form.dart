@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/utils/validators/validators.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
@@ -49,7 +50,7 @@ class AccountInfoFormWidget extends StatelessWidget {
             CustomTextField(
               initialValue: firstName,
 
-              label: "İsim",
+              label: TextConstants.firstName,
               validator: Validators.onlyLetters,
               keyboardType: TextInputType.text,
               onChanged: onFirstNameChanged,
@@ -59,7 +60,7 @@ class AccountInfoFormWidget extends StatelessWidget {
 
             CustomTextField(
               initialValue: lastName,
-              label: "Soyisim",
+              label: TextConstants.lastName,
               validator: Validators.onlyLetters,
               keyboardType: TextInputType.text,
               onChanged: onLastNameChanged,
@@ -69,7 +70,7 @@ class AccountInfoFormWidget extends StatelessWidget {
 
             CustomTextField(
               initialValue: email,
-              label: "E-posta",
+              label: TextConstants.email,
               validator: Validators.email,
               keyboardType: TextInputType.emailAddress,
               onChanged: onEmailChanged,
@@ -79,7 +80,7 @@ class AccountInfoFormWidget extends StatelessWidget {
 
             CustomTextField(
               controller: birthDateController,
-              label: "Doğum Tarihi",
+              label: TextConstants.birthDateLabel,
               isDateField: true,
               keyboardType: TextInputType.datetime,
               validator: Validators.date,
@@ -96,14 +97,16 @@ class AccountInfoFormWidget extends StatelessWidget {
             SizedBox(height: 32.h),
 
             CustomElevatedButton.primary(
-              text: isLoading ? "Güncelleniyor..." : "Bilgileri Kaydet",
+              text: isLoading
+                  ? TextConstants.updating
+                  : TextConstants.saveOfInfo,
               onPressed: isLoading ? null : onSavePressed,
             ),
 
             SizedBox(height: 16.h),
 
             CustomElevatedButton.secondary(
-              text: "Hesap Sil",
+              text: TextConstants.deleteAccount,
               onPressed: onDeletePressed,
             ),
           ],

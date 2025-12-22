@@ -1,14 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
+import 'package:rate_flag/features/RateFlag/common/widgets/dialog/common_delete_confirm_dialog.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
+import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/account_info/cubit/account_info_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/account_info/cubit/account_info_state.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/account_info/widget/account_info_form.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/dialog/common_delete_confirm_dialog.dart';
 
 class AccountInfoScreen extends StatelessWidget {
   AccountInfoScreen({super.key});
@@ -21,25 +23,28 @@ class AccountInfoScreen extends StatelessWidget {
     final userID = FirebaseAuth.instance.currentUser!.uid;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!cubit.state.isGetInfoSuccess && !cubit.state.isGetInfoLoading) {
+      if (cubit.state.getInfoStatus == RequestStatus.initial) {
         cubit.loadUser(userID);
       }
     });
 
     return Scaffold(
       appBar: AppBar(
-        title: RateFlagText.head2(text: "Profil Güncelleme", context: context),
+        title: RateFlagText.head2(
+          text: TextConstants.profileUpdateTitle,
+          context: context,
+        ),
       ),
       body: BlocConsumer<AccountInfoCubit, AccountInfoState>(
         listener: (context, state) {
-          if (state.isUpdateInfoSuccess) {
+          if (state.updateInfoStatus == RequestStatus.success) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Bilgiler güncellendi")),
+              const SnackBar(content: Text(TextConstants.infoUpdated)),
             );
           }
 
-          if (state.isDeleteAccountSuccess) {
-            Navigator.push(
+          if (state.deleteAccountStatus == RequestStatus.success) {
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
                 builder: (_) => BlocProvider(
@@ -47,6 +52,7 @@ class AccountInfoScreen extends StatelessWidget {
                   child: LoginScreen(),
                 ),
               ),
+              (_) => false,
             );
           }
 
@@ -60,7 +66,7 @@ class AccountInfoScreen extends StatelessWidget {
           if (state.birthDate != null) {
             birthDateController.text = state.birthDate!
                 .toIso8601String()
-                .split("T")
+                .split('T')
                 .first;
           }
 
@@ -75,7 +81,7 @@ class AccountInfoScreen extends StatelessWidget {
                 email: state.email,
                 gender: state.gender,
                 birthDateController: birthDateController,
-                isLoading: state.isUpdateInfoLoading,
+                isLoading: state.updateInfoStatus == RequestStatus.loading,
 
                 onFirstNameChanged: cubit.firstNameChanged,
                 onLastNameChanged: cubit.lastNameChanged,
@@ -86,15 +92,14 @@ class AccountInfoScreen extends StatelessWidget {
                     cubit.genderChanged(gender);
                   }
                 },
-
                 onSavePressed: () => cubit.updateUser(userID),
                 onDeletePressed: () {
                   showDialog(
                     context: context,
                     barrierDismissible: false,
                     builder: (_) => DeleteConfirmDialog(
-                      title: "Hesap Sil",
-                      content: "Hesabını silmek istediğine emin misin?",
+                      title: TextConstants.deleteAccountTitle,
+                      content: TextConstants.deleteAccountContent,
                       onConfirm: () {
                         cubit.deleteUser(userID);
                       },
@@ -102,12 +107,20 @@ class AccountInfoScreen extends StatelessWidget {
                   );
                 },
               ),
-              if (state.isUpdateInfoLoading)
+
+              if (state.getInfoStatus == RequestStatus.loading)
                 Container(
                   color: Theme.of(
                     context,
                   ).colorScheme.onSurfaceVariant.withAlpha(77),
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
 
+              if (state.updateInfoStatus == RequestStatus.loading)
+                Container(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withAlpha(77),
                   child: const Center(child: CircularProgressIndicator()),
                 ),
             ],

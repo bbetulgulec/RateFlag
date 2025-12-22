@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/app_notification.dart';
@@ -29,10 +30,10 @@ class LocalServicesImpl implements NotificationPermissionRepository {
 
   @override
   Future<void> showNotification({
+    required String userId,
     required String title,
     required String body,
   }) async {
-    // 🔔 1. Telefona bildirimi göster
     const androidDetails = AndroidNotificationDetails(
       'post_channel',
       'Post Notifications',
@@ -47,9 +48,9 @@ class LocalServicesImpl implements NotificationPermissionRepository {
 
     await _plugin.show(id, title, body, details);
 
-    // 💾 2. Local DB'ye kaydet
     await _saveToLocalDb(
       AppNotification(
+        userId: userId,
         id: id.toString(),
         title: title,
         body: body,
@@ -62,33 +63,20 @@ class LocalServicesImpl implements NotificationPermissionRepository {
     final prefs = await SharedPreferences.getInstance();
     final list = prefs.getStringList(_storageKey) ?? [];
 
-    list.insert(
-      0,
-      jsonEncode({
-        'id': notification.id,
-        'title': notification.title,
-        'body': notification.body,
-        'createdAt': notification.createdAt.toIso8601String(),
-      }),
-    );
+    list.insert(0, jsonEncode(notification.toJson()));
 
     await prefs.setStringList(_storageKey, list);
   }
 
-  // 📥 Bildirimleri çekmek için
-  Future<List<AppNotification>> getNotifications() async {
+  @override
+  Future<List<AppNotification>> getNotifications(String userId) async {
     final prefs = await SharedPreferences.getInstance();
     final list = prefs.getStringList(_storageKey) ?? [];
 
-    return list.map((e) {
-      final json = jsonDecode(e);
-      return AppNotification(
-        id: json['id'],
-        title: json['title'],
-        body: json['body'],
-        createdAt: DateTime.parse(json['createdAt']),
-      );
-    }).toList();
+    return list
+        .map((e) => AppNotification.fromJson(jsonDecode(e)))
+        .where((n) => n.userId == userId)
+        .toList();
   }
 
   @override

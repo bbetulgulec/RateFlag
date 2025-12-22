@@ -20,7 +20,6 @@ class MainScreen extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => getIt<MainCubit>()),
         BlocProvider(create: (_) => getIt<ProfileCubit>()),
-        // İleride diğer cubitleri ekleyebilirsin
       ],
       child: BlocBuilder<MainCubit, MainState>(
         builder: (context, state) {

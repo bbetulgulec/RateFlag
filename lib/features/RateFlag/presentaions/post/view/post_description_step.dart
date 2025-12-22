@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/text_fields/custom_text_field.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/view/home_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/main/cubit/main_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/main/view/main_screen.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
@@ -55,14 +54,14 @@ class PostDescriptionStep extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           RateFlagText.head2(
-                            text: "Story Açıklaması",
+                            text: TextConstants.postDescription,
                             context: context,
                           ),
                           SizedBox(height: 20.h),
 
                           CustomTextField(
                             initialValue: state.draftPost?.description ?? '',
-                            label: "Sizi eşsiz kılan şeyleri yazın...",
+                            label: TextConstants.whatIsYourSpecial,
                             keyboardType: TextInputType.text,
                             maxLength: 500,
                             maxLines: 6,
@@ -72,7 +71,7 @@ class PostDescriptionStep extends StatelessWidget {
                           SizedBox(height: 40.h),
 
                           CustomElevatedButton.primary(
-                            text: "Paylaş",
+                            text: TextConstants.share,
                             onPressed: state.isCreatePostLoading
                                 ? null
                                 : () => cubit.createPost(),
@@ -82,15 +81,6 @@ class PostDescriptionStep extends StatelessWidget {
                     ),
                   ),
                 ),
-
-                // 🔥 FULLSCREEN LOADING
-                if (state.isCreatePostLoading)
-                  Positioned.fill(
-                    child: Container(
-                      color: Colors.black.withOpacity(0.35),
-                      child: const Center(child: CircularProgressIndicator()),
-                    ),
-                  ),
               ],
             );
           },

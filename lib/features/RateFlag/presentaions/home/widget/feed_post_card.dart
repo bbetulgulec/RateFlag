@@ -27,7 +27,7 @@ class FeedPostCard extends StatelessWidget {
           children: [
             AspectRatio(
               aspectRatio: isBig ? 3 / 4 : 1,
-              child: imageUrl != null
+              child: (imageUrl != null && imageUrl!.isNotEmpty)
                   ? CachedNetworkImage(
                       imageUrl: imageUrl!,
                       fit: BoxFit.cover,

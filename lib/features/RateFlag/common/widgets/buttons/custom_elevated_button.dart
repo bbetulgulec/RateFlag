@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_elevated_button_text.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   final VoidCallback? onPressed;

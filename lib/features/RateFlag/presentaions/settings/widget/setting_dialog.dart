@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class SettingDialog extends StatelessWidget {
@@ -63,7 +64,7 @@ class SettingDialog extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text("Close"),
+                        child: const Text(TextConstants.close),
                       ),
                     ),
                   ],

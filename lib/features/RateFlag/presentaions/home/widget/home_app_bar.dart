@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/common_icon_button.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/filter_page/cubit/filter_page_cubit.dart';
@@ -41,13 +42,13 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Tabitem(
-                title: "Haritalar",
+                title: TextConstants.map,
                 isActive: state.selectedTab == HomeTab.map,
                 onTap: () => context.read<HomeCubit>().selectMap(),
               ),
               const SizedBox(width: 20),
               Tabitem(
-                title: "Senin için ",
+                title: TextConstants.forYou,
                 isActive: state.selectedTab == HomeTab.forYou,
                 onTap: () => context.read<HomeCubit>().selectForYou(),
               ),
@@ -63,8 +64,10 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               context,
               MaterialPageRoute(
                 builder: (_) => BlocProvider(
-                  create: (_) => getIt<FilterPageCubit>()..loadAllUsers(),
-                  child: const FilterPage(),
+                  create: (_) => getIt<FilterPageCubit>()
+                    ..loadAllUsers()
+                    ..loadPosts(),
+                  child: const FilterPageScreen(),
                 ),
               ),
             );

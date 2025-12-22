@@ -14,12 +14,12 @@ class ResponsiveConfig {
 }
 
 extension Responsive on num {
-  /// 📐 Width bazlı
+  // Width
   double get w => ResponsiveConfig.width * (this / 375);
 
-  /// 📐 Height bazlı
+  // Height
   double get h => ResponsiveConfig.height * (this / 812);
 
-  /// 🔤 Font / Icon
+  // Font / Icon
   double get sp => this * (ResponsiveConfig.shortestSide / 375);
 }

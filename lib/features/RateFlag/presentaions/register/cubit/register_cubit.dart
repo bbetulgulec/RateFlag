@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/user.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/auth/create_user.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/register/cubit/register_state.dart';
@@ -23,22 +24,21 @@ class RegisterCubit extends Cubit<RegisterState> {
   void setGender(Gender gender) => emit(state.copyWith(gender: gender));
 
   Future<void> register() async {
-    // 🔎 VALIDATION
     if (state.firstName.isEmpty ||
         state.lastName.isEmpty ||
         state.email.isEmpty ||
         state.password.isEmpty) {
-      emit(state.copyWith(errorMessage: "Tüm alanları doldur"));
+      emit(state.copyWith(errorMessage: TextConstants.fullAllFlield));
       return;
     }
 
     if (state.birthDate == null) {
-      emit(state.copyWith(errorMessage: "Doğum tarihini seçmelisin"));
+      emit(state.copyWith(errorMessage: TextConstants.chooseYourBirthDay));
       return;
     }
 
     if (state.gender == null) {
-      emit(state.copyWith(errorMessage: "Cinsiyet seçmelisin"));
+      emit(state.copyWith(errorMessage: TextConstants.chooseYourGender));
       return;
     }
 
@@ -55,18 +55,15 @@ class RegisterCubit extends Cubit<RegisterState> {
     );
 
     try {
-      // 1️⃣ AUTH + FIRESTORE
       await createUserUsecase.execute(user);
 
-      // 2️⃣ EMAIL DOĞRULAMA GÖNDER
       await createUserUsecase.authRepository.sendEmailVerification();
 
-      // 3️⃣ LOGIN’E GEÇ
       emit(
         state.copyWith(
           isRegisterLoading: false,
           isRegisterSuccess: true,
-          errorMessage: "Lütfen e-postanızı doğrulayın",
+          errorMessage: TextConstants.plaseVerifyEmail,
         ),
       );
     } catch (e) {

@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rate_flag/features/RateFlag/common/constants/api_constants.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/create_post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/local/local_send_notification.dart';
@@ -59,7 +60,7 @@ class PostCubit extends Cubit<PostState> {
         state.copyWith(
           isCreatePostLoading: false,
           isCreatePostSuccess: false,
-          errorMessage: "Lütfen bir resim seçin!",
+          errorMessage: TextConstants.pleaseChooseImge,
         ),
       );
       return;
@@ -79,7 +80,7 @@ class PostCubit extends Cubit<PostState> {
           state.copyWith(
             isCreatePostLoading: false,
             isCreatePostSuccess: false,
-            errorMessage: "Resim yüklenirken bir hata oluştu",
+            errorMessage: TextConstants.uploadMistakeImage,
           ),
         );
         return;
@@ -94,16 +95,19 @@ class PostCubit extends Cubit<PostState> {
       await createPostUserUsecase.execute(post: postToSave);
 
       final city = post.city;
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+
       await localSendNotification.call(
-        title: "Gönderi Paylaşılıyor",
-        body: "$city konumundaki postunuz paylaşılıyor",
+        userId: uid,
+        title: TextConstants.uploasingPost,
+        body: "$city ${TextConstants.shareLocationPost}",
       );
 
       emit(
         state.copyWith(isCreatePostLoading: false, isCreatePostSuccess: true),
       );
 
-      print("Post başarıyla kaydedildi!");
+      print(TextConstants.successSavePost);
     } catch (e) {
       emit(
         state.copyWith(
@@ -112,7 +116,7 @@ class PostCubit extends Cubit<PostState> {
           errorMessage: e.toString(),
         ),
       );
-      print("createPost ERROR: $e");
+      print("${TextConstants.error} $e");
     }
   }
 
@@ -181,9 +185,7 @@ class PostCubit extends Cubit<PostState> {
     emit(
       state.copyWith(
         selectedImage: File(pickedFile.path),
-        draftPost: state.draftPost!.copyWith(
-          imageUrl: pickedFile.path, // 🔥 KRİTİK SATIR
-        ),
+        draftPost: state.draftPost!.copyWith(imageUrl: pickedFile.path),
       ),
     );
   }
@@ -248,7 +250,7 @@ class PostCubit extends Cubit<PostState> {
       ),
     );
 
-    // 🔥 koordinat çek
+    //  koordinat çek
     final coords = await fetchCoordinates(city: city, district: districtName);
 
     final updatedPost = state.draftPost!.copyWith(
@@ -312,13 +314,13 @@ class PostCubit extends Cubit<PostState> {
     );
 
     if (response.statusCode != 200) {
-      throw Exception("Konum servisine ulaşılamadı");
+      throw Exception(TextConstants.didNotFoundLocationService);
     }
 
     final data = jsonDecode(response.body);
 
     if (data.isEmpty) {
-      throw Exception("Bu ilçe için koordinat bulunamadı");
+      throw Exception(TextConstants.didNotFoundDistricService);
     }
 
     final latRaw = data[0]["lat"];

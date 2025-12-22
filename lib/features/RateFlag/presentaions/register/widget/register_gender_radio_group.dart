@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/user.dart';
 
 class GenderRadioGroup extends StatelessWidget {
@@ -20,7 +21,7 @@ class GenderRadioGroup extends StatelessWidget {
         children: [
           Expanded(
             child: RadioListTile<Gender?>(
-              title: const Text("Kadın"),
+              title: const Text(TextConstants.genderFemale),
               value: Gender.female,
               dense: true,
               contentPadding: EdgeInsets.zero,
@@ -28,7 +29,7 @@ class GenderRadioGroup extends StatelessWidget {
           ),
           Expanded(
             child: RadioListTile<Gender?>(
-              title: const Text("Erkek"),
+              title: const Text(TextConstants.genderMale),
               value: Gender.male,
               dense: true,
               contentPadding: EdgeInsets.zero,

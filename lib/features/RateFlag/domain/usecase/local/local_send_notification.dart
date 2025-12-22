@@ -2,9 +2,18 @@ import 'package:rate_flag/features/RateFlag/domain/repositories/notification_per
 
 class LocalSendNotification {
   final NotificationPermissionRepository repository;
+
   LocalSendNotification(this.repository);
 
-  Future<void> call({required String title, required String body}) {
-    return repository.showNotification(title: title, body: body);
+  Future<void> call({
+    required String userId,
+    required String title,
+    required String body,
+  }) {
+    return repository.showNotification(
+      userId: userId,
+      title: title,
+      body: body,
+    );
   }
 }

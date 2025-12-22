@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
@@ -31,7 +32,7 @@ class PostDistrictSelectionStep extends StatelessWidget {
           children: [
             if (state.draftPost?.city.isNotEmpty == true)
               RateFlagText.head2(
-                text: "Seçilen Şehir : ${state.draftPost!.city}",
+                text: "${TextConstants.searchCity} ${state.draftPost!.city}",
                 context: context,
               ),
 
@@ -41,13 +42,13 @@ class PostDistrictSelectionStep extends StatelessWidget {
               icon: Icons.search,
               keyboardType: TextInputType.text,
               onChanged: cubit.onDistrictQueryChanged,
-              label: 'İlçe ara',
+              label: TextConstants.searchDisritct,
             ),
 
             SizedBox(height: 10.h),
 
             districts.isEmpty
-                ? const Center(child: Text("İlçe bulunamadı"))
+                ? const Center(child: Text(TextConstants.didNotFoundDistrict))
                 : Expanded(
                     child: PageListView(
                       itemCount: districts.length,
@@ -68,7 +69,7 @@ class PostDistrictSelectionStep extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: CustomElevatedButton.secondary(
-                text: "İlerle",
+                text: TextConstants.move,
                 onPressed: () {
                   cubit.nextPage();
                 },

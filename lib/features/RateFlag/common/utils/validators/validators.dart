@@ -1,14 +1,16 @@
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
+
 class Validators {
   Validators._(); // private constructor
 
   // E-posta validator
   static String? email(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return "E-posta boş olamaz";
+      return TextConstants.emailEmpty;
     }
     final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!regex.hasMatch(value.trim())) {
-      return "Geçerli bir e-posta giriniz";
+      return TextConstants.emailInvalid;
     }
     return null;
   }
@@ -16,10 +18,10 @@ class Validators {
   // Şifre validator (minimum 6 karakter)
   static String? password(String? value) {
     if (value == null || value.isEmpty) {
-      return "Şifre boş olamaz";
+      return TextConstants.passwordEmpty;
     }
     if (value.length < 6) {
-      return "Şifre en az 6 karakter olmalı";
+      return TextConstants.passwordMin6;
     }
     return null;
   }
@@ -27,16 +29,16 @@ class Validators {
   // Şifre (minimum 8 + büyük harf + rakam)
   static String? strongPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return "Şifre boş olamaz";
+      return TextConstants.passwordEmpty;
     }
     if (value.length < 8) {
-      return "Şifre en az 8 karakter olmalı";
+      return TextConstants.passwordMin8;
     }
     if (!value.contains(RegExp(r'[A-Z]'))) {
-      return "En az 1 büyük harf olmalı";
+      return TextConstants.passwordUppercase;
     }
     if (!value.contains(RegExp(r'[0-9]'))) {
-      return "En az 1 rakam olmalı";
+      return TextConstants.passwordDigit;
     }
     return null;
   }
@@ -44,10 +46,10 @@ class Validators {
   // Şifre tekrarı
   static String? passwordMatch(String? value, String original) {
     if (value == null || value.isEmpty) {
-      return "Şifre tekrarı boş olamaz";
+      return TextConstants.passwordRepeatEmpty;
     }
     if (value != original) {
-      return "Şifreler eşleşmiyor";
+      return TextConstants.passwordMismatch;
     }
     return null;
   }
@@ -55,7 +57,7 @@ class Validators {
   // Boş olamaz
   static String? required(String? value, [String? fieldName]) {
     if (value == null || value.trim().isEmpty) {
-      return fieldName != null ? "$fieldName boş olamaz" : "Bu alan boş olamaz";
+      return fieldName != null ? "$fieldName " : TextConstants.requiredField;
     }
     return null;
   }
@@ -63,7 +65,7 @@ class Validators {
   // Minimum uzunluk
   static String? minLength(String? value, int min, [String? fieldName]) {
     if (value == null || value.trim().isEmpty) {
-      return fieldName != null ? "$fieldName boş olamaz" : "Bu alan boş olamaz";
+      return fieldName != null ? "$fieldName " : TextConstants.requiredField;
     }
     if (value.trim().length < min) {
       return fieldName != null
@@ -75,33 +77,33 @@ class Validators {
 
   // Telefon (Türkiye formatı)
   static String? phone(String? value) {
-    if (value == null || value.trim().isEmpty) return "Telefon boş olamaz";
+    if (value == null || value.trim().isEmpty) return TextConstants.phoneEmpty;
     final cleaned = value.replaceAll(RegExp(r'\D'), '');
     if (cleaned.length != 10 || !cleaned.startsWith('5')) {
-      return "Geçerli bir telefon numarası giriniz";
+      return TextConstants.phoneInvalid;
     }
     return null;
   }
 
   // Sadece rakam
   static String? number(String? value) {
-    if (value == null || value.isEmpty) return "Sayı giriniz";
-    if (int.tryParse(value) == null) return "Geçerli bir sayı giriniz";
+    if (value == null || value.isEmpty) return TextConstants.numberEmpty;
+    if (int.tryParse(value) == null) return TextConstants.numberInvalid;
     return null;
   }
 
   //sadece harf
   static String? onlyLetters(String? value, [String? fieldName]) {
     if (value == null || value.trim().isEmpty) {
-      return fieldName != null ? "$fieldName boş olamaz" : "Bu alan boş olamaz";
+      return fieldName != null ? "$fieldName " : TextConstants.requiredField;
     }
 
     final regex = RegExp(r"^[a-zA-ZğüşöçıİĞÜŞÖÇ\s]+$");
 
     if (!regex.hasMatch(value.trim())) {
       return fieldName != null
-          ? "$fieldName sadece harf içerebilir"
-          : "Sadece harf içerebilir";
+          ? "$fieldName ${TextConstants.lettersOnly}"
+          : TextConstants.lettersOnly;
     }
 
     return null;
@@ -110,14 +112,14 @@ class Validators {
   ///date
   static String? date(String? value) {
     if (value == null || value.isEmpty) {
-      return "Tarih seçmelisin";
+      return TextConstants.dateEmpty;
     }
 
     try {
       DateTime.parse(value);
       return null;
     } catch (_) {
-      return "Geçerli bir tarih seçmelisin";
+      return TextConstants.dateInvalid;
     }
   }
 }

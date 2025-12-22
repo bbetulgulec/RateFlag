@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class SelfPostBadget extends StatelessWidget {
@@ -13,7 +14,7 @@ class SelfPostBadget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        "SELF POST 🔥",
+        "${TextConstants.selfPost}🔥",
         style: TextStyle(
           color: Colors.white,
           fontSize: 10.sp,

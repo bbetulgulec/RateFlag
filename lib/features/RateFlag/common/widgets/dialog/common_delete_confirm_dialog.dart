@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 
 class DeleteConfirmDialog extends StatelessWidget {
   final String title;
@@ -21,7 +22,7 @@ class DeleteConfirmDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text("Hayır"),
+          child: const Text(TextConstants.no),
         ),
         TextButton(
           onPressed: () {
@@ -29,7 +30,7 @@ class DeleteConfirmDialog extends StatelessWidget {
             onConfirm();
           },
           child: Text(
-            "Evet",
+            TextConstants.yes,
             style: TextStyle(color: Theme.of(context).colorScheme.error),
           ),
         ),

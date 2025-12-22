@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/common_image_picker.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
@@ -22,7 +23,7 @@ class PostImagePickerStep extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               RateFlagText.fadedItalic(
-                text: "Yüklemek için resim seçin",
+                text: TextConstants.chooseUploadImage,
                 context: context,
               ),
               SizedBox(height: 20.h),
@@ -36,11 +37,11 @@ class PostImagePickerStep extends StatelessWidget {
               SizedBox(height: 40.h),
 
               CustomElevatedButton.secondary(
-                text: "Devam",
+                text: TextConstants.move,
                 onPressed: () {
                   if (state.selectedImage == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Lütfen resim seçin")),
+                      SnackBar(content: Text(TextConstants.chooseUploadImage)),
                     );
                     return;
                   }

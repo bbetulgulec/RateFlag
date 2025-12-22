@@ -38,12 +38,6 @@ class RegisterScreen extends StatelessWidget {
               ),
             );
           }
-          if (state.errorMessage != null) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
-            context.read<RegisterCubit>().clearError();
-          }
         },
         builder: (context, state) {
           final cubit = context.read<RegisterCubit>();

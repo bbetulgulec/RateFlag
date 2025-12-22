@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/utils/validators/validators.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
@@ -49,11 +50,11 @@ class RegisterFormWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          RateFlagText.head1(text: "Kayıt ol", context: context),
+          RateFlagText.head1(text: TextConstants.register, context: context),
           SizedBox(height: 30.h),
 
           CustomTextField(
-            label: "İsim",
+            label: TextConstants.firstName,
             keyboardType: TextInputType.text,
             validator: Validators.onlyLetters,
             onChanged: onFirstNameChanged,
@@ -61,7 +62,7 @@ class RegisterFormWidget extends StatelessWidget {
           SizedBox(height: 20.h),
 
           CustomTextField(
-            label: "Soyisim",
+            label: TextConstants.lastName,
             keyboardType: TextInputType.text,
             validator: Validators.onlyLetters,
             onChanged: onLastNameChanged,
@@ -69,7 +70,7 @@ class RegisterFormWidget extends StatelessWidget {
           SizedBox(height: 20.h),
 
           CustomTextField(
-            label: "E-posta",
+            label: TextConstants.email,
             keyboardType: TextInputType.emailAddress,
             validator: Validators.email,
             onChanged: onEmailChanged,
@@ -79,7 +80,7 @@ class RegisterFormWidget extends StatelessWidget {
           CustomTextField(
             controller: birthDateController,
 
-            label: "Doğum Tarihi",
+            label: TextConstants.birthDay,
             isDateField: true,
             keyboardType: TextInputType.datetime,
             validator: Validators.date,
@@ -93,7 +94,7 @@ class RegisterFormWidget extends StatelessWidget {
           ),
 
           CustomTextField(
-            label: "Şifre",
+            label: TextConstants.password,
             isPassword: true,
             keyboardType: TextInputType.visiblePassword,
             validator: Validators.password,
@@ -102,7 +103,7 @@ class RegisterFormWidget extends StatelessWidget {
           SizedBox(height: 20.h),
 
           CustomTextField(
-            label: "Şifre (Tekrar)",
+            label: TextConstants.passwordAgain,
             isPassword: true,
             keyboardType: TextInputType.visiblePassword,
             validator: Validators.password,
@@ -114,11 +115,13 @@ class RegisterFormWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               CustomElevatedButton.secondary(
-                text: "Zaten hesabım var",
+                text: TextConstants.iHaveAlreadyAccount,
                 onPressed: onAlreadyHaveAccount,
               ),
               CustomElevatedButton.primary(
-                text: isLoading ? "Kaydediliyor..." : "Kayıt ol",
+                text: isLoading
+                    ? TextConstants.registiring
+                    : TextConstants.register,
                 onPressed: isLoading ? null : onRegisterPressed,
               ),
             ],

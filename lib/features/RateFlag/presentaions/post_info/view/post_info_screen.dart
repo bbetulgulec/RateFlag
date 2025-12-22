@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/common_icon_button.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/commun_text_button.dart';
@@ -48,7 +49,7 @@ class _PostInfoScreenState extends State<PostInfoScreen> {
       listener: (context, state) {},
 
       builder: (context, state) {
-        // ⏳ Loading
+        // Loading
         if (state.postInfoStatus == RequestStatus.loading ||
             state.postInfoStatus == RequestStatus.initial) {
           return const Scaffold(
@@ -56,10 +57,12 @@ class _PostInfoScreenState extends State<PostInfoScreen> {
           );
         }
 
-        // ❌ Error
+        //  Error
         if (state.postInfoStatus == RequestStatus.failure) {
           return Scaffold(
-            body: Center(child: Text(state.errorMessage ?? "Veri bulunamadı")),
+            body: Center(
+              child: Text(state.errorMessage ?? TextConstants.didNotData),
+            ),
           );
         }
 
@@ -67,7 +70,7 @@ class _PostInfoScreenState extends State<PostInfoScreen> {
         final user = state.user;
 
         if (post == null || user == null) {
-          return const Scaffold(body: Center(child: Text("Beklenmeyen hata")));
+          return const Scaffold(body: Center(child: Text(TextConstants.error)));
         }
 
         final age = calculateAge.calculateAge(user.birthDate);
@@ -85,7 +88,9 @@ class _PostInfoScreenState extends State<PostInfoScreen> {
             actions: [
               if (currentUserId != null && post.userId != currentUserId)
                 CommunTextButton(
-                  text: state.isFollowing ? "Takibi Bırak" : "Takip Et",
+                  text: state.isFollowing
+                      ? TextConstants.followOut
+                      : TextConstants.follow,
                   isLoading: state.followStatus == RequestStatus.loading,
                   color: Theme.of(context).colorScheme.onPrimary,
                   onPressed: () => cubit.handleToggleFollow(post.userId),
@@ -125,8 +130,6 @@ class _PostInfoScreenState extends State<PostInfoScreen> {
                     onSaveToggle: () => cubit.toggleSavePost(post),
                   ),
                 ),
-
-                SizedBox(height: 16.h),
 
                 PostCommentsSection(
                   status: state.commentStatus,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
+import 'package:rate_flag/features/RateFlag/common/widgets/toast_message/toast_message.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
 import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_state.dart';
@@ -40,12 +42,16 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             );
-            //  ToastMessage.show(context, message: "Başarıyla Giriş yapıldı");
+            ToastMessage.show(
+              context,
+              TextConstants.login,
+              icon: Icons.check_circle,
+            );
           }
 
           if (state.passwordResetStatus == LoginStatus.success) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Şifre sıfırlama maili gönderildi")),
+              const SnackBar(content: Text(TextConstants.sendResetPassword)),
             );
           }
         },

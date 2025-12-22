@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
@@ -20,7 +21,7 @@ class PostCitySelectionStep extends StatelessWidget {
         return Column(
           children: [
             RateFlagText.head2(
-              text: "Sizi nerede bulabiliriz ?",
+              text: TextConstants.whereFoundYou,
               context: context,
             ),
 
@@ -30,7 +31,7 @@ class PostCitySelectionStep extends StatelessWidget {
               icon: Icons.search,
               keyboardType: TextInputType.text,
               onChanged: cubit.onCityQueryChanged,
-              label: 'Şehir ara',
+              label: TextConstants.searchCity,
             ),
 
             SizedBox(height: 15.h),
@@ -57,7 +58,7 @@ class PostCitySelectionStep extends StatelessWidget {
             SizedBox(height: 10.h),
 
             CustomElevatedButton.primary(
-              text: "Devam",
+              text: TextConstants.continueText,
               onPressed:
                   (state.draftPost?.city == null ||
                       state.draftPost!.city.isEmpty)

@@ -119,7 +119,7 @@ void setupGetIt() {
   getIt.registerFactory(() => MainCubit());
   getIt.registerFactory(() => OnboardingCubit(totalPageCount: 4));
   getIt.registerFactory(() => PostCubit(getIt(), getIt(), getIt()));
-  getIt.registerFactory(() => FilterPageCubit(getIt(), getIt()));
+  getIt.registerFactory(() => FilterPageCubit(getIt(), getIt(), getIt()));
   getIt.registerFactory(
     () => PostInfoCubit(
       getIt(),

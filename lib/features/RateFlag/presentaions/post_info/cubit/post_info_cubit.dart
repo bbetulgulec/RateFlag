@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/comment.dart';
 import 'package:rate_flag/features/RateFlag/domain/entity/post.dart';
 import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/create_comment.dart';
@@ -81,7 +82,7 @@ class PostInfoCubit extends Cubit<PostInfoState> {
       emit(
         state.copyWith(
           commentStatus: RequestStatus.failure,
-          errorMessage: "Yorumlar yüklenemedi",
+          errorMessage: TextConstants.didNotUploadComment,
         ),
       );
     }
@@ -101,20 +102,22 @@ class PostInfoCubit extends Cubit<PostInfoState> {
       await createComment.execute(comment: comment);
       await loadPostCommentsByPostId(postId);
 
-      final postOwner = state.user; // post sahibi zaten state’te var
+      final postOwner = state.user;
+      final uid = currentUserId;
 
       if (postOwner != null) {
         await localSendNotification.call(
-          title: "Yorum Gönderildi",
+          userId: uid,
+          title: TextConstants.uploasingPost,
           body:
-              "${postOwner.firstName} ${postOwner.lastName} kişisine yorum attın",
+              "${postOwner.firstName} ${postOwner.lastName}  ${TextConstants.sendCommentForUser}",
         );
       }
     } catch (e) {
       emit(
         state.copyWith(
           commentStatus: RequestStatus.failure,
-          errorMessage: "Yorum eklenemedi",
+          errorMessage: TextConstants.sendFailed,
         ),
       );
     }
@@ -126,20 +129,18 @@ class PostInfoCubit extends Cubit<PostInfoState> {
     );
 
     try {
-      // 1️⃣ Postu çek
+      // 1️ Postu çek
       final post = await loadPostById.execute(postId);
 
       if (post == null) {
         emit(
           state.copyWith(
             postInfoStatus: RequestStatus.failure,
-            errorMessage: "Post bulunamadı",
+            errorMessage: TextConstants.didNotPost,
           ),
         );
         return;
       }
-
-      final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
       // 2️⃣ Kullanıcıyı çek
       final myuser.User? user = await getUserInfo.execute(post.userId);
@@ -148,7 +149,7 @@ class PostInfoCubit extends Cubit<PostInfoState> {
         emit(
           state.copyWith(
             postInfoStatus: RequestStatus.failure,
-            errorMessage: "Kullanıcı bulunamadı",
+            errorMessage: TextConstants.doNotFoundPerson,
           ),
         );
         return;
@@ -209,8 +210,10 @@ class PostInfoCubit extends Cubit<PostInfoState> {
     }
 
     await localSendNotification.call(
-      title: "Oy Verildi ",
-      body: "Bir gönderiye ${isGreen ? 'yeşil' : 'kırmızı'} bayrak verdin",
+      userId: currentUserId,
+      title: TextConstants.uploasingPost,
+      body:
+          "${TextConstants.onePost}${isGreen ? TextConstants.green : TextConstants.red} ${TextConstants.takeFlag}",
     );
 
     // UI güncelle
@@ -238,7 +241,7 @@ class PostInfoCubit extends Cubit<PostInfoState> {
           redFlagCount: prevRed,
           hasGreenFlag: prevGreenFlag,
           hasRedFlag: prevRedFlag,
-          errorMessage: "Posta oy verilemedi",
+          errorMessage: TextConstants.error,
         ),
       );
     }
@@ -274,8 +277,8 @@ class PostInfoCubit extends Cubit<PostInfoState> {
           followStatus: RequestStatus.success,
           isFollowing: updatedFollowing,
           followMessage: updatedFollowing
-              ? "Kullanıcı takip edildi"
-              : "Takipten çıkıldı",
+              ? TextConstants.followThePerson
+              : TextConstants.followOutPerson,
           errorMessage: null,
           user: updatedUser,
         ),
@@ -284,7 +287,7 @@ class PostInfoCubit extends Cubit<PostInfoState> {
       emit(
         state.copyWith(
           followStatus: RequestStatus.failure,
-          errorMessage: "Takip işlemi başarısız oldu",
+          errorMessage: TextConstants.followFailed,
           followMessage: null,
         ),
       );
@@ -305,7 +308,7 @@ class PostInfoCubit extends Cubit<PostInfoState> {
         imageUrl: post.imageUrl,
       );
     } catch (e) {
-      emit(state.copyWith(errorMessage: "Paylaşım başarısız oldu"));
+      emit(state.copyWith(errorMessage: TextConstants.failedPost));
     }
   }
 

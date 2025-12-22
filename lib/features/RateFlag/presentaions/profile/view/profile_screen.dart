@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
@@ -77,19 +78,19 @@ class ProfileScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ProfileBuildCount(
-                        label: "Posts",
+                        label: TextConstants.post,
                         count: "${state.postCount}",
                       ),
 
                       ProfileBuildCount(
-                        label: "Followers",
+                        label: TextConstants.followers,
                         count: "${state.followersCount}",
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => FollowListScreen(
-                                title: "Followers",
+                                title: TextConstants.followers,
                                 userIds: state.followers,
                               ),
                             ),
@@ -98,14 +99,14 @@ class ProfileScreen extends StatelessWidget {
                       ),
 
                       ProfileBuildCount(
-                        label: "Following",
+                        label: TextConstants.following,
                         count: "${state.followingCount}",
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => FollowListScreen(
-                                title: "Following",
+                                title: TextConstants.following,
                                 userIds: state.following,
                               ),
                             ),

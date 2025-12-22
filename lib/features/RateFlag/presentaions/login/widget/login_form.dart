@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 import 'package:rate_flag/features/RateFlag/common/utils/validators/validators.dart';
 import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
@@ -36,11 +37,11 @@ class LoginForm extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            RateFlagText.head1(text: "Giriş Yap", context: context),
+            RateFlagText.head1(text: TextConstants.login, context: context),
             SizedBox(height: 60.h),
 
             CustomTextField(
-              label: "E-posta giriniz",
+              label: TextConstants.email,
               icon: Icons.email,
               keyboardType: TextInputType.emailAddress,
               validator: Validators.email,
@@ -50,7 +51,7 @@ class LoginForm extends StatelessWidget {
             SizedBox(height: 24.h),
 
             CustomTextField(
-              label: "Şifre giriniz",
+              label: TextConstants.password,
               icon: Icons.lock_outline,
               isPassword: true,
               validator: Validators.password,
@@ -64,11 +65,15 @@ class LoginForm extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomElevatedButton.primary(
-                  text: isLoading ? "Giriş yapılıyor..." : "Giriş Yap",
+                  text: isLoading
+                      ? TextConstants.logining
+                      : TextConstants.login,
                   onPressed: isLoading ? null : onLoginPressed,
                 ),
                 CustomElevatedButton.secondary(
-                  text: isResetLoading ? "Gönderiliyor..." : "Şifremi Unuttum",
+                  text: isResetLoading
+                      ? TextConstants.sending
+                      : TextConstants.forgotPassword,
                   onPressed: isResetLoading ? null : onForgotPasswordPressed,
                 ),
               ],

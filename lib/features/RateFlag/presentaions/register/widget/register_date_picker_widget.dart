@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
 import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
 
 class RegisterDatePickerWidget extends StatelessWidget {
@@ -36,7 +37,7 @@ class RegisterDatePickerWidget extends StatelessWidget {
         ),
         child: Text(
           selectedDate == null
-              ? "Doğum Tarihini Seç"
+              ? TextConstants.selectYourBirthday
               : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
           style: TextStyle(fontSize: 16.sp),
         ),
