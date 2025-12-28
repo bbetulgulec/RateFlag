@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/buttons/common_icon_button.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/filter_page/cubit/filter_page_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/filter_page/view/filter_page_screen.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_state.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/widget/tabItem.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/notificaiton/cubit/notification_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/notificaiton/view/notification_screen.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/buttons/common_icon_button.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/home/cubit/home_cubit.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/home/cubit/home_state.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/home/widget/tab_item.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const HomeAppBar({super.key});
+  final VoidCallback onPressed;
+  final VoidCallback onTapMap;
+  final VoidCallback onTapFeed;
+  final VoidCallback onTapSearch;
+  const HomeAppBar({
+    super.key,
+    required this.onPressed,
+    required this.onTapMap,
+    required this.onTapFeed,
+    required this.onTapSearch,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,17 +29,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       leading: CommonIconButton(
         icon: Icons.notifications_none,
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => BlocProvider(
-                create: (_) => getIt<NotificationCubit>(),
-                child: NotificationScreen(),
-              ),
-            ),
-          );
-        },
+        onPressed: onPressed,
       ),
       title: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
@@ -44,36 +39,20 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               Tabitem(
                 title: TextConstants.map,
                 isActive: state.selectedTab == HomeTab.map,
-                onTap: () => context.read<HomeCubit>().selectMap(),
+                onTap: onTapMap, //() => context.read<HomeCubit>().selectMap(),
               ),
               const SizedBox(width: 20),
               Tabitem(
                 title: TextConstants.forYou,
                 isActive: state.selectedTab == HomeTab.forYou,
-                onTap: () => context.read<HomeCubit>().selectForYou(),
+                onTap:
+                    onTapFeed, // () => context.read<HomeCubit>().selectForYou(),
               ),
             ],
           );
         },
       ),
-      actions: [
-        CommonIconButton(
-          icon: Icons.search,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => BlocProvider(
-                  create: (_) => getIt<FilterPageCubit>()
-                    ..loadAllUsers()
-                    ..loadPosts(),
-                  child: const FilterPageScreen(),
-                ),
-              ),
-            );
-          },
-        ),
-      ],
+      actions: [CommonIconButton(icon: Icons.search, onPressed: onTapSearch)],
     );
   }
 

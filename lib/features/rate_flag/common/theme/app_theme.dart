@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/app_color.dart';
-import 'package:rate_flag/features/RateFlag/common/theme/text_field_theme.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/app_color.dart';
+import 'package:rate_flag/features/rate_flag/common/theme/text_field_theme.dart';
 
 class AppTheme {
   static ThemeData dark = ThemeData(

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/auth/sign_out.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_state.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/auth/sign_out.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/settings/cubit/settings_state.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
   final SignOut signOutUserUsecase;

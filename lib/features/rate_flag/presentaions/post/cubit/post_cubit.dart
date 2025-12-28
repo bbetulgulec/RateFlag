@@ -2,17 +2,18 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/api_constants.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/create_post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/local/local_send_notification.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/storage/upload_image_storage.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_state.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/api_constants.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/post.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/create_post.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/local/local_send_notification.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/storage/upload_image_storage.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/post/cubit/post_state.dart';
 
 class PostCubit extends Cubit<PostState> {
   final CreatePost createPostUserUsecase;
@@ -107,7 +108,7 @@ class PostCubit extends Cubit<PostState> {
         state.copyWith(isCreatePostLoading: false, isCreatePostSuccess: true),
       );
 
-      print(TextConstants.successSavePost);
+      debugPrint(TextConstants.successSavePost);
     } catch (e) {
       emit(
         state.copyWith(
@@ -116,7 +117,7 @@ class PostCubit extends Cubit<PostState> {
           errorMessage: e.toString(),
         ),
       );
-      print("${TextConstants.error} $e");
+      debugPrint("${TextConstants.error} $e");
     }
   }
 

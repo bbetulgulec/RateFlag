@@ -1,13 +1,18 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_all_post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/rate_post.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_state.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:rate_flag/features/rate_flag/core/enum/request_status.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/post.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/load_all_post.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/rate_post.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/home/cubit/home_state.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/home/widget/post_marker_widget.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   final LoadAllPost loadAllPostUserUsecase;
   final RatePost rateTheImageUserUsecase;
+
+  Set<Marker> markers = {};
 
   HomeCubit(this.loadAllPostUserUsecase, this.rateTheImageUserUsecase)
     : super(const HomeState());
@@ -35,6 +40,21 @@ class HomeCubit extends Cubit<HomeState> {
         ),
       );
     }
+  }
+
+  Future<void> buildMarkers(BuildContext context, List posts) async {
+    final futures = posts.where((p) => p.imageUrl != null).map((post) async {
+      final widget = PostMarkerWidget(
+        post: post,
+        onTap: () {
+          openPost(post);
+        },
+      );
+      return widget.buildMarker();
+    }).toList();
+
+    final markers = await Future.wait(futures);
+    emit(state.copyWith(markers: markers.toSet()));
   }
 
   void selectMap() {

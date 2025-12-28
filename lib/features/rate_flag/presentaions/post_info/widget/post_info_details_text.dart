@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/widget/post_material_button.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/widget/post_save_mark_button.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/texts/custom_text.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/post_info/widget/post_material_button.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/post_info/widget/post_save_mark_button.dart';
 
 class PostInfoDetailsTextWithFlags extends StatelessWidget {
   final String fullName;

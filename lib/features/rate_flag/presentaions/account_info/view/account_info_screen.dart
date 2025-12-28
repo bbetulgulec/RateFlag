@@ -1,16 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/dialog/common_delete_confirm_dialog.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
-import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/account_info/cubit/account_info_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/account_info/cubit/account_info_state.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/account_info/widget/account_info_form.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/routes/routes.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/dialog/common_delete_confirm_dialog.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/texts/custom_text.dart';
+import 'package:rate_flag/features/rate_flag/core/enum/request_status.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/account_info/cubit/account_info_cubit.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/account_info/cubit/account_info_state.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/account_info/widget/account_info_form.dart';
 
 class AccountInfoScreen extends StatelessWidget {
   AccountInfoScreen({super.key});
@@ -37,6 +35,16 @@ class AccountInfoScreen extends StatelessWidget {
       ),
       body: BlocConsumer<AccountInfoCubit, AccountInfoState>(
         listener: (context, state) {
+          if (state.getInfoStatus == RequestStatus.success &&
+              state.isFormInitialized &&
+              state.birthDate != null &&
+              birthDateController.text.isEmpty) {
+            birthDateController.text = state.birthDate!
+                .toIso8601String()
+                .split('T')
+                .first;
+          }
+
           if (state.updateInfoStatus == RequestStatus.success) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text(TextConstants.infoUpdated)),
@@ -44,16 +52,7 @@ class AccountInfoScreen extends StatelessWidget {
           }
 
           if (state.deleteAccountStatus == RequestStatus.success) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (_) => BlocProvider(
-                  create: (_) => getIt<LoginCubit>(),
-                  child: LoginScreen(),
-                ),
-              ),
-              (_) => false,
-            );
+            Routes.clearAndPush(context, Routes.login);
           }
 
           if (state.errorMessage != null) {
@@ -62,20 +61,12 @@ class AccountInfoScreen extends StatelessWidget {
             ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
           }
         },
-        builder: (context, state) {
-          if (state.birthDate != null) {
-            birthDateController.text = state.birthDate!
-                .toIso8601String()
-                .split('T')
-                .first;
-          }
 
+        builder: (context, state) {
           return Stack(
             children: [
               AccountInfoFormWidget(
-                key: ValueKey(
-                  '${state.firstName}-${state.lastName}-${state.email}-${state.gender}',
-                ),
+                key: ValueKey(state.isFormInitialized),
                 firstName: state.firstName,
                 lastName: state.lastName,
                 email: state.email,

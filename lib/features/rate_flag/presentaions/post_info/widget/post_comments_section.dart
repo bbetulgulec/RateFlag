@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/comment.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart' as myuser;
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_state.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/comment.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart' as myuser;
+import 'package:rate_flag/features/rate_flag/presentaions/post_info/cubit/post_info_state.dart';
 
 class PostCommentsSection extends StatelessWidget {
   final RequestStatus status;
@@ -19,17 +19,14 @@ class PostCommentsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ⏳ Loading + Initial
     if (status == RequestStatus.loading || status == RequestStatus.initial) {
       return Center(child: CircularProgressIndicator());
     }
 
-    // 📭 Empty
     if (comments.isEmpty) {
       return const Text(TextConstants.dontHaveCommentYet);
     }
 
-    // 🗨️ Comments
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -38,7 +35,6 @@ class PostCommentsSection extends StatelessWidget {
         final comment = comments[index];
         final user = commentUsers[comment.userId];
 
-        // Kullanıcı henüz yüklenmediyse placeholder göster
         if (user == null) {
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),

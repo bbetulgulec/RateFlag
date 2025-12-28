@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/post.dart';
-import 'circle_image_marker.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/post.dart';
+import '../../../common/utils/functions/circle_image_marker.dart';
 
 class PostMarkerWidget extends StatelessWidget {
   final Post post;

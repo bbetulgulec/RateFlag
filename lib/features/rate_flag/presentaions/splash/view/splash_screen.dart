@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/assets_path.dart';
-import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/main/cubit/main_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/main/view/main_screen.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/onboarding/cubit/onboarding_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/onboarding/view/onboarding_screen.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/splash/cubit/splash_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/splash/cubit/splash_state.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/assets_path.dart';
+import 'package:rate_flag/features/rate_flag/common/routes/routes.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/splash/cubit/splash_cubit.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/splash/cubit/splash_state.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -18,31 +13,12 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<SplashCubit, SplashState>(
       listener: (context, state) {
-        if (state.isFinished) {
-          if (state.isAuthenticated) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MultiBlocProvider(
-                  providers: [
-                    BlocProvider(create: (_) => getIt<MainCubit>()),
-                    BlocProvider(create: (_) => getIt<HomeCubit>()),
-                  ],
-                  child: MainScreen(),
-                ),
-              ),
-            );
-          } else {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => BlocProvider(
-                  create: (_) => getIt<OnboardingCubit>(),
-                  child: const OnboardingScreen(),
-                ),
-              ),
-            );
-          }
+        if (!state.isFinished) return;
+
+        if (state.isAuthenticated) {
+          Routes.replace(context, Routes.main);
+        } else {
+          Routes.replace(context, Routes.onboarding);
         }
       },
       child: Scaffold(body: Center(child: Lottie.asset(AssetsPath.splash))),

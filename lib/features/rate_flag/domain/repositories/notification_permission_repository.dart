@@ -1,4 +1,4 @@
-import 'package:rate_flag/features/RateFlag/domain/model/app_notification.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/app_notification.dart';
 
 abstract class NotificationPermissionRepository {
   Future<void> init();

@@ -1,4 +1,4 @@
-import 'package:rate_flag/features/RateFlag/domain/repositories/notification_permission_repository.dart';
+import 'package:rate_flag/features/rate_flag/domain/repositories/notification_permission_repository.dart';
 
 class LocalSendNotification {
   final NotificationPermissionRepository repository;

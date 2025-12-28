@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' as fb;
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
-import 'package:rate_flag/features/RateFlag/domain/repositories/auth_repository.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/domain/repositories/auth_repository.dart';
 
 class FirebaseAuthImpl extends AuthRepository {
   final fb.FirebaseAuth auth = fb.FirebaseAuth.instance;

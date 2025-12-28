@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/widget/self_post_badget.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/home/widget/self_post_badget.dart';
 
 class FeedPostCard extends StatelessWidget {
   final String? imageUrl;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
 
 class Tabitem extends StatelessWidget {
   final String title;

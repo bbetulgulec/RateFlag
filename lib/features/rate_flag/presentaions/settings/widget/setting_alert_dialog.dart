@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
 
 class SettingAlertDialog extends StatelessWidget {
   final String title;
   final String content;
+  final VoidCallback onPressed;
 
   const SettingAlertDialog({
     super.key,
     required this.title,
     required this.content,
+    required this.onPressed,
   });
 
   @override
@@ -22,7 +24,9 @@ class SettingAlertDialog extends StatelessWidget {
       actions: [
         TextButton(
           child: const Text(TextConstants.close),
-          onPressed: () => Navigator.pop(context),
+          onPressed: onPressed,
+
+          //Navigator.pop(context),
         ),
       ],
     );

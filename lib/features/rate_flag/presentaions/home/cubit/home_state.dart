@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/post.dart';
+import 'package:rate_flag/features/rate_flag/core/enum/request_status.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/post.dart';
 
 enum HomeTab { map, forYou }
 

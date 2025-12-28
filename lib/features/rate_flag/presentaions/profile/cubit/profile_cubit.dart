@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:rate_flag/features/RateFlag/domain/repositories/firestore_repository.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/get_user_info.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_user_posts.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/update_user_info.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/storage/upload_profile_image.dart';
+import 'package:rate_flag/features/rate_flag/domain/repositories/firestore_repository.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/get_user_info.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/load_user_posts.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/update_user_info.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/storage/upload_profile_image.dart';
 
 import 'profile_state.dart';
 

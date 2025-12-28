@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/auth/check_auth_user.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/auth/check_auth_user.dart';
 import 'splash_state.dart';
 
 class SplashCubit extends Cubit<SplashState> {

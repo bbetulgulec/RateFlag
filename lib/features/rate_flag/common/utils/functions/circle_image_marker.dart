@@ -8,16 +8,14 @@ class CircleImageMarker {
 
   static Future<BitmapDescriptor> fromUrl(
     String imageUrl, {
-    double size = 110,
-    double borderWidth = 6,
+    double size = 60,
+    double borderWidth = 3,
     Color borderColor = Colors.white,
   }) async {
-    // CACHE
     if (_cache.containsKey(imageUrl)) {
       return _cache[imageUrl]!;
     }
 
-    // download image
     final response = await http.get(Uri.parse(imageUrl));
     final bytes = response.bodyBytes;
 
@@ -36,7 +34,6 @@ class CircleImageMarker {
 
     final radius = size / 2;
 
-    // clip circle
     canvas.save();
     canvas.translate(radius, radius);
     canvas.clipPath(
@@ -47,7 +44,6 @@ class CircleImageMarker {
     canvas.drawImage(image, Offset.zero, paint);
     canvas.restore();
 
-    // border
     paint
       ..style = PaintingStyle.stroke
       ..strokeWidth = borderWidth
@@ -59,9 +55,7 @@ class CircleImageMarker {
     final img = await picture.toImage(size.toInt(), size.toInt());
     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
 
-    final descriptor = BitmapDescriptor.fromBytes(
-      byteData!.buffer.asUint8List(),
-    );
+    final descriptor = BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
 
     _cache[imageUrl] = descriptor;
     return descriptor;

@@ -1,18 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/buttons/common_icon_button.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/buttons/commun_text_button.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/text_fields/common_text_field.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/post.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_state.dart';
-import 'package:rate_flag/features/RateFlag/common/utils/functions/calculate_age.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/widget/post_comments_section.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/widget/post_image_widget.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/widget/post_info_details_text.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/buttons/common_icon_button.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/buttons/commun_text_button.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/text_fields/common_text_field.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/post.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/post_info/cubit/post_info_cubit.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/post_info/cubit/post_info_state.dart';
+import 'package:rate_flag/features/rate_flag/common/utils/functions/calculate_age.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/post_info/widget/post_comments_section.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/post_info/widget/post_image_widget.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/post_info/widget/post_info_details_text.dart';
 
 class PostInfoScreen extends StatefulWidget {
   final String postId;
@@ -49,7 +49,6 @@ class _PostInfoScreenState extends State<PostInfoScreen> {
       listener: (context, state) {},
 
       builder: (context, state) {
-        // Loading
         if (state.postInfoStatus == RequestStatus.loading ||
             state.postInfoStatus == RequestStatus.initial) {
           return const Scaffold(
@@ -57,7 +56,6 @@ class _PostInfoScreenState extends State<PostInfoScreen> {
           );
         }
 
-        //  Error
         if (state.postInfoStatus == RequestStatus.failure) {
           return Scaffold(
             body: Center(

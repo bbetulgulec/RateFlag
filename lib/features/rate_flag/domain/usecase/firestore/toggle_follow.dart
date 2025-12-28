@@ -1,4 +1,4 @@
-import 'package:rate_flag/features/RateFlag/domain/repositories/firestore_repository.dart';
+import 'package:rate_flag/features/rate_flag/domain/repositories/firestore_repository.dart';
 
 class ToggleFollows {
   final FirestoreRepository repository;

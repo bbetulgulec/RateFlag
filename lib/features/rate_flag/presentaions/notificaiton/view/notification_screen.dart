@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/notificaiton/cubit/notification_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/notificaiton/cubit/notification_state.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/notificaiton/widget/notification_tile.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/notificaiton/cubit/notification_cubit.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/notificaiton/cubit/notification_state.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/notificaiton/widget/notification_tile.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});

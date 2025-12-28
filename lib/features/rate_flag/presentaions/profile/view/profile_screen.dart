@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/follow_list/view/follow_list_screen.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/profile/cubit/profile_state.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_avatar.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_buid_count.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_gesture_detector.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_icon_widget.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_image_picker_sheet.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/profile/widget/profile_post_content.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/view/settings_screen.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/routes/routes.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/texts/custom_text.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/post.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/profile/cubit/profile_cubit.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/profile/cubit/profile_state.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/profile/widget/profile_avatar.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/profile/widget/profile_buid_count.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/profile/widget/profile_gesture_detector.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/profile/widget/profile_icon_widget.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/profile/widget/profile_image_picker_sheet.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/profile/widget/profile_post_content.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<ProfileCubit>();
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         return Scaffold(
@@ -34,15 +33,7 @@ class ProfileScreen extends StatelessWidget {
                     child: ProfileIconWidget.small(
                       icon: Icons.settings_outlined,
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => getIt<SettingsCubit>(),
-                              child: SettingsScreen(),
-                            ),
-                          ),
-                        );
+                        Routes.push(context, Routes.setting);
                       },
                     ),
                   ),
@@ -58,7 +49,16 @@ class ProfileScreen extends StatelessWidget {
                         context: context,
                         builder: (_) => BlocProvider.value(
                           value: context.read<ProfileCubit>(),
-                          child: const ProfileImagePickerSheet(),
+                          child: ProfileImagePickerSheet(
+                            onPressedCamera: () {
+                              Routes.pop(context);
+                              cubit.pickFromCamera();
+                            },
+                            onPressedGallery: () {
+                              Routes.pop(context);
+                              cubit.pickFromGallery();
+                            },
+                          ),
                         ),
                       );
                     },
@@ -86,14 +86,13 @@ class ProfileScreen extends StatelessWidget {
                         label: TextConstants.followers,
                         count: "${state.followersCount}",
                         onTap: () {
-                          Navigator.push(
+                          Routes.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => FollowListScreen(
-                                title: TextConstants.followers,
-                                userIds: state.followers,
-                              ),
-                            ),
+                            Routes.followList,
+                            arguments: {
+                              'title': TextConstants.followers,
+                              'userIds': state.followers,
+                            },
                           );
                         },
                       ),
@@ -102,14 +101,13 @@ class ProfileScreen extends StatelessWidget {
                         label: TextConstants.following,
                         count: "${state.followingCount}",
                         onTap: () {
-                          Navigator.push(
+                          Routes.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => FollowListScreen(
-                                title: TextConstants.following,
-                                userIds: state.following,
-                              ),
-                            ),
+                            Routes.followList,
+                            arguments: {
+                              'title': TextConstants.following,
+                              'userIds': state.following,
+                            },
                           );
                         },
                       ),
@@ -152,7 +150,12 @@ class ProfileScreen extends StatelessWidget {
                   Expanded(
                     child: state.isPostLoading
                         ? const Center(child: CircularProgressIndicator())
-                        : ProfilePostContent(state: state),
+                        : ProfilePostContent(
+                            state: state,
+                            onTap: (Post p1) {
+                              Routes.push(context, Routes.postInfo);
+                            },
+                          ),
                   ),
                 ],
               ),

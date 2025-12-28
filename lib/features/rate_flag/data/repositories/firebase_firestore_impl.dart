@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/comment.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/post.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
-import 'package:rate_flag/features/RateFlag/domain/repositories/firestore_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/comment.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/post.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/domain/repositories/firestore_repository.dart';
 
 class FirebaseFirestoreImpl implements FirestoreRepository {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -20,7 +21,7 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
         "createdAt": FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print("🔥 FIRESTORE CREATE USER ERROR: $e");
+      debugPrint("🔥 FIRESTORE CREATE USER ERROR: $e");
       rethrow;
     }
   }
@@ -34,7 +35,7 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
 
       return User.fromJson(doc.data()!);
     } catch (e) {
-      print("getUserInfo ERROR: $e");
+      debugPrint("getUserInfo ERROR: $e");
       return null;
     }
   }
@@ -55,24 +56,20 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
     try {
       await firestore.collection("users").doc(user.uid).update(user.toJson());
     } catch (e) {
-      print("updateUser ERROR: $e");
+      debugPrint("updateUser ERROR: $e");
     }
   }
 
   @override
   Future<void> deleteAccount(String userID) async {
-    try {
-      final doc = await firestore
-          .collection("users")
-          .doc(userID)
-          .delete()
-          .then(
-            (doc) => print("documented deleted"),
-            onError: (e) => print("error updating $e"),
-          );
-    } catch (e) {
-      print(e);
-    }
+    await firestore
+        .collection("users")
+        .doc(userID)
+        .delete()
+        .then(
+          (doc) => debugPrint("documented deleted"),
+          onError: (e) => debugPrint("error updating $e"),
+        );
   }
 
   @override
@@ -82,38 +79,29 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
         ...post.toFirestore(),
         "createdAt": FieldValue.serverTimestamp(),
       });
-
-      print("Post saved successfully");
     } catch (e) {
-      print("createPost ERROR: $e");
       rethrow;
     }
   }
 
   @override
   Future<void> createComment(Comment comment) async {
-    try {
-      final commentRef = firestore
-          .collection("comments")
-          .doc(comment.commentId);
+    final commentRef = firestore.collection("comments").doc(comment.commentId);
 
-      final postRef = firestore.collection("posts").doc(comment.postId);
+    final postRef = firestore.collection("posts").doc(comment.postId);
 
-      await firestore.runTransaction((transaction) async {
-        /// 1️⃣ Yorumu oluştur
-        transaction.set(commentRef, {
-          ...comment.toFirestore(),
-          "createdAt": FieldValue.serverTimestamp(),
-        });
-
-        /// 2️⃣ Post içindeki commentIds listesine ekle
-        transaction.update(postRef, {
-          "comments": FieldValue.arrayUnion([comment.commentId]),
-        });
+    await firestore.runTransaction((transaction) async {
+      /// 1️⃣ Yorumu oluştur
+      transaction.set(commentRef, {
+        ...comment.toFirestore(),
+        "createdAt": FieldValue.serverTimestamp(),
       });
-    } catch (e) {
-      print("Create comment error: $e");
-    }
+
+      /// 2️⃣ Post içindeki commentIds listesine ekle
+      transaction.update(postRef, {
+        "comments": FieldValue.arrayUnion([comment.commentId]),
+      });
+    });
   }
 
   @override
@@ -196,8 +184,6 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
         .orderBy("createdAt", descending: true)
         .get();
 
-    print("POST COUNT: ${query.docs.length}");
-
     return query.docs.map((doc) => Post.fromFirestore(doc.data())).toList();
   }
 
@@ -239,7 +225,6 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
       // Eğer önceki oy aynı ise return
       if ((isGreen && previousVote == "green") ||
           (!isGreen && previousVote == "red")) {
-        print("User already voted the same");
         return;
       }
 
@@ -271,8 +256,6 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
         'redFlag': redCount,
         'flaggedBy': updatedFlaggedBy,
       });
-
-      print("Firestore vote updated successfully");
     });
   }
 
@@ -315,10 +298,13 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
       final updatedFollowing = List<String>.from(currentUser.following ?? []);
       final updatedFollowers = List<String>.from(targetUser.followers ?? []);
 
-      if (!updatedFollowing.contains(targetUserId))
+      if (!updatedFollowing.contains(targetUserId)) {
         updatedFollowing.add(targetUserId);
-      if (!updatedFollowers.contains(currentUserId))
+      }
+
+      if (!updatedFollowers.contains(currentUserId)) {
         updatedFollowers.add(currentUserId);
+      }
 
       // Transaction update
       transaction.update(
@@ -424,7 +410,7 @@ class FirebaseFirestoreImpl implements FirestoreRepository {
 
       return snapshot.docs.map((doc) => User.fromJson(doc.data())).toList();
     } catch (e) {
-      print("getAllUsers ERROR: $e");
+      debugPrint("getAllUsers ERROR: $e");
       return [];
     }
   }

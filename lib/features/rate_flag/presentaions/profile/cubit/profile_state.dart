@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/post.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/post.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
 
 class ProfileState extends Equatable {
   final int tabIndex;

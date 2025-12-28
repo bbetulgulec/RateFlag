@@ -1,5 +1,5 @@
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
-import 'package:rate_flag/features/RateFlag/domain/repositories/firestore_repository.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/domain/repositories/firestore_repository.dart';
 
 class UpdateUserInfo {
   final FirestoreRepository firestoreRepository;

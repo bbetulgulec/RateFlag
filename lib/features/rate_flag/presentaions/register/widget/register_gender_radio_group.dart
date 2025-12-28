@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
 
 class GenderRadioGroup extends StatelessWidget {
   const GenderRadioGroup({

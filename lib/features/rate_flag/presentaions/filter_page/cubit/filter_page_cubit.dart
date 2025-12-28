@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/utils/functions/calculate_age.dart';
-import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_all_post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_all_user.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/search_post_city.dart';
+import 'package:rate_flag/features/rate_flag/common/utils/functions/calculate_age.dart';
+import 'package:rate_flag/features/rate_flag/core/enum/filter_list_type.dart';
+import 'package:rate_flag/features/rate_flag/core/enum/request_status.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/load_all_post.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/load_all_user.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/search_post_city.dart';
 import 'filter_page_state.dart';
 
 class FilterPageCubit extends Cubit<FilterPageState> {
@@ -86,6 +87,14 @@ class FilterPageCubit extends Cubit<FilterPageState> {
     emit(state.copyWith(filteredUsers: filtered));
   }
 
+  void applySelectedFilters() {
+    if (state.filterListType == FilterListType.users) {
+      applyFilters(state.ageRange, state.gender);
+    } else if (state.filterListType == FilterListType.posts) {
+      filterPosts();
+    }
+  }
+
   void clearFilters() {
     emit(
       state.copyWith(
@@ -155,6 +164,10 @@ class FilterPageCubit extends Cubit<FilterPageState> {
     emit(state.copyWith(gender: gender));
   }
 
+  void selectfilterListType(FilterListType list) {
+    emit(state.copyWith(filterListType: list));
+  }
+
   void setIsPublic(bool? value) {
     emit(state.copyWith(isPublic: value, isPublicSet: true));
   }
@@ -168,5 +181,13 @@ class FilterPageCubit extends Cubit<FilterPageState> {
     }).toList();
 
     emit(state.copyWith(filteredPosts: filtered));
+  }
+
+  void isSelectFilterType() {
+    if (state.filterListType == FilterListType.users) {
+      applySelectedFilters();
+    } else if (state.filterListType == FilterListType.posts) {
+      filterPosts();
+    }
   }
 }

@@ -1,13 +1,15 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/post.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/core/enum/filter_list_type.dart';
+import 'package:rate_flag/features/rate_flag/core/enum/request_status.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/post.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
 
 class FilterPageState extends Equatable {
   final RequestStatus userStatus;
   final RequestStatus postStatus;
   final RequestStatus cityStatus;
+  final FilterListType filterListType;
 
   final String? errorMessage;
 
@@ -28,6 +30,7 @@ class FilterPageState extends Equatable {
     this.userStatus = RequestStatus.initial,
     this.postStatus = RequestStatus.initial,
     this.cityStatus = RequestStatus.initial,
+
     this.errorMessage,
 
     this.allUsers = const [],
@@ -39,13 +42,14 @@ class FilterPageState extends Equatable {
     this.searchQuery = '',
     this.ageRange = const RangeValues(18, 75),
     this.gender = 'all',
+    this.filterListType = FilterListType.users,
   });
 
   FilterPageState copyWith({
     RequestStatus? userStatus,
     RequestStatus? postStatus,
     String? errorMessage,
-
+    FilterListType? filterListType,
     List<User>? allUsers,
     List<User>? filteredUsers,
     List<Post>? allPosts,
@@ -62,7 +66,7 @@ class FilterPageState extends Equatable {
       postStatus: postStatus ?? this.postStatus,
       errorMessage: errorMessage,
       isPublic: isPublicSet ? isPublic : this.isPublic,
-
+      filterListType: filterListType ?? this.filterListType,
       allUsers: allUsers ?? this.allUsers,
       filteredUsers: filteredUsers ?? this.filteredUsers,
       allPosts: allPosts ?? this.allPosts,
@@ -84,6 +88,7 @@ class FilterPageState extends Equatable {
     filteredUsers,
     isPublic,
     allPosts,
+    filterListType,
     filteredPosts,
     searchQuery,
     ageRange,

@@ -1,28 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/filter_page/cubit/filter_page_state.dart';
-import '../cubit/filter_page_cubit.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/core/enum/filter_list_type.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/filter_page/cubit/filter_page_state.dart';
 import 'filter_radio_tile.dart';
 
 class FilterBottomSheet extends StatelessWidget {
-  const FilterBottomSheet({super.key});
+  final FilterPageState state;
+
+  final VoidCallback onClearFilters;
+  final VoidCallback onApply;
+
+  final ValueChanged<FilterListType> onFilterTypeChanged;
+  final ValueChanged<RangeValues> onAgeRangeChanged;
+  final ValueChanged<String> onGenderChanged;
+  final ValueChanged<bool?> onIsPublicChanged;
+
+  const FilterBottomSheet({
+    super.key,
+    required this.state,
+    required this.onClearFilters,
+    required this.onApply,
+    required this.onFilterTypeChanged,
+    required this.onAgeRangeChanged,
+    required this.onGenderChanged,
+    required this.onIsPublicChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(20.h),
-      child: BlocBuilder<FilterPageCubit, FilterPageState>(
-        builder: (context, state) {
-          final cubit = context.read<FilterPageCubit>();
-
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // HEADER
-              Row(
+      child: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
@@ -32,8 +49,9 @@ class FilterBottomSheet extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+
                   TextButton(
-                    onPressed: cubit.clearFilters,
+                    onPressed: onClearFilters,
                     child: Text(
                       TextConstants.clean,
                       style: TextStyle(
@@ -43,10 +61,39 @@ class FilterBottomSheet extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
 
-              SizedBox(height: 20.h),
+            SizedBox(height: 20.h),
 
-              // AGE
+            /// FILTER TYPE
+            const Text("Tür"),
+            RadioGroup<FilterListType>(
+              groupValue: state.filterListType,
+              onChanged: (value) {
+                if (value != null) {
+                  onFilterTypeChanged(value);
+                }
+              },
+              child: Row(
+                children: const [
+                  Expanded(
+                    child: FilterRadioTile<FilterListType>(
+                      title: "kullanıcı",
+                      value: FilterListType.users,
+                    ),
+                  ),
+                  Expanded(
+                    child: FilterRadioTile<FilterListType>(
+                      title: "postlar",
+                      value: FilterListType.posts,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            /// USER FILTERS
+            if (state.filterListType == FilterListType.users) ...[
               const Text(TextConstants.ageBetween),
               RangeSlider(
                 values: state.ageRange,
@@ -57,66 +104,71 @@ class FilterBottomSheet extends StatelessWidget {
                   state.ageRange.start.round().toString(),
                   state.ageRange.end.round().toString(),
                 ),
-                onChanged: cubit.changeAgeRange,
+                onChanged: onAgeRangeChanged,
               ),
 
               SizedBox(height: 20.h),
 
-              // GENDER
               const Text(TextConstants.gender),
-              FilterRadioTile<String>(
-                title: TextConstants.genderMale,
-                value: 'male',
+              RadioGroup<String>(
                 groupValue: state.gender,
-                onChanged: (v) => cubit.selectGender(v!),
-              ),
-              FilterRadioTile<String>(
-                title: TextConstants.genderFemale,
-                value: 'female',
-                groupValue: state.gender,
-                onChanged: (v) => cubit.selectGender(v!),
-              ),
-
-              SizedBox(height: 20.h),
-
-              // POST TYPE
-              const Text(TextConstants.postType),
-              FilterRadioTile<bool?>(
-                title: TextConstants.all,
-                value: null,
-                groupValue: state.isPublic,
-                onChanged: cubit.setIsPublic,
-              ),
-              FilterRadioTile<bool?>(
-                title: TextConstants.postSomeoneElse,
-                value: true,
-                groupValue: state.isPublic,
-                onChanged: cubit.setIsPublic,
-              ),
-              FilterRadioTile<bool?>(
-                title: TextConstants.postMyself,
-                value: false,
-                groupValue: state.isPublic,
-                onChanged: cubit.setIsPublic,
-              ),
-
-              SizedBox(height: 24.h),
-
-              // APPLY
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    cubit.applyFilters(state.ageRange, state.gender);
-                    cubit.filterPosts();
-                    Navigator.pop(context);
-                  },
-                  child: const Text(TextConstants.apply),
+                onChanged: (value) {
+                  if (value != null) {
+                    onGenderChanged(value);
+                  }
+                },
+                child: Column(
+                  children: const [
+                    FilterRadioTile<String>(
+                      title: TextConstants.genderMale,
+                      value: 'male',
+                    ),
+                    FilterRadioTile<String>(
+                      title: TextConstants.genderFemale,
+                      value: 'female',
+                    ),
+                  ],
                 ),
               ),
             ],
-          );
-        },
+
+            /// POST FILTERS
+            if (state.filterListType == FilterListType.posts) ...[
+              const Text(TextConstants.postType),
+              RadioGroup<bool?>(
+                groupValue: state.isPublic,
+                onChanged: onIsPublicChanged,
+                child: Column(
+                  children: const [
+                    FilterRadioTile<bool?>(
+                      title: TextConstants.all,
+                      value: null,
+                    ),
+                    FilterRadioTile<bool?>(
+                      title: TextConstants.postSomeoneElse,
+                      value: true,
+                    ),
+                    FilterRadioTile<bool?>(
+                      title: TextConstants.postMyself,
+                      value: false,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
+            SizedBox(height: 24.h),
+
+            /// APPLY
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: onApply,
+                child: const Text(TextConstants.apply),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

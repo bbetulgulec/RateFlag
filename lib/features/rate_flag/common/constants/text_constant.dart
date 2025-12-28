@@ -118,7 +118,7 @@ class TextConstants {
 
   static const String whereFoundYou = "Sizi nerede bulabiliriz ?";
 
-  static const String searchCity = "Şehir ara";
+  static const String searchCity = "Şehir: ";
 
   static const String continueText = "Devam";
 
@@ -138,7 +138,7 @@ class TextConstants {
 
   static const String chooseUploadImage = "Yüklemek için resim seçin";
 
-  static const String howWantToShare = "İlçe bulunamadı";
+  static const String howWantToShare = "Nasıl paylaşmak istersin";
 
   static const String didNotUploadComment = "Yorumlar yüklenemedi ";
 

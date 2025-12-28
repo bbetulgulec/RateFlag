@@ -2,23 +2,23 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/comment.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/create_comment.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/get_Saved_post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/get_user_info.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/is_following.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_post_by_id.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_post_comment.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_user_posts.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/toggle_follow.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/share_post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/rate_post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/toogle_saved_post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/local/local_send_notification.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_state.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart' as myuser;
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/comment.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/post.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/create_comment.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/get_saved_post.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/get_user_info.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/is_following.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/load_post_by_id.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/load_post_comment.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/load_user_posts.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/toggle_follow.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/share_post.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/rate_post.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/toogle_saved_post.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/local/local_send_notification.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/post_info/cubit/post_info_state.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart' as myuser;
 
 class PostInfoCubit extends Cubit<PostInfoState> {
   final LoadUserPosts loadPostUserUsecase;
@@ -181,7 +181,6 @@ class PostInfoCubit extends Cubit<PostInfoState> {
   }
 
   Future<void> ratePost({required Post post, required bool isGreen}) async {
-    // UI için önceki değerler
     final prevGreen = state.greenFlagCount ?? post.greenFlag ?? 0;
     final prevRed = state.redFlagCount ?? post.redFlag ?? 0;
     final prevGreenFlag =
@@ -192,7 +191,6 @@ class PostInfoCubit extends Cubit<PostInfoState> {
     int newGreen = prevGreen;
     int newRed = prevRed;
 
-    // Oy durumunu güncelle
     if (prevGreenFlag && !isGreen) {
       newGreen--;
       newRed++;
@@ -200,10 +198,11 @@ class PostInfoCubit extends Cubit<PostInfoState> {
       newRed--;
       newGreen++;
     } else if (!prevGreenFlag && !prevRedFlag) {
-      if (isGreen)
+      if (isGreen) {
         newGreen++;
-      else
+      } else {
         newRed++;
+      }
     }
 
     await localSendNotification.call(
@@ -213,7 +212,6 @@ class PostInfoCubit extends Cubit<PostInfoState> {
           "${TextConstants.onePost}${isGreen ? TextConstants.green : TextConstants.red} ${TextConstants.takeFlag}",
     );
 
-    // UI güncelle
     emit(
       state.copyWith(
         greenFlagCount: newGreen,
@@ -224,14 +222,12 @@ class PostInfoCubit extends Cubit<PostInfoState> {
     );
 
     try {
-      // Firestore update
       await rateTheImageUserUsecase.execute(
         userId: currentUserId,
         post: post,
         isGreen: isGreen,
       );
     } catch (e) {
-      // Hata → UI geri al
       emit(
         state.copyWith(
           greenFlagCount: prevGreen,
@@ -248,20 +244,17 @@ class PostInfoCubit extends Cubit<PostInfoState> {
     emit(state.copyWith(followStatus: RequestStatus.loading));
 
     try {
-      // Firestore’dan güncel durumu al
       final currentlyFollowing = await isFollowing.execute(
         currentUserId: currentUserId,
         targetUserId: targetUserId,
       );
 
-      // Toggle işlemini yap
       await toggleFollow.execute(
         currentUserId: currentUserId,
         targetUserId: targetUserId,
         isFollow: !currentlyFollowing,
       );
 
-      // İşlem sonrası tekrar güncel durumu al
       final updatedFollowing = await isFollowing.execute(
         currentUserId: currentUserId,
         targetUserId: targetUserId,
@@ -337,13 +330,11 @@ class PostInfoCubit extends Cubit<PostInfoState> {
   Future<void> toggleSavePost(Post post) async {
     final userId = currentUserId;
 
-    // ⚡ Anında UI
     emit(state.copyWith(isSaved: !state.isSaved));
 
     try {
       await toggleSavedPost.execute(userId: userId, postId: post.postId);
     } catch (e) {
-      // ❌ hata olursa geri al
       emit(state.copyWith(isSaved: !state.isSaved));
     }
   }

@@ -1,6 +1,6 @@
-import 'package:rate_flag/features/RateFlag/domain/model/comment.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/post.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/comment.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/post.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
 
 abstract class FirestoreRepository {
   Future<void> createUser(String collection, User user);

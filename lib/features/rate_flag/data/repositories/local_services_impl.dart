@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/app_notification.dart';
-import 'package:rate_flag/features/RateFlag/domain/repositories/notification_permission_repository.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/app_notification.dart';
+import 'package:rate_flag/features/rate_flag/domain/repositories/notification_permission_repository.dart';
 
 class LocalServicesImpl implements NotificationPermissionRepository {
   final FlutterLocalNotificationsPlugin _plugin =

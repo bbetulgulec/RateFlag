@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/auth/delete_account.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/get_user_info.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/update_user_info.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/account_info/cubit/account_info_state.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/core/enum/request_status.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/auth/delete_account.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/get_user_info.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/update_user_info.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/account_info/cubit/account_info_state.dart';
 
 class AccountInfoCubit extends Cubit<AccountInfoState> {
   final UpdateUserInfo updateUserInfoUsecase;
@@ -64,6 +64,7 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
           email: user.mail,
           birthDate: user.birthDate,
           gender: user.gender,
+          isFormInitialized: true,
         ),
       );
     } catch (_) {

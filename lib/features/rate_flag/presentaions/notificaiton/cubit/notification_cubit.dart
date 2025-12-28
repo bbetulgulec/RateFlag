@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/local/local_load__notifications.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/local/local_services.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/notificaiton/cubit/notification_state.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/local/local_load__notifications.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/local/local_services.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/notificaiton/cubit/notification_state.dart';
 
 class NotificationCubit extends Cubit<NotificationState> {
   final LocalServices requestPermission;
@@ -11,7 +11,6 @@ class NotificationCubit extends Cubit<NotificationState> {
   NotificationCubit(this.requestPermission, this.loadLocalNotifications)
     : super(NotificationState.initial());
 
-  /// 🔔 İzin isteme (user'dan bağımsız)
   Future<void> askPermission() async {
     emit(state.copyWith(isLoading: true));
 
@@ -20,7 +19,6 @@ class NotificationCubit extends Cubit<NotificationState> {
     emit(state.copyWith(isGranted: granted, isLoading: false));
   }
 
-  /// 📥 User'a özel bildirimleri yükle
   Future<void> loadNotifications() async {
     emit(state.copyWith(isLoading: true));
 

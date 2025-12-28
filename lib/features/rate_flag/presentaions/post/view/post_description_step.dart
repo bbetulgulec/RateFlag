@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/text_fields/common_text_field.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/main/cubit/main_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/main/view/main_screen.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post/cubit/post_state.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/routes/routes.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/buttons/custom_elevated_button.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/texts/custom_text.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/text_fields/common_text_field.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/post/cubit/post_cubit.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/post/cubit/post_state.dart';
 
 class PostDescriptionStep extends StatelessWidget {
   const PostDescriptionStep({super.key});
@@ -21,16 +19,7 @@ class PostDescriptionStep extends StatelessWidget {
     return BlocConsumer<PostCubit, PostState>(
       listener: (context, state) {
         if (state.isCreatePostSuccess) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (_) => BlocProvider(
-                create: (_) => getIt<MainCubit>(),
-                child: const MainScreen(),
-              ),
-            ),
-            (route) => false, // 🔥 STACK TEMİZ
-          );
+          Routes.clearAndPush(context, Routes.main);
         } else if (state.errorMessage != null) {
           ScaffoldMessenger.of(
             context,

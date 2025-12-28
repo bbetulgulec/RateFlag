@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/app_notification.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/app_notification.dart';
 
 class NotificationState extends Equatable {
   final bool isGranted;

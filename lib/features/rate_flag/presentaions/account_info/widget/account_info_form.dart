@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/common/utils/validators/validators.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/text_fields/common_text_field.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/register/widget/register_gender_radio_group.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/utils/validators/validators.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/buttons/custom_elevated_button.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/text_fields/common_text_field.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/register/widget/register_gender_radio_group.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
 
 class AccountInfoFormWidget extends StatelessWidget {
   final String firstName;

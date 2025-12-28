@@ -1,4 +1,4 @@
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
 
 class Validators {
   Validators._(); // private constructor

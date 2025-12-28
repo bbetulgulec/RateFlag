@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/auth/forgot_password_user.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/auth/login_user.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_state.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/auth/forgot_password_user.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/auth/login_user.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/login/cubit/login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   final LoginUser loginUserUsecase;

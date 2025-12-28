@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/auth/create_user.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/register/cubit/register_state.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/domain/usecase/auth/create_user.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/register/cubit/register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
   final CreateUser createUserUsecase;

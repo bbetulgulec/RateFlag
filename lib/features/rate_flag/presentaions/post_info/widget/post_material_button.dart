@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/app_color.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/app_color.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
 
 class FlagButton extends StatelessWidget {
   final bool isGreen;

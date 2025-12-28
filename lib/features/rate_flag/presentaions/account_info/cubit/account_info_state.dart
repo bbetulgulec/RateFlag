@@ -1,11 +1,12 @@
 import 'package:equatable/equatable.dart';
-import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/core/enum/request_status.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
 
 class AccountInfoState extends Equatable {
   final RequestStatus getInfoStatus;
   final RequestStatus updateInfoStatus;
   final RequestStatus deleteAccountStatus;
+  final bool isFormInitialized;
 
   final String? errorMessage;
 
@@ -20,6 +21,7 @@ class AccountInfoState extends Equatable {
     this.updateInfoStatus = RequestStatus.initial,
     this.deleteAccountStatus = RequestStatus.initial,
     this.errorMessage,
+    this.isFormInitialized = false,
 
     this.firstName = '',
     this.lastName = '',
@@ -33,7 +35,7 @@ class AccountInfoState extends Equatable {
     RequestStatus? updateInfoStatus,
     RequestStatus? deleteAccountStatus,
     String? errorMessage,
-
+    bool? isFormInitialized,
     String? firstName,
     String? lastName,
     String? email,
@@ -46,7 +48,7 @@ class AccountInfoState extends Equatable {
       getInfoStatus: getInfoStatus ?? this.getInfoStatus,
       updateInfoStatus: updateInfoStatus ?? this.updateInfoStatus,
       deleteAccountStatus: deleteAccountStatus ?? this.deleteAccountStatus,
-
+      isFormInitialized: isFormInitialized ?? this.isFormInitialized,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
@@ -61,7 +63,7 @@ class AccountInfoState extends Equatable {
     getInfoStatus,
     updateInfoStatus,
     deleteAccountStatus,
-
+    isFormInitialized,
     firstName,
     lastName,
     email,

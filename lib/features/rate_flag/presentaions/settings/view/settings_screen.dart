@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/account_info/cubit/account_info_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/account_info/view/account_info_screen.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/cubit/settings_state.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/dialog/common_delete_confirm_dialog.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/widget/setting_dialog.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/settings/widget/setting_card.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/get_it/service_locator.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/routes/routes.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/texts/custom_text.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/login/cubit/login_cubit.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/login/view/login_screen.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/settings/cubit/settings_cubit.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/settings/cubit/settings_state.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/dialog/common_delete_confirm_dialog.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/settings/widget/setting_dialog.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/settings/widget/setting_card.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -96,15 +95,7 @@ class SettingsScreen extends StatelessWidget {
                   iconColor: Colors.deepPurple,
                   title: TextConstants.updateAccount,
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BlocProvider(
-                          create: (_) => getIt<AccountInfoCubit>(),
-                          child: AccountInfoScreen(),
-                        ),
-                      ),
-                    );
+                    Routes.push(context, Routes.accountInfo);
                   },
                 ),
                 SizedBox(height: 15.h),

@@ -15,10 +15,8 @@ class NotificationTile extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
 
-        // 🔹 BORDER
         border: Border.all(color: Colors.grey.shade300, width: 1),
 
-        // 🔹 SHADOW
         boxShadow: const [
           BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 4)),
         ],

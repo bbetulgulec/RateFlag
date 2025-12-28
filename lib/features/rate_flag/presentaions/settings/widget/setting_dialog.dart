@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
 
 class SettingDialog extends StatelessWidget {
   final String title;
@@ -16,7 +16,6 @@ class SettingDialog extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // HEADER
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(vertical: 18.w),
@@ -35,7 +34,6 @@ class SettingDialog extends StatelessWidget {
             ),
           ),
 
-          // CONTENT
           Padding(
             padding: EdgeInsets.all(20.w),
             child: Column(

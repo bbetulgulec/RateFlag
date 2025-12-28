@@ -1,35 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/onboarding_constants.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/onboarding/cubit/onboarding_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/onboarding/cubit/onboarding_state.dart';
-import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/onboarding/widget/onboarding_bottom_controls.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/onboarding_constants.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/texts/custom_text.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/onboarding/cubit/onboarding_cubit.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/onboarding/cubit/onboarding_state.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/buttons/custom_elevated_button.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/onboarding/widget/onboarding_bottom_controls.dart';
 
 class OnboardingPageItem extends StatelessWidget {
   final Map<String, String> model;
   final int index;
+  final VoidCallback? onSkip;
+  final VoidCallback? onBack;
+  final VoidCallback? onNext;
+  final VoidCallback? onFinish;
 
   const OnboardingPageItem({
     super.key,
     required this.model,
     required this.index,
+    this.onSkip,
+    this.onBack,
+    this.onNext,
+    this.onFinish,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<OnboardingCubit, OnboardingState>(
-      buildWhen: (prev, curr) => prev.currentPageIndex != curr.currentPageIndex,
+      buildWhen: (p, c) => p.currentPageIndex != c.currentPageIndex,
       builder: (context, state) {
-        final bool isActivePage = state.currentPageIndex == index;
-        final bool isLastPage = index == OnboardingConstants.pages.length - 1;
+        final isActive = state.currentPageIndex == index;
+        final isLast = index == OnboardingConstants.pages.length - 1;
 
         return SafeArea(
           child: Padding(
@@ -38,19 +43,9 @@ class OnboardingPageItem extends StatelessWidget {
               children: [
                 Align(
                   alignment: Alignment.topRight,
-                  child: !isLastPage && isActivePage
+                  child: !isLast && isActive
                       ? GestureDetector(
-                          onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider(
-                                  create: (_) => getIt<LoginCubit>(),
-                                  child: LoginScreen(),
-                                ),
-                              ),
-                            );
-                          },
+                          onTap: onSkip,
                           child: RateFlagText.fadedItalic(
                             text: TextConstants.skip,
                             context: context,
@@ -73,32 +68,23 @@ class OnboardingPageItem extends StatelessWidget {
                   ),
                 ),
 
-                //  ALT KONTROLLER
-                if (isActivePage)
+                if (isActive)
                   Padding(
                     padding: EdgeInsets.only(bottom: 30.h),
                     child: OnboardingBottomControls(
                       index: index,
-                      isLastPage: isLastPage,
+                      isLastPage: isLast,
+                      onBack: onBack ?? () {},
+                      onNext: onNext ?? () {},
                     ),
                   ),
 
-                if (isActivePage && isLastPage)
+                if (isActive && isLast)
                   Padding(
                     padding: EdgeInsets.only(bottom: 24.h),
                     child: CustomElevatedButton.primary(
                       text: TextConstants.letBegin,
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => getIt<LoginCubit>(),
-                              child: LoginScreen(),
-                            ),
-                          ),
-                        );
-                      },
+                      onPressed: onFinish,
                     ),
                   ),
               ],

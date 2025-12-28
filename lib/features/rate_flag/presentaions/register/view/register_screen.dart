@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/login/cubit/login_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/login/view/login_screen.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/register/cubit/register_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/register/cubit/register_state.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/register/widget/register_form.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/routes/routes.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/register/cubit/register_cubit.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/register/cubit/register_state.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/register/widget/register_form.dart';
 
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
@@ -28,15 +26,7 @@ class RegisterScreen extends StatelessWidget {
           }
 
           if (state.isRegisterSuccess) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => BlocProvider(
-                  create: (_) => getIt<LoginCubit>(),
-                  child: LoginScreen(),
-                ),
-              ),
-            );
+            Routes.push(context, Routes.login);
           }
         },
         builder: (context, state) {
@@ -87,7 +77,7 @@ class RegisterScreen extends StatelessWidget {
                               },
 
                               onAlreadyHaveAccount: () {
-                                Navigator.pop(context);
+                                Routes.push(context, Routes.login);
                               },
                             ),
                           ),

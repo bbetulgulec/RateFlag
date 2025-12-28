@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/post.dart';
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/post.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
 
 class SearchResultTile extends StatelessWidget {
   final User? user;
@@ -30,7 +30,6 @@ class SearchResultTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Post Image
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: SizedBox(

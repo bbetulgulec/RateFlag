@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
 
 class ProfileBuildCount extends StatelessWidget {
   final String label;

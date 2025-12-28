@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/common/utils/validators/validators.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/buttons/custom_elevated_button.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/texts/custom_text.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/text_fields/common_text_field.dart';
-import 'package:rate_flag/features/RateFlag/common/widgets/buttons/commun_text_button.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/utils/validators/validators.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/buttons/custom_elevated_button.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/texts/custom_text.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/text_fields/common_text_field.dart';
+import 'package:rate_flag/features/rate_flag/common/widgets/buttons/commun_text_button.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({

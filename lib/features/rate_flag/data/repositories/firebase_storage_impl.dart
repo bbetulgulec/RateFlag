@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:rate_flag/features/RateFlag/domain/repositories/storage_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:rate_flag/features/rate_flag/domain/repositories/storage_repository.dart';
 
 class FirebaseStorageImpl extends StorageRepository {
   final FirebaseStorage storage = FirebaseStorage.instance;
@@ -13,10 +14,10 @@ class FirebaseStorageImpl extends StorageRepository {
       await ref.putFile(image);
       final url = await ref.getDownloadURL();
 
-      print("UPLOAD IMAGE URL => $url");
+      debugPrint("UPLOAD IMAGE URL => $url");
       return url;
     } catch (e) {
-      print("uploadImage ERROR: $e");
+      debugPrint("uploadImage ERROR: $e");
       return null;
     }
   }
@@ -28,7 +29,7 @@ class FirebaseStorageImpl extends StorageRepository {
       await ref.putFile(image);
       return await ref.getDownloadURL();
     } catch (e) {
-      print("uploadProfileImage ERROR: $e");
+      debugPrint("uploadProfileImage ERROR: $e");
       return null;
     }
   }

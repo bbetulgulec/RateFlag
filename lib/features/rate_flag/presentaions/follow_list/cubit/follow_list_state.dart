@@ -1,4 +1,4 @@
-import 'package:rate_flag/features/RateFlag/domain/model/user.dart';
+import 'package:rate_flag/features/rate_flag/domain/model/user.dart';
 
 class FollowListState {
   final bool isLoading;

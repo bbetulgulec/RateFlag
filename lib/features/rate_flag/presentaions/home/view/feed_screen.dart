@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rate_flag/features/RateFlag/common/constants/text_constant.dart';
-import 'package:rate_flag/features/RateFlag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/RateFlag/core/enum/request_status.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/load_all_post.dart';
-import 'package:rate_flag/features/RateFlag/domain/usecase/firestore/rate_post.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/cubit/home_state.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/home/widget/feed_post_card.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/cubit/post_info_cubit.dart';
-import 'package:rate_flag/features/RateFlag/presentaions/post_info/view/post_info_screen.dart';
-import 'package:rate_flag/features/RateFlag/common/get_it/service_locator.dart';
+import 'package:rate_flag/features/rate_flag/common/constants/text_constant.dart';
+import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
+import 'package:rate_flag/features/rate_flag/common/routes/routes.dart';
+import 'package:rate_flag/features/rate_flag/core/enum/request_status.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/home/cubit/home_cubit.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/home/cubit/home_state.dart';
+import 'package:rate_flag/features/rate_flag/presentaions/home/widget/feed_post_card.dart';
 
 class FeedScreen extends StatelessWidget {
   const FeedScreen({super.key});
@@ -21,66 +17,51 @@ class FeedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-    return BlocProvider(
-      create: (context) =>
-          HomeCubit(getIt<LoadAllPost>(), getIt<RatePost>())..loadAllPosts(),
-      child: BlocBuilder<HomeCubit, HomeState>(
-        builder: (context, state) {
-          if (state.loadPostsStatus == RequestStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        if (state.loadPostsStatus == RequestStatus.loading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          if (state.errorMessage != null) {
-            return Center(child: Text(state.errorMessage!));
-          }
+        if (state.errorMessage != null) {
+          return Center(child: Text(state.errorMessage!));
+        }
 
-          if (state.posts.isEmpty) {
-            return const Center(child: Text(TextConstants.dontHaveAnyYetPost));
-          }
+        if (state.posts.isEmpty) {
+          return const Center(child: Text(TextConstants.dontHaveAnyYetPost));
+        }
 
-          return Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: EdgeInsets.all(8.sp),
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  await context.read<HomeCubit>().loadAllPosts();
+        return Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: EdgeInsets.all(8.sp),
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await context.read<HomeCubit>().loadAllPosts();
+              },
+              child: MasonryGridView.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                itemCount: state.posts.length,
+                itemBuilder: (context, index) {
+                  final post = state.posts[index];
+                  final isBig = index % 4 == 0 || index % 5 == 0;
+
+                  return FeedPostCard(
+                    imageUrl: post.imageUrl,
+                    isSelfPost: post.userId == currentUserId,
+                    isBig: isBig,
+                    onPressed: () {
+                      Routes.push(context, Routes.postInfo, arguments: post);
+                    },
+                  );
                 },
-                child: MasonryGridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  itemCount: state.posts.length,
-                  itemBuilder: (context, index) {
-                    final post = state.posts[index];
-                    final isBig = index % 4 == 0 || index % 5 == 0;
-
-                    return FeedPostCard(
-                      imageUrl: post.imageUrl,
-                      isSelfPost: post.userId == currentUserId,
-                      isBig: isBig,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => getIt<PostInfoCubit>()
-                                ..loadPostInfo(postId: post.postId)
-                                ..loadFollowStatus(post.userId),
-
-                              child: PostInfoScreen(postId: post.postId),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

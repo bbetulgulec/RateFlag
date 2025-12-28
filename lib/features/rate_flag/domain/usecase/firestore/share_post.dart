@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:share_plus/share_plus.dart';
 
 class PostShare {
@@ -11,18 +12,18 @@ class PostShare {
     String? imageUrl,
   }) async {
     final message =
-        """
+        '''
 $userName adlı kullanıcının paylaşımı:
 
 $description
 
 📍 $city / $district
-""";
+''';
 
     try {
-      await Share.share(message);
+      SharePlus.instance.share(ShareParams(text: message));
     } catch (e) {
-      print("Share ERROR: $e");
+      debugPrint("Share ERROR: $e");
       rethrow;
     }
   }
