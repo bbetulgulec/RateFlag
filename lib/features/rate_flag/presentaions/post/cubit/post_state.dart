@@ -10,7 +10,7 @@ class PostState extends Equatable {
 
   final Post? draftPost;
 
-  //1.page
+  //1.pag
 
   final int currentPage;
 
