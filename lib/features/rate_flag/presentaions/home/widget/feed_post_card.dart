@@ -34,7 +34,7 @@ class FeedPostCard extends StatelessWidget {
                       memCacheHeight: 800,
                       memCacheWidth: 800,
                       placeholder: (context, url) => Container(
-                        color: Colors.grey.shade300,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         child: const Center(
                           child: CircularProgressIndicator(strokeWidth: 2),
                         ),

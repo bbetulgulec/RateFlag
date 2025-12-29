@@ -249,4 +249,8 @@ class TextConstants {
 
   static const String yes = "Evet";
   static const String no = "Hayır";
+
+  static const String type = "Tür";
+
+  static const String user = "Tür";
 }

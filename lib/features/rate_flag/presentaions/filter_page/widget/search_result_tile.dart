@@ -78,7 +78,7 @@ class SearchResultTile extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       color: Theme.of(
                         context,
                       ).colorScheme.onSurface.withAlpha(60),

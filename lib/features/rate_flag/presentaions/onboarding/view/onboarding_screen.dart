@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/features/rate_flag/common/constants/onboarding_constants.dart';
-import 'package:rate_flag/features/rate_flag/common/get_it/service_locator.dart';
 import 'package:rate_flag/features/rate_flag/common/routes/routes.dart';
-import 'package:rate_flag/features/rate_flag/presentaions/login/cubit/login_cubit.dart';
-import 'package:rate_flag/features/rate_flag/presentaions/login/view/login_screen.dart';
 import 'package:rate_flag/features/rate_flag/presentaions/onboarding/cubit/onboarding_cubit.dart';
 import 'package:rate_flag/features/rate_flag/presentaions/onboarding/cubit/onboarding_state.dart';
 import 'package:rate_flag/features/rate_flag/presentaions/onboarding/widget/onboarding_page_item.dart';

@@ -5,15 +5,18 @@ class Tabitem extends StatelessWidget {
   final String title;
   final bool isActive;
   final VoidCallback onTap;
+
   const Tabitem({
     super.key,
     required this.title,
     required this.isActive,
     required this.onTap,
   });
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
     return GestureDetector(
       onTap: onTap,
@@ -23,9 +26,7 @@ class Tabitem extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              color: theme.brightness == Brightness.light
-                  ? Colors.black
-                  : Colors.white, // Light siyah, Dark beyaz
+              color: colors.onSurface,
               fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -34,9 +35,10 @@ class Tabitem extends StatelessWidget {
             duration: const Duration(milliseconds: 200),
             height: 2.h,
             width: isActive ? 24.w : 0,
-            color: theme.brightness == Brightness.light
-                ? Colors.black
-                : Colors.white,
+            decoration: BoxDecoration(
+              color: colors.onSurface,
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
         ],
       ),

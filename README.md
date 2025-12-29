@@ -60,66 +60,75 @@ Bloc/Cubit mimarisi ve Firebase altyapısı kullanılarak geliştirilmiştir.
   <tr>
     <td><img src="assets/screenshots/light/splash.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/splash.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/light/onboarding.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/dark/onboarding.jpeg" width="180"/></td>
+
   </tr>
 
   <tr>
     <td><img src="assets/screenshots/light/onboarding.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/onboarding.jpeg" width="180"/></td>
-  </tr>
-
-  <tr>
     <td><img src="assets/screenshots/light/login.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/login.jpeg" width="180"/></td>
   </tr>
 
   <tr>
-    <td><img src="assets/screenshots/light/register.jpeg" width="180"/></td>
-    <td><img src="assets/screenshots/dark/register.jpeg" width="180"/></td>
+
   </tr>
 
   <tr>
+    <td><img src="assets/screenshots/light/register.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/dark/register.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/light/home.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/home.jpeg" width="180"/></td>
   </tr>
 
   <tr>
-    <td><img src="assets/screenshots/light/profile.jpeg" width="180"/></td>
-    <td><img src="assets/screenshots/dark/profile.jpeg" width="180"/></td>
+
   </tr>
 
   <tr>
+    <td><img src="assets/screenshots/light/profile.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/dark/profile.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/light/profile_info.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/profile_info.jpeg" width="180"/></td>
   </tr>
 
   <tr>
-    <td><img src="assets/screenshots/light/setting.jpeg" width="180"/></td>
-    <td><img src="assets/screenshots/dark/setting.jpeg" width="180"/></td>
+
   </tr>
 
   <tr>
+    <td><img src="assets/screenshots/light/setting.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/dark/setting.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/light/setting_detail.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/setting_detail.jpeg" width="180"/></td>
   </tr>
 
   <tr>
-    <td><img src="assets/screenshots/light/map.jpeg" width="180"/></td>
-    <td><img src="assets/screenshots/dark/map.jpeg" width="180"/></td>
+
   </tr>
 
   <tr>
+    <td><img src="assets/screenshots/light/map.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/dark/map.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/light/filter.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/filter.jpeg" width="180"/></td>
   </tr>
 
   <tr>
-    <td><img src="assets/screenshots/light/filter_detail.jpeg" width="180"/></td>
-    <td><img src="assets/screenshots/dark/filter_detail.jpeg" width="180"/></td>
+
   </tr>
 
   <tr>
+    <td><img src="assets/screenshots/light/filter_detail.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/dark/filter_detail.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/light/follow.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/follow.jpeg" width="180"/></td>
+  </tr>
+
+  <tr>
+
   </tr>
 
   <tr>

@@ -39,14 +39,13 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               Tabitem(
                 title: TextConstants.map,
                 isActive: state.selectedTab == HomeTab.map,
-                onTap: onTapMap, //() => context.read<HomeCubit>().selectMap(),
+                onTap: onTapMap,
               ),
               const SizedBox(width: 20),
               Tabitem(
                 title: TextConstants.forYou,
                 isActive: state.selectedTab == HomeTab.forYou,
-                onTap:
-                    onTapFeed, // () => context.read<HomeCubit>().selectForYou(),
+                onTap: onTapFeed,
               ),
             ],
           );

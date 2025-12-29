@@ -65,8 +65,7 @@ class FilterBottomSheet extends StatelessWidget {
 
             SizedBox(height: 20.h),
 
-            /// FILTER TYPE
-            const Text("Tür"),
+            const Text(TextConstants.type),
             RadioGroup<FilterListType>(
               groupValue: state.filterListType,
               onChanged: (value) {
@@ -78,13 +77,13 @@ class FilterBottomSheet extends StatelessWidget {
                 children: const [
                   Expanded(
                     child: FilterRadioTile<FilterListType>(
-                      title: "kullanıcı",
+                      title: TextConstants.user,
                       value: FilterListType.users,
                     ),
                   ),
                   Expanded(
                     child: FilterRadioTile<FilterListType>(
-                      title: "postlar",
+                      title: TextConstants.post,
                       value: FilterListType.posts,
                     ),
                   ),
