@@ -73,18 +73,10 @@ Bloc/Cubit mimarisi ve Firebase altyapısı kullanılarak geliştirilmiştir.
   </tr>
 
   <tr>
-
-  </tr>
-
-  <tr>
     <td><img src="assets/screenshots/light/register.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/register.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/light/home.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/home.jpeg" width="180"/></td>
-  </tr>
-
-  <tr>
-
   </tr>
 
   <tr>
@@ -95,18 +87,10 @@ Bloc/Cubit mimarisi ve Firebase altyapısı kullanılarak geliştirilmiştir.
   </tr>
 
   <tr>
-
-  </tr>
-
-  <tr>
     <td><img src="assets/screenshots/light/setting.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/setting.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/light/setting_detail.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/setting_detail.jpeg" width="180"/></td>
-  </tr>
-
-  <tr>
-
   </tr>
 
   <tr>
@@ -117,10 +101,6 @@ Bloc/Cubit mimarisi ve Firebase altyapısı kullanılarak geliştirilmiştir.
   </tr>
 
   <tr>
-
-  </tr>
-
-  <tr>
     <td><img src="assets/screenshots/light/filter_detail.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/filter_detail.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/light/follow.jpeg" width="180"/></td>
@@ -128,25 +108,16 @@ Bloc/Cubit mimarisi ve Firebase altyapısı kullanılarak geliştirilmiştir.
   </tr>
 
   <tr>
-
-  </tr>
-
-  <tr>
     <td><img src="assets/screenshots/light/notification.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/notification.jpeg" width="180"/></td>
-  </tr>
-
-  <tr>
     <td><img src="assets/screenshots/light/post_visibility.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/post_visibility.jpeg" width="180"/></td>
+
   </tr>
 
   <tr>
     <td><img src="assets/screenshots/light/post_disc.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/post_city.jpeg" width="180"/></td>
-  </tr>
-
-  <tr>
     <td><img src="assets/screenshots/light/post_image.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/post_image.jpeg" width="180"/></td>
   </tr>

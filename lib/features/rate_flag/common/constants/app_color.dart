@@ -8,7 +8,6 @@ class AppColors {
   //  Surfaces
   static const Color surface = Color(0xFF121212);
   static const Color container = Color(0xFF1E1E1E);
-  // BottomSheet / Modal
 
   //  Text
   static const Color textPrimary = Color(0xFFFFFFFF);
