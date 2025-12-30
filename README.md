@@ -115,12 +115,15 @@ Bloc/Cubit mimarisi ve Firebase altyapısı kullanılarak geliştirilmiştir.
 
   </tr>
 
+
   <tr>
     <td><img src="assets/screenshots/light/post_disc.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/post_city.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/light/post_image.jpeg" width="180"/></td>
     <td><img src="assets/screenshots/dark/post_image.jpeg" width="180"/></td>
   </tr>
+
+
 
   <tr>
     <td><img src="assets/screenshots/light/post_dec.jpeg" width="180"/></td>
