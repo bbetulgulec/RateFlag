@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "561232933070",
+    "project_id": "rateflag-39f52",
+    "storage_bucket": "rateflag-39f52.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:561232933070:android:482ce1fd53cea38c2d209f",
+        "android_client_info": {
+          "package_name": "com.betulgulec.rateflag"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMzBmFw8wc0yqrz0BuT44FfY2KgeH8XLw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
