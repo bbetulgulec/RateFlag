@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rate_flag/app/common/constants/onboarding_constants.dart';
 import 'package:rate_flag/app/common/constants/text_constant.dart';
 import 'package:rate_flag/core/responsive/responsive.dart';
@@ -58,7 +57,7 @@ class OnboardingPageItem extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset(model["image"]!, height: 300.h),
+                      Image.asset(model["image"]!, height: 300.h),
                       SizedBox(height: 30.h),
                       RateFlagText.head4(
                         text: model["text"]!,

@@ -6,7 +6,7 @@ import 'package:rate_flag/app/common/constants/text_constant.dart';
 import 'package:rate_flag/app/features/data/model/comment.dart';
 import 'package:rate_flag/app/features/data/model/post.dart';
 import 'package:rate_flag/app/features/data/usecase/firestore/create_comment.dart';
-import 'package:rate_flag/features/rate_flag/domain/usecase/firestore/get_saved_post.dart';
+import 'package:rate_flag/app/features/data/usecase/firestore/get_Saved_post.dart';
 import 'package:rate_flag/app/features/data/usecase/firestore/get_user_info.dart';
 import 'package:rate_flag/app/features/data/usecase/firestore/is_following.dart';
 import 'package:rate_flag/app/features/data/usecase/firestore/load_post_by_id.dart';

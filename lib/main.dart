@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rate_flag/app/features/data/domain/repositories/notification_permission_repository.dart';
 import 'package:rate_flag/core/get_it/service_locator.dart';
@@ -22,7 +21,6 @@ Future<void> main() async {
   await notificationRepo.init();
 
   await LocalNotificationService.init();
-  FirebaseDatabase.instance.setPersistenceEnabled(true);
 
   runApp(
     MultiBlocProvider(
