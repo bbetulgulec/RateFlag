@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rate_flag/features/rate_flag/common/get_it/service_locator.dart';
-import 'package:rate_flag/features/rate_flag/common/responsive/responsive.dart';
-import 'package:rate_flag/features/rate_flag/common/routes/routes.dart';
-import 'package:rate_flag/features/rate_flag/common/theme/app_theme.dart';
-import 'package:rate_flag/features/rate_flag/core/internet/cubit/internet_cubit.dart';
-import 'package:rate_flag/features/rate_flag/core/internet/view/internet_gate.dart';
-import 'package:rate_flag/features/rate_flag/core/notifications/local_notification_service.dart';
-import 'package:rate_flag/features/rate_flag/domain/repositories/notification_permission_repository.dart';
-import 'package:rate_flag/features/rate_flag/presentaions/splash/cubit/splash_cubit.dart';
+import 'package:rate_flag/app/features/data/domain/repositories/notification_permission_repository.dart';
+import 'package:rate_flag/core/get_it/service_locator.dart';
+import 'package:rate_flag/core/responsive/responsive.dart';
+import 'package:rate_flag/core/routes/routes.dart';
+import 'package:rate_flag/app/features/presentations/internet/cubit/internet_cubit.dart';
+import 'package:rate_flag/app/features/presentations/internet/view/internet_gate.dart';
+import 'package:rate_flag/core/service/notifications/local_notification_service.dart';
+import 'package:rate_flag/app/features/presentations/splash/cubit/splash_cubit.dart';
+import 'package:rate_flag/core/theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
